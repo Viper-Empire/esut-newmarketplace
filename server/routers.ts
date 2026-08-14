@@ -104,10 +104,11 @@ export const appRouter = router({
       return { categories: categoryRows, listings: listingRows, stores: storeRows, todayDeals, trending, campusPicks, services, popularStores };
     }),
     categories: publicProcedure.query(async () => (await ensureDb()).select().from(categories).where(eq(categories.isActive, true)).orderBy(asc(categories.sortOrder))),
-    search: publicProcedure.input(pager.extend({ q: z.string().max(120).optional(), min: z.number().int().nonnegative().optional(), max: z.number().int().positive().optional(), condition: z.enum(["NEW", "LIKE_NEW", "USED_GOOD", "USED_FAIR", "REFURBISHED"]).optional(), verified: z.boolean().optional(), sort: z.enum(["newest", "price_asc", "price_desc", "popular"]).default("newest") })).query(async ({ input }) => {
+    search: publicProcedure.input(pager.extend({ q: z.string().max(120).optional(), categorySlug: z.string().max(180).optional(), min: z.number().int().nonnegative().optional(), max: z.number().int().positive().optional(), condition: z.enum(["NEW", "LIKE_NEW", "USED_GOOD", "USED_FAIR", "REFURBISHED"]).optional(), verified: z.boolean().optional(), sort: z.enum(["newest", "price_asc", "price_desc", "popular"]).default("newest") })).query(async ({ input }) => {
       const db = await ensureDb();
       const where = [eq(listings.status, "ACTIVE")];
       if (input.q) where.push(like(listings.title, `%${input.q.trim()}%`));
+      if (input.categorySlug) { const category = (await db.select().from(categories).where(and(eq(categories.slug, input.categorySlug), eq(categories.isActive, true))).limit(1))[0]; if (!category) return { items: [], page: input.page, hasMore: false }; where.push(eq(listings.categoryId, category.id)); }
       if (input.min !== undefined) where.push(gte(listings.priceKobo, input.min));
       if (input.max !== undefined) where.push(lte(listings.priceKobo, input.max));
       if (input.condition) where.push(eq(listings.condition, input.condition));
