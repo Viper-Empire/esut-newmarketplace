@@ -59,7 +59,7 @@
 - [x] Document and verify the existing-user password-claim journey preserves existing roles, stores, and marketplace data.
 - [x] Add a role-aware seller onboarding checklist that shows verification and application progress before seller tools unlock.
 - [x] Implement secure evidence-file upload and administrator evidence review for individual and business seller verification.
-- [ ] Add automated coverage proving an existing account claims a password without losing its role, store, or marketplace records.
+- [x] Add automated coverage proving an existing account claims a password without losing its role, store, or marketplace records.
 - [ ] Verify the live seller evidence submission, administrator review, and post-approval gate loop.
 - [x] Add clear Login and Create Account routes that initiate the supported secure account session flow.
 - [x] Add separate visible Create Account and Log In actions to the public storefront header for signed-out visitors.
