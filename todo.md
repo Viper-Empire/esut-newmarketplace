@@ -4,7 +4,7 @@
 - [x] Create the database schema and migrations for profiles, stores, seller applications, verification requests, categories, listings, images, inventory, favorites, carts, cart items, orders, order items, offers, conversations, messages, notifications, reports, disputes, reviews, and audit logs.
 - [x] Implement authorization-aware database services and operation-specific tRPC procedures for marketplace operations.
 - [x] Add database-backed seed/development data, clearly separated from production data and excluding fabricated customer reviews.
-- [ ] Configure the ESUT visual system, global typography, responsive tokens, SEO baseline, and PWA configuration.
+- [x] Configure the ESUT visual system, global typography, responsive tokens, SEO baseline, and PWA configuration.
 - [x] Upload and reference the supplied ESUT Marketplace logo through managed static storage.
 - [ ] Build reusable storefront components including header, search, category navigation, product cards, price displays, trust badges, empty states, and footer.
 - [x] Build the database-backed homepage with announcement, hero, categories, deals, trending listings, fresh arrivals, verified stores, services, and seller recruitment sections.
