@@ -75,7 +75,7 @@
 - [x] Connect the seller-approval delivery event to the administrator-managed email template renderer.
 - [ ] Add loading, error, empty, and success states across customer, seller, and admin experiences.
 - [ ] Add unit and integration tests for authorization, IDOR prevention, mass-assignment protection, cart and checkout calculations, business state transitions, and critical buyer/seller/admin journeys.
-- [ ] Verify desktop and mobile storefront experience at required breakpoints, plus keyboard navigation and accessibility basics.
+- [x] Verify desktop and mobile storefront experience at required breakpoints, plus keyboard navigation and accessibility basics.
 - [ ] Review TODO completion state, save the final project checkpoint, and prepare a concise implementation handoff.
 - [x] Build a distinct buyer account settings page rather than reusing the profile editor route.
 - [x] Build seller settings controls and expose them from the verified seller workspace.

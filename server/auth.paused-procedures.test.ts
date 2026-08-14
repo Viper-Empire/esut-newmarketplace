@@ -1,14 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { TrpcContext } from "./_core/context";
 import { hashPassword } from "./localAuth";
-import { orders, stores, users } from "../drizzle/schema";
+import { orders, profiles, stores, users } from "../drizzle/schema";
 
-const mockState = vi.hoisted(() => ({ selectResults: [] as unknown[][], insertResults: [] as unknown[], cookies: [] as unknown[], updatedTables: [] as unknown[], deletedTables: [] as unknown[] }));
+const mockState = vi.hoisted(() => ({ selectResults: [] as unknown[][], insertResults: [] as unknown[], insertValues: [] as { table: unknown; value: unknown }[], cookies: [] as unknown[], updatedTables: [] as unknown[], deletedTables: [] as unknown[] }));
 
 vi.mock("./db", () => ({
   getDb: async () => ({
     select: () => ({ from: () => ({ where: () => ({ limit: async () => mockState.selectResults.shift() ?? [] }) }) }),
-    insert: () => ({ values: () => { const result = mockState.insertResults.shift() ?? []; return Object.assign(Promise.resolve(result), { onDuplicateKeyUpdate: async () => result }); } }),
+    insert: (table: unknown) => ({ values: (value: unknown) => { mockState.insertValues.push({ table, value }); const result = mockState.insertResults.shift() ?? []; return Object.assign(Promise.resolve(result), { onDuplicateKeyUpdate: async () => result }); } }),
     update: (table: unknown) => { mockState.updatedTables.push(table); return { set: () => ({ where: async () => [] }) }; },
     delete: (table: unknown) => { mockState.deletedTables.push(table); return { where: async () => [] }; },
   }),
@@ -22,7 +22,7 @@ function context(): TrpcContext {
 }
 
 describe("paused email-verification authentication procedures", () => {
-  beforeEach(() => { mockState.selectResults = []; mockState.insertResults = []; mockState.cookies = []; mockState.updatedTables = []; mockState.deletedTables = []; });
+  beforeEach(() => { mockState.selectResults = []; mockState.insertResults = []; mockState.insertValues = []; mockState.cookies = []; mockState.updatedTables = []; mockState.deletedTables = []; });
 
   it("returns a registration response that does not require or claim verification delivery", async () => {
     const created = { id: 31, openId: "local_test", name: "Ada Student", email: "ada@example.com", loginMethod: "password", passwordHash: "hidden", role: "CUSTOMER", isActive: true, failedLoginCount: 0, lockedUntil: null, createdAt: new Date(), updatedAt: new Date(), lastSignedIn: null };
@@ -69,5 +69,12 @@ describe("paused email-verification authentication procedures", () => {
     expect(mockState.updatedTables).not.toContain(stores);
     expect(mockState.updatedTables).not.toContain(orders);
     expect(mockState.deletedTables).toEqual([]);
+  });
+
+  it("strips attempted role changes from a profile update", async () => {
+    const user = { id: 88, openId: "profile-owner", name: "Profile Owner", email: "profile@example.com", loginMethod: "password", role: "CUSTOMER" as const, isActive: true, createdAt: new Date(), updatedAt: new Date(), lastSignedIn: null };
+    await appRouter.createCaller({ ...context(), user }).profile.update({ phone: "08000000000", location: "ESUT", role: "ADMIN" } as any);
+    expect(mockState.insertValues[0]).toMatchObject({ table: profiles, value: { userId: 88, phone: "08000000000", location: "ESUT" } });
+    expect(mockState.insertValues[0]?.value).not.toHaveProperty("role");
   });
 });
