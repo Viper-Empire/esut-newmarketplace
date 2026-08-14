@@ -79,5 +79,5 @@
 - [ ] Review TODO completion state, save the final project checkpoint, and prepare a concise implementation handoff.
 - [x] Build a distinct buyer account settings page rather than reusing the profile editor route.
 - [x] Build seller settings controls and expose them from the verified seller workspace.
-- [ ] Add a customer-facing report-submission entry point from listing, store, message, and review experiences.
+- [x] Add a customer-facing report-submission entry point from listing, store, message, and review experiences.
 - [x] Build a moderator-specific workspace and procedures, or formally document a supported administrator-only moderation policy.
