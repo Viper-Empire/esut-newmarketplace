@@ -81,3 +81,4 @@
 - [x] Build seller settings controls and expose them from the verified seller workspace.
 - [x] Add a customer-facing report-submission entry point from listing, store, message, and review experiences.
 - [x] Build a moderator-specific workspace and procedures, or formally document a supported administrator-only moderation policy.
+- [ ] Conduct a consented live seller-evidence, administrator-review, and post-approval access-gate verification using authentic marketplace sessions only. (Partial: an authentic seller session shows APPROVED verification and seller-tool access; administrator review requires an authenticated administrator session.)
