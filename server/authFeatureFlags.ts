@@ -10,3 +10,7 @@ export const emailVerificationRegistrationState = () => ({
   requiresEmailVerification: EMAIL_VERIFICATION_ENABLED,
   verificationSent: false,
 });
+
+export const emailVerificationLoginState = () => ({
+  requiresEmailVerification: EMAIL_VERIFICATION_ENABLED,
+});
