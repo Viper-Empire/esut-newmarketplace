@@ -1,0 +1,83 @@
+# Project TODO
+
+- [x] Extend the user role model for CUSTOMER, SELLER, MODERATOR, ADMIN, and SUPER_ADMIN, with server-side route and procedure guards.
+- [x] Create the database schema and migrations for profiles, stores, seller applications, verification requests, categories, listings, images, inventory, favorites, carts, cart items, orders, order items, offers, conversations, messages, notifications, reports, disputes, reviews, and audit logs.
+- [ ] Implement authorization-aware database services and operation-specific tRPC procedures for marketplace operations.
+- [x] Add database-backed seed/development data, clearly separated from production data and excluding fabricated customer reviews.
+- [ ] Configure the ESUT visual system, global typography, responsive tokens, SEO baseline, and PWA configuration.
+- [x] Upload and reference the supplied ESUT Marketplace logo through managed static storage.
+- [ ] Build reusable storefront components including header, search, category navigation, product cards, price displays, trust badges, empty states, and footer.
+- [x] Build the database-backed homepage with announcement, hero, categories, deals, trending listings, fresh arrivals, verified stores, services, and seller recruitment sections.
+- [ ] Build catalogue, search, filtering, sorting, pagination, and category browsing routes.
+- [ ] Build database-backed product detail pages with gallery, seller information, favorites, related listings, offers, and buyer contact entry points.
+- [ ] Implement persistent guest and authenticated carts with cart merging, stock validation, seller grouping, and server-calculated totals.
+- [ ] Implement checkout for campus pickup and cash on pickup only, with a payment service abstraction and transactional order creation.
+- [x] Implement order lifecycle controls, status history, seller fulfillment actions, and buyer order history views.
+- [ ] Build buyer account pages for overview, orders, favorites, offers, messages, notifications, verification, profile, and settings.
+- [ ] Implement seller application, server-side approval, store management, listing management, inventory, seller orders, offers, analytics, and settings.
+- [x] Implement buyer-seller conversations, messages, offers, and in-app notifications with participant ownership checks.
+- [x] Implement verified user workflows, purchase-eligible reviews, reporting, disputes, and immutable audit logging for sensitive operations.
+- [ ] Build administrator and moderator dashboards for marketplace oversight, approvals, moderation, reports, disputes, audit logs, and database-driven KPIs.
+- [ ] Implement safe listing-image validation, managed file storage, multiple image ordering, and web-optimized image presentation.
+- [ ] Provide compliant notification architecture for in-app events and clearly labeled future email delivery integration.
+- [ ] Integrate a password-based authentication and recovery provider without weakening the existing secure OAuth session flow.
+- [ ] Define and implement verified-email and password-reset capabilities if a password identity provider is approved for the marketplace.
+- [x] Replace the external OAuth entry redirect with ESUT Marketplace-branded email-and-password registration and login forms.
+- [x] Add secure password hashing, first-party session issuance, email verification tokens, password-reset tokens, and rate-limited authentication endpoints.
+- [x] Add branded verification, password-reset request, and password-reset completion routes matching the supplied visual direction.
+- [ ] Verify a Resend sending domain and test email verification and password recovery delivery to normal marketplace recipients.
+- [x] Temporarily disable outbound email-verification delivery and verification-required user messaging while retaining a documented re-enable path.
+- [x] Document the safe re-enable process for email verification after a verified sending domain is available.
+- [x] Review authentication copy to confirm it does not imply email verification is required while the feature is paused.
+- [x] Add regression coverage for paused email-verification registration and login behavior.
+- [ ] Add procedure-level paused-mode coverage for registration and login responses.
+- [ ] Verify the live registration and login routes remain free of email-verification-required prompts while the feature is paused.
+- [x] Fix seller verification submission to omit irrelevant individual or business fields and add regression coverage for both verification types.
+- [x] Produce a technical and product audit report covering delivered features, security, data architecture, testing, risks, and prioritized next steps.
+- [x] Define and implement concurrency-safe inventory reservation, transactional checkout, and explicit marketplace order-state management.
+- [x] Produce an ESUT Marketplace architecture report with current-state and planned-evolution diagrams.
+- [x] Implement database-backed buyer order list/detail, seller order list/detail, and admin order list/detail routes.
+- [x] Implement idempotent order batches, atomic inventory reservations, expiry release, and a server-enforced order transition policy.
+- [x] Add order-batch and inventory-reservation schema support with transaction-safe indexes.
+- [x] Implement server-enforced buyer, seller, administrator, and expiry order transitions with order-status history, audit logs, notifications, and stock release or commitment.
+- [ ] Add ownership and concurrency tests proving stock cannot be oversold and duplicate checkout cannot create duplicate orders.
+- [ ] Implement verified seller store profile, products, product image upload, listing publication, inventory, order fulfilment, reviews, analytics, and settings routes.
+- [ ] Implement buyer favorites, offers, participant-only messaging, reviews, notifications, profile, verification, and settings routes.
+- [x] Implement administrator users, sellers, stores, listings, categories, orders, offers, verifications, reports, disputes, reviews, notifications, audit logs, and settings operations using real database data.
+- [x] Implement participant-authorized offers and conversations with ownership controls, status transitions, and notifications.
+- [x] Implement completed-order-only reviews with eligibility, uniqueness, ownership, and moderation enforcement.
+- [ ] Implement first-class multi-seller cart save-for-later, server price/stock validation, seller grouping, and checkout handling.
+- [x] Complete the database-backed Nigerian marketplace homepage sections using only real listings and stores.
+- [ ] Add continuous end-to-end authorization, IDOR, ownership, tampering, upload, concurrency, responsive, and accessibility test coverage for marketplace flows.
+- [x] Add endpoint-level abuse protection for branded registration, login, verification, and password-recovery procedures.
+- [ ] Add automated procedure coverage for registration, login lockout, verification tokens, password-reset tokens, expiration, and token consumption.
+- [ ] Verify live email-verification and password-reset completion states with valid and invalid token paths.
+- [x] Add password confirmation and independent show/hide controls to the branded registration form.
+- [x] Capture Individual and Business/Vendor account classification at registration and persist it safely.
+- [x] Define and enforce individual-versus-business seller verification requirements before sensitive seller operations are enabled.
+- [x] Add verification submission and administrator review flows for seller identity and business evidence.
+- [x] Document and verify the existing-user password-claim journey preserves existing roles, stores, and marketplace data.
+- [x] Add a role-aware seller onboarding checklist that shows verification and application progress before seller tools unlock.
+- [x] Implement secure evidence-file upload and administrator evidence review for individual and business seller verification.
+- [ ] Add automated coverage proving an existing account claims a password without losing its role, store, or marketplace records.
+- [ ] Verify the live seller evidence submission, administrator review, and post-approval gate loop.
+- [x] Add clear Login and Create Account routes that initiate the supported secure account session flow.
+- [x] Add separate visible Create Account and Log In actions to the public storefront header for signed-out visitors.
+- [x] Add role-aware account navigation and explicit protected dashboard entry points for buyers, sellers, and administrators.
+- [x] Add a visible secure Logout control to buyer, seller, and administrator workspace views.
+- [ ] Connect an approved transactional email provider and deliver verified email notifications for marketplace events.
+- [x] Add Resend-backed transactional notification delivery for selected marketplace events, using a server-side secret only.
+- [x] Add provider-agnostic notification channel settings so future email providers can be configured without redesigning marketplace workflows.
+- [x] Send and verify a live Resend transactional email to the approved test recipient.
+- [x] Send the approved Resend verification email to the currently permitted test recipient, holstonjames6@gmail.com.
+- [x] Add secure provider-adapter stubs for SendGrid and SMTP-based transactional email services.
+- [x] Add administrator-controlled email template customization and safe placeholder previews.
+- [x] Connect the seller-approval delivery event to the administrator-managed email template renderer.
+- [ ] Add loading, error, empty, and success states across customer, seller, and admin experiences.
+- [ ] Add unit and integration tests for authorization, IDOR prevention, mass-assignment protection, cart and checkout calculations, business state transitions, and critical buyer/seller/admin journeys.
+- [ ] Verify desktop and mobile storefront experience at required breakpoints, plus keyboard navigation and accessibility basics.
+- [ ] Review TODO completion state, save the final project checkpoint, and prepare a concise implementation handoff.
+- [ ] Build a distinct buyer account settings page rather than reusing the profile editor route.
+- [ ] Build seller settings controls and expose them from the verified seller workspace.
+- [ ] Add a customer-facing report-submission entry point from listing, store, message, and review experiences.
+- [ ] Build a moderator-specific workspace and procedures, or formally document a supported administrator-only moderation policy.

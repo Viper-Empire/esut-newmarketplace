@@ -1,0 +1,17 @@
+{
+  "name": "ESUT Marketplace",
+  "short_name": "ESUT Market",
+  "description": "Buy. Sell. Connect. Right from ESUT.",
+  "display": "standalone",
+  "start_url": "/",
+  "background_color": "#F7F9FC",
+  "theme_color": "#00843D",
+  "icons": [
+    {
+      "src": "/manus-storage/esut-main-logo_0f99c6ab.png",
+      "sizes": "2048x2048",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
