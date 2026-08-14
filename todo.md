@@ -10,7 +10,7 @@
 - [x] Build the database-backed homepage with announcement, hero, categories, deals, trending listings, fresh arrivals, verified stores, services, and seller recruitment sections.
 - [x] Build catalogue, search, filtering, sorting, pagination, and category browsing routes.
 - [x] Build database-backed product detail pages with gallery, seller information, favorites, related listings, offers, and buyer contact entry points.
-- [ ] Implement persistent guest and authenticated carts with cart merging, stock validation, seller grouping, and server-calculated totals.
+- [x] Implement persistent guest and authenticated carts with cart merging, stock validation, seller grouping, and server-calculated totals.
 - [ ] Implement checkout for campus pickup and cash on pickup only, with a payment service abstraction and transactional order creation.
 - [x] Implement order lifecycle controls, status history, seller fulfillment actions, and buyer order history views.
 - [ ] Build buyer account pages for overview, orders, favorites, offers, messages, notifications, verification, profile, and settings.
