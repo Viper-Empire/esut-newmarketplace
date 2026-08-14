@@ -19,9 +19,9 @@
 - [x] Implement verified user workflows, purchase-eligible reviews, reporting, disputes, and immutable audit logging for sensitive operations.
 - [x] Build administrator and moderator dashboards for marketplace oversight, approvals, moderation, reports, disputes, audit logs, and database-driven KPIs.
 - [x] Implement safe listing-image validation, managed file storage, multiple image ordering, and web-optimized image presentation.
-- [ ] Provide compliant notification architecture for in-app events and clearly labeled future email delivery integration.
-- [ ] Integrate a password-based authentication and recovery provider without weakening the existing secure OAuth session flow.
-- [ ] Define and implement verified-email and password-reset capabilities if a password identity provider is approved for the marketplace.
+- [x] Provide compliant notification architecture for in-app events and clearly labeled future email delivery integration.
+- [x] Integrate a password-based authentication and recovery provider without weakening the existing secure OAuth session flow.
+- [x] Define and implement verified-email and password-reset capabilities if a password identity provider is approved for the marketplace.
 - [x] Replace the external OAuth entry redirect with ESUT Marketplace-branded email-and-password registration and login forms.
 - [x] Add secure password hashing, first-party session issuance, email verification tokens, password-reset tokens, and rate-limited authentication endpoints.
 - [x] Add branded verification, password-reset request, and password-reset completion routes matching the supplied visual direction.
