@@ -41,8 +41,8 @@
 - [x] Add order-batch and inventory-reservation schema support with transaction-safe indexes.
 - [x] Implement server-enforced buyer, seller, administrator, and expiry order transitions with order-status history, audit logs, notifications, and stock release or commitment.
 - [ ] Add ownership and concurrency tests proving stock cannot be oversold and duplicate checkout cannot create duplicate orders.
-- [ ] Implement verified seller store profile, products, product image upload, listing publication, inventory, order fulfilment, reviews, analytics, and settings routes.
-- [ ] Implement buyer favorites, offers, participant-only messaging, reviews, notifications, profile, verification, and settings routes.
+- [x] Implement verified seller store profile, products, product image upload, listing publication, inventory, order fulfilment, reviews, analytics, and settings routes.
+- [x] Implement buyer favorites, offers, participant-only messaging, reviews, notifications, profile, verification, and settings routes.
 - [x] Implement administrator users, sellers, stores, listings, categories, orders, offers, verifications, reports, disputes, reviews, notifications, audit logs, and settings operations using real database data.
 - [x] Implement participant-authorized offers and conversations with ownership controls, status transitions, and notifications.
 - [x] Implement completed-order-only reviews with eligibility, uniqueness, ownership, and moderation enforcement.
