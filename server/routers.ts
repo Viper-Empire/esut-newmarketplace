@@ -119,8 +119,11 @@ export const appRouter = router({
       const db = await ensureDb();
       const rows = await db.select({ listing: listings, store: stores, category: categories }).from(listings).innerJoin(stores, eq(listings.storeId, stores.id)).innerJoin(categories, eq(listings.categoryId, categories.id)).where(and(eq(listings.slug, input.slug), eq(listings.status, "ACTIVE"))).limit(1);
       if (!rows[0]) throw new TRPCError({ code: "NOT_FOUND", message: "This listing is unavailable." });
-      const images = await db.select().from(listingImages).where(eq(listingImages.listingId, rows[0].listing.id)).orderBy(asc(listingImages.sortOrder));
-      return { ...rows[0], images };
+      const [images, related] = await Promise.all([
+        db.select().from(listingImages).where(eq(listingImages.listingId, rows[0].listing.id)).orderBy(asc(listingImages.sortOrder)),
+        db.select({ listing: listings, store: stores, image: listingImages }).from(listings).innerJoin(stores, eq(listings.storeId, stores.id)).leftJoin(listingImages, and(eq(listingImages.listingId, listings.id), eq(listingImages.isPrimary, true))).where(and(eq(listings.status, "ACTIVE"), eq(listings.categoryId, rows[0].listing.categoryId), sql`${listings.id} <> ${rows[0].listing.id}`)).orderBy(desc(listings.publishedAt)).limit(4),
+      ]);
+      return { ...rows[0], images, related };
     }),
     store: publicProcedure.input(z.object({ slug: z.string().min(1).max(180) })).query(async ({ input }) => { const db = await ensureDb(); const store = (await db.select().from(stores).where(and(eq(stores.slug, input.slug), eq(stores.status, "ACTIVE"))).limit(1))[0]; if (!store) throw new TRPCError({ code: "NOT_FOUND", message: "This store is unavailable." }); const [products, storeReviews] = await Promise.all([db.select({ listing: listings, image: listingImages }).from(listings).leftJoin(listingImages, and(eq(listingImages.listingId, listings.id), eq(listingImages.isPrimary, true))).where(and(eq(listings.storeId, store.id), eq(listings.status, "ACTIVE"))).orderBy(desc(listings.publishedAt)).limit(24), db.select({ review: reviews, buyer: users, listing: listings }).from(reviews).innerJoin(users, eq(reviews.buyerUserId, users.id)).innerJoin(listings, eq(reviews.listingId, listings.id)).where(and(eq(reviews.storeId, store.id), eq(reviews.status, "PUBLISHED"))).orderBy(desc(reviews.createdAt)).limit(12)]); return { store, products, reviews: storeReviews }; }),
   }),
