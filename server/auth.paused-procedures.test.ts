@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { TrpcContext } from "./_core/context";
 import { hashPassword } from "./localAuth";
-import { orders, profiles, stores, users } from "../drizzle/schema";
+import { authTokens, orders, profiles, stores, users } from "../drizzle/schema";
 
 const mockState = vi.hoisted(() => ({ selectResults: [] as unknown[][], insertResults: [] as unknown[], insertValues: [] as { table: unknown; value: unknown }[], cookies: [] as unknown[], updatedTables: [] as unknown[], deletedTables: [] as unknown[] }));
 
@@ -38,6 +38,14 @@ describe("paused email-verification authentication procedures", () => {
     mockState.selectResults = [[], [existing]];
     const result = await appRouter.createCaller(context()).auth.login({ email: "bola@example.com", password: "CampusPass123!" });
     expect(result).toMatchObject({ requiresEmailVerification: false });
+  });
+
+  it("does not issue an undeliverable password-reset token while ordinary email delivery is paused", async () => {
+    const existing = { id: 43, openId: "reset-paused", name: "Reset Student", email: "reset@example.com", loginMethod: "password", passwordHash: "hidden", role: "CUSTOMER", isActive: true, failedLoginCount: 0, lockedUntil: null, createdAt: new Date(), updatedAt: new Date(), lastSignedIn: null };
+    mockState.selectResults = [[], [existing]];
+    const result = await appRouter.createCaller(context()).auth.requestPasswordReset({ email: "reset@example.com" });
+    expect(result).toMatchObject({ success: true, passwordResetEmailAvailable: false });
+    expect(mockState.insertValues.some(entry => entry.table === authTokens)).toBe(false);
   });
 
   it("escalates a fifth failed password attempt into a persisted lockout", async () => {
