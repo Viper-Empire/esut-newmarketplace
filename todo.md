@@ -18,7 +18,7 @@
 - [x] Implement buyer-seller conversations, messages, offers, and in-app notifications with participant ownership checks.
 - [x] Implement verified user workflows, purchase-eligible reviews, reporting, disputes, and immutable audit logging for sensitive operations.
 - [x] Build administrator and moderator dashboards for marketplace oversight, approvals, moderation, reports, disputes, audit logs, and database-driven KPIs.
-- [ ] Implement safe listing-image validation, managed file storage, multiple image ordering, and web-optimized image presentation.
+- [x] Implement safe listing-image validation, managed file storage, multiple image ordering, and web-optimized image presentation.
 - [ ] Provide compliant notification architecture for in-app events and clearly labeled future email delivery integration.
 - [ ] Integrate a password-based authentication and recovery provider without weakening the existing secure OAuth session flow.
 - [ ] Define and implement verified-email and password-reset capabilities if a password identity provider is approved for the marketplace.
