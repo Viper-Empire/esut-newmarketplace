@@ -15,6 +15,7 @@ import { EMAIL_VERIFICATION_ENABLED, emailVerificationRegistrationState } from "
 import { sellerVerificationInput, verificationEvidenceSchema } from "./sellerVerification";
 import { assertAllowedOrderTransition, orderStatusValues, type OrderStatus } from "./orderLifecycle";
 import { canRestoreSavedItem, groupCartByStore } from "./cartPolicies";
+import { campusPickupPayment } from "./paymentPolicy";
 
 const ensureDb = async () => {
   const db = await getDb();
@@ -194,7 +195,7 @@ export const appRouter = router({
           const group = byStore[key]!;
           const subtotal = group.reduce((sum, line) => sum + line.item.quantity * line.listing.priceKobo, 0);
           const publicId = `ESUT-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
-          const inserted = await tx.insert(orders).values({ publicId, orderBatchId: batch.id, buyerUserId: ctx.user.id, storeId: Number(key), pickupNote: input.pickupNote ?? null, subtotalKobo: subtotal, totalKobo: subtotal, reservationExpiresAt: expiresAt });
+          const inserted = await tx.insert(orders).values({ publicId, orderBatchId: batch.id, buyerUserId: ctx.user.id, storeId: Number(key), pickupNote: input.pickupNote ?? null, subtotalKobo: subtotal, totalKobo: subtotal, reservationExpiresAt: expiresAt, ...campusPickupPayment() });
           const orderId = Number(inserted[0].insertId);
           for (const line of group) {
             const reserved = await tx.update(inventory).set({ reservedQuantity: sql`${inventory.reservedQuantity} + ${line.item.quantity}` }).where(and(eq(inventory.listingId, line.listing.id), sql`${inventory.quantity} - ${inventory.reservedQuantity} >= ${line.item.quantity}`));
