@@ -46,7 +46,7 @@
 - [x] Implement administrator users, sellers, stores, listings, categories, orders, offers, verifications, reports, disputes, reviews, notifications, audit logs, and settings operations using real database data.
 - [x] Implement participant-authorized offers and conversations with ownership controls, status transitions, and notifications.
 - [x] Implement completed-order-only reviews with eligibility, uniqueness, ownership, and moderation enforcement.
-- [ ] Implement first-class multi-seller cart save-for-later, server price/stock validation, seller grouping, and checkout handling.
+- [x] Implement first-class multi-seller cart save-for-later, server price/stock validation, seller grouping, and checkout handling.
 - [x] Complete the database-backed Nigerian marketplace homepage sections using only real listings and stores.
 - [ ] Add continuous end-to-end authorization, IDOR, ownership, tampering, upload, concurrency, responsive, and accessibility test coverage for marketplace flows.
 - [x] Add endpoint-level abuse protection for branded registration, login, verification, and password-recovery procedures.
