@@ -13,11 +13,11 @@
 - [x] Implement persistent guest and authenticated carts with cart merging, stock validation, seller grouping, and server-calculated totals.
 - [x] Implement checkout for campus pickup and cash on pickup only, with a payment service abstraction and transactional order creation.
 - [x] Implement order lifecycle controls, status history, seller fulfillment actions, and buyer order history views.
-- [ ] Build buyer account pages for overview, orders, favorites, offers, messages, notifications, verification, profile, and settings.
-- [ ] Implement seller application, server-side approval, store management, listing management, inventory, seller orders, offers, analytics, and settings.
+- [x] Build buyer account pages for overview, orders, favorites, offers, messages, notifications, verification, profile, and settings.
+- [x] Implement seller application, server-side approval, store management, listing management, inventory, seller orders, offers, analytics, and settings.
 - [x] Implement buyer-seller conversations, messages, offers, and in-app notifications with participant ownership checks.
 - [x] Implement verified user workflows, purchase-eligible reviews, reporting, disputes, and immutable audit logging for sensitive operations.
-- [ ] Build administrator and moderator dashboards for marketplace oversight, approvals, moderation, reports, disputes, audit logs, and database-driven KPIs.
+- [x] Build administrator and moderator dashboards for marketplace oversight, approvals, moderation, reports, disputes, audit logs, and database-driven KPIs.
 - [ ] Implement safe listing-image validation, managed file storage, multiple image ordering, and web-optimized image presentation.
 - [ ] Provide compliant notification architecture for in-app events and clearly labeled future email delivery integration.
 - [ ] Integrate a password-based authentication and recovery provider without weakening the existing secure OAuth session flow.
