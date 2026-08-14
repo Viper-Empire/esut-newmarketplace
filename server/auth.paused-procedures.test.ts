@@ -33,6 +33,10 @@ describe("paused email-verification authentication procedures", () => {
     expect(result).toMatchObject({ requiresEmailVerification: false, verificationSent: false });
   });
 
+  it("exposes unavailable password-recovery email before a user starts a reset request", async () => {
+    await expect(appRouter.createCaller(context()).auth.passwordResetAvailability()).resolves.toEqual({ passwordResetEmailAvailable: false });
+  });
+
   it("returns a login response that does not require verification delivery", async () => {
     const passwordHash = await hashPassword("CampusPass123!");
     const existing = { id: 41, openId: "local_login", name: "Bola Student", email: "bola@example.com", loginMethod: "password", passwordHash, role: "CUSTOMER", isActive: true, failedLoginCount: 0, lockedUntil: null, createdAt: new Date(), updatedAt: new Date(), lastSignedIn: null };
