@@ -7,10 +7,11 @@ const mockState = vi.hoisted(() => ({ selectResults: [] as unknown[][], insertRe
 
 vi.mock("./db", () => ({
   getDb: async () => ({
-    select: () => ({ from: () => ({ where: () => ({ limit: async () => mockState.selectResults.shift() ?? [] }) }) }),
+    select: () => ({ from: () => ({ where: () => ({ limit: async () => (mockState.selectResults.shift() ?? []).filter((row: any) => !row?.expiresAt || (row.expiresAt > new Date() && row.consumedAt === null)) }) }) }),
     insert: (table: unknown) => ({ values: (value: unknown) => { mockState.insertValues.push({ table, value }); const result = mockState.insertResults.shift() ?? []; return Object.assign(Promise.resolve(result), { onDuplicateKeyUpdate: async () => result }); } }),
     update: (table: unknown) => { mockState.updatedTables.push(table); return { set: () => ({ where: async () => [] }) }; },
     delete: (table: unknown) => { mockState.deletedTables.push(table); return { where: async () => [] }; },
+    transaction: async (callback: (tx: { update: (table: unknown) => { set: () => { where: () => Promise<unknown[]> } } }) => Promise<unknown>) => callback({ update: (table: unknown) => { mockState.updatedTables.push(table); return { set: () => ({ where: async () => [] }) }; } }),
   }),
 }));
 vi.mock("./_core/sdk", () => ({ sdk: { createSessionToken: vi.fn(async () => "test-session-token") } }));
@@ -46,6 +47,43 @@ describe("paused email-verification authentication procedures", () => {
     const result = await appRouter.createCaller(context()).auth.requestPasswordReset({ email: "reset@example.com" });
     expect(result).toMatchObject({ success: true, passwordResetEmailAvailable: false });
     expect(mockState.insertValues.some(entry => entry.table === authTokens)).toBe(false);
+  });
+
+  it("consumes a valid verification token and rejects invalid or expired token records", async () => {
+    const validToken = { id: 71, userId: 31, purpose: "EMAIL_VERIFY", tokenHash: "hidden", expiresAt: new Date(Date.now() + 60_000), consumedAt: null };
+    mockState.selectResults = [[], [validToken]];
+    await expect(appRouter.createCaller(context()).auth.verifyEmail({ token: "a".repeat(24) })).resolves.toEqual({ success: true });
+    expect(mockState.updatedTables).toEqual([users, authTokens]);
+
+    mockState.selectResults = [[], []];
+    await expect(appRouter.createCaller(context()).auth.verifyEmail({ token: "b".repeat(24) })).rejects.toMatchObject({ code: "BAD_REQUEST" });
+
+    const expiredToken = { ...validToken, id: 73, expiresAt: new Date(Date.now() - 60_000) };
+    mockState.selectResults = [[], [expiredToken]];
+    await expect(appRouter.createCaller(context()).auth.verifyEmail({ token: "e".repeat(24) })).rejects.toMatchObject({ code: "BAD_REQUEST" });
+
+    const consumedToken = { ...validToken, id: 74, consumedAt: new Date() };
+    mockState.selectResults = [[], [consumedToken]];
+    await expect(appRouter.createCaller(context()).auth.verifyEmail({ token: "f".repeat(24) })).rejects.toMatchObject({ code: "BAD_REQUEST" });
+  });
+
+  it("consumes a valid reset token, then rejects an unavailable, expired, or already-consumed token", async () => {
+    const validToken = { id: 72, userId: 32, purpose: "PASSWORD_RESET", tokenHash: "hidden", expiresAt: new Date(Date.now() + 60_000), consumedAt: null };
+    const account = { id: 32, openId: "reset-complete", name: "Token Student", email: "token@example.com", loginMethod: "password", passwordHash: "old", role: "CUSTOMER", isActive: true, failedLoginCount: 0, lockedUntil: null, createdAt: new Date(), updatedAt: new Date(), lastSignedIn: null };
+    mockState.selectResults = [[], [validToken], [account]];
+    await expect(appRouter.createCaller(context()).auth.resetPassword({ token: "c".repeat(24), password: "NewCampusPass123!" })).resolves.toMatchObject({ success: true, user: { id: 32 } });
+    expect(mockState.updatedTables).toEqual([users, authTokens]);
+
+    mockState.selectResults = [[], []];
+    await expect(appRouter.createCaller(context()).auth.resetPassword({ token: "d".repeat(24), password: "NewCampusPass123!" })).rejects.toMatchObject({ code: "BAD_REQUEST" });
+
+    const expiredToken = { ...validToken, id: 75, expiresAt: new Date(Date.now() - 60_000) };
+    mockState.selectResults = [[], [expiredToken]];
+    await expect(appRouter.createCaller(context()).auth.resetPassword({ token: "g".repeat(24), password: "NewCampusPass123!" })).rejects.toMatchObject({ code: "BAD_REQUEST" });
+
+    const consumedToken = { ...validToken, id: 76, consumedAt: new Date() };
+    mockState.selectResults = [[], [consumedToken]];
+    await expect(appRouter.createCaller(context()).auth.resetPassword({ token: "h".repeat(24), password: "NewCampusPass123!" })).rejects.toMatchObject({ code: "BAD_REQUEST" });
   });
 
   it("escalates a fifth failed password attempt into a persisted lockout", async () => {

@@ -31,7 +31,7 @@
 - [x] Review authentication copy to confirm it does not imply email verification is required while the feature is paused.
 - [x] Add regression coverage for paused email-verification registration and login behavior.
 - [x] Add procedure-level paused-mode coverage for registration and login responses.
-- [ ] Verify the live registration and login routes remain free of email-verification-required prompts while the feature is paused.
+- [x] Verify the live registration and login routes remain free of email-verification-required prompts while the feature is paused.
 - [x] Fix seller verification submission to omit irrelevant individual or business fields and add regression coverage for both verification types.
 - [x] Produce a technical and product audit report covering delivered features, security, data architecture, testing, risks, and prioritized next steps.
 - [x] Define and implement concurrency-safe inventory reservation, transactional checkout, and explicit marketplace order-state management.
