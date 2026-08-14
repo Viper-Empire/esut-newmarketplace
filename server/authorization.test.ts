@@ -1,9 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { router, adminProcedure, sellerProcedure } from "./_core/trpc";
+import { router, adminProcedure, moderatorProcedure, sellerProcedure } from "./_core/trpc";
 import type { TrpcContext } from "./_core/context";
 
 const protectedRoutes = router({
   adminOnly: adminProcedure.query(() => ({ ok: true })),
+  moderatorOnly: moderatorProcedure.query(() => ({ ok: true })),
   sellerOnly: sellerProcedure.query(() => ({ ok: true })),
 });
 
@@ -26,5 +27,10 @@ describe("marketplace role authorization", () => {
   it("rejects customers but permits sellers for seller-only operations", async () => {
     await expect(protectedRoutes.createCaller(contextFor("CUSTOMER")).sellerOnly()).rejects.toMatchObject({ code: "FORBIDDEN" });
     await expect(protectedRoutes.createCaller(contextFor("SELLER")).sellerOnly()).resolves.toEqual({ ok: true });
+  });
+  it("permits moderators only for scoped moderation operations", async () => {
+    await expect(protectedRoutes.createCaller(contextFor("MODERATOR")).moderatorOnly()).resolves.toEqual({ ok: true });
+    await expect(protectedRoutes.createCaller(contextFor("MODERATOR")).adminOnly()).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(protectedRoutes.createCaller(contextFor("CUSTOMER")).moderatorOnly()).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
 });
