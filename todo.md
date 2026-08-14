@@ -2,7 +2,7 @@
 
 - [x] Extend the user role model for CUSTOMER, SELLER, MODERATOR, ADMIN, and SUPER_ADMIN, with server-side route and procedure guards.
 - [x] Create the database schema and migrations for profiles, stores, seller applications, verification requests, categories, listings, images, inventory, favorites, carts, cart items, orders, order items, offers, conversations, messages, notifications, reports, disputes, reviews, and audit logs.
-- [ ] Implement authorization-aware database services and operation-specific tRPC procedures for marketplace operations.
+- [x] Implement authorization-aware database services and operation-specific tRPC procedures for marketplace operations.
 - [x] Add database-backed seed/development data, clearly separated from production data and excluding fabricated customer reviews.
 - [ ] Configure the ESUT visual system, global typography, responsive tokens, SEO baseline, and PWA configuration.
 - [x] Upload and reference the supplied ESUT Marketplace logo through managed static storage.

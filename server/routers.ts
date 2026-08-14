@@ -16,6 +16,7 @@ import { sellerVerificationInput, verificationEvidenceSchema } from "./sellerVer
 import { assertAllowedOrderTransition, orderStatusValues, type OrderStatus } from "./orderLifecycle";
 import { canRestoreSavedItem, groupCartByStore } from "./cartPolicies";
 import { campusPickupPayment } from "./paymentPolicy";
+import { hasExistingBatchOrders } from "./checkoutPolicies";
 
 const ensureDb = async () => {
   const db = await getDb();
@@ -188,7 +189,7 @@ export const appRouter = router({
         const batch = (await tx.select().from(orderBatches).where(and(eq(orderBatches.buyerUserId, ctx.user.id), eq(orderBatches.idempotencyKey, input.idempotencyKey))).limit(1))[0];
         if (!batch) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Could not establish an order batch." });
         const existingOrders = await tx.select().from(orders).where(eq(orders.orderBatchId, batch.id));
-        if (existingOrders.length) return { orderIds: existingOrders.map(order => order.publicId), orderBatchId: batch.publicId };
+        if (hasExistingBatchOrders(existingOrders.length)) return { orderIds: existingOrders.map(order => order.publicId), orderBatchId: batch.publicId };
         const expiresAt = new Date(Date.now() + 2 * 60 * 60 * 1000);
         const publicIds: string[] = [];
         for (const key of Object.keys(byStore)) {
