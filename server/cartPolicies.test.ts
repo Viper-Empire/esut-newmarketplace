@@ -16,7 +16,12 @@ describe("cart policies", () => {
 
   it("blocks restoring a saved item when available stock is insufficient", () => {
     expect(canRestoreSavedItem(10, 4, 6)).toBe(true);
+    expect(canRestoreSavedItem(5, 5, 0)).toBe(true);
     expect(canRestoreSavedItem(10, 4, 7)).toBe(false);
     expect(canRestoreSavedItem(3, 3, 1)).toBe(false);
+  });
+
+  it("returns no seller groups when there are no active checkout lines", () => {
+    expect(groupCartByStore([])).toEqual([]);
   });
 });
