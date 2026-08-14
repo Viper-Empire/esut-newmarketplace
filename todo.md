@@ -30,7 +30,7 @@
 - [x] Document the safe re-enable process for email verification after a verified sending domain is available.
 - [x] Review authentication copy to confirm it does not imply email verification is required while the feature is paused.
 - [x] Add regression coverage for paused email-verification registration and login behavior.
-- [ ] Add procedure-level paused-mode coverage for registration and login responses.
+- [x] Add procedure-level paused-mode coverage for registration and login responses.
 - [ ] Verify the live registration and login routes remain free of email-verification-required prompts while the feature is paused.
 - [x] Fix seller verification submission to omit irrelevant individual or business fields and add regression coverage for both verification types.
 - [x] Produce a technical and product audit report covering delivered features, security, data architecture, testing, risks, and prioritized next steps.
