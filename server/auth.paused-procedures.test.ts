@@ -40,6 +40,22 @@ describe("paused email-verification authentication procedures", () => {
     expect(result).toMatchObject({ requiresEmailVerification: false });
   });
 
+  it("escalates a fifth failed password attempt into a persisted lockout", async () => {
+    const passwordHash = await hashPassword("CampusPass123!");
+    const existing = { id: 45, openId: "lockout-test", name: "Locked Student", email: "locked@example.com", loginMethod: "password", passwordHash, role: "CUSTOMER", isActive: true, failedLoginCount: 4, lockedUntil: null, createdAt: new Date(), updatedAt: new Date(), lastSignedIn: null };
+    mockState.selectResults = [[], [existing]];
+    await expect(appRouter.createCaller(context()).auth.login({ email: "locked@example.com", password: "wrong-password" })).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+    expect(mockState.updatedTables).toEqual([users]);
+  });
+
+  it("rejects login attempts while the account lockout window remains active", async () => {
+    const passwordHash = await hashPassword("CampusPass123!");
+    const existing = { id: 46, openId: "active-lock", name: "Locked Student", email: "still-locked@example.com", loginMethod: "password", passwordHash, role: "CUSTOMER", isActive: true, failedLoginCount: 5, lockedUntil: new Date(Date.now() + 15 * 60 * 1000), createdAt: new Date(), updatedAt: new Date(), lastSignedIn: null };
+    mockState.selectResults = [[], [existing]];
+    await expect(appRouter.createCaller(context()).auth.login({ email: "still-locked@example.com", password: "CampusPass123!" })).rejects.toMatchObject({ code: "TOO_MANY_REQUESTS" });
+    expect(mockState.updatedTables).toEqual([]);
+  });
+
   it("preserves an existing account identity and role when it claims password login", async () => {
     const existing = { id: 52, openId: "legacy-seller-open-id", name: "Legacy Seller", email: "seller@example.com", loginMethod: "oauth", passwordHash: null, role: "SELLER", isActive: true, failedLoginCount: 0, lockedUntil: null, createdAt: new Date(), updatedAt: new Date(), lastSignedIn: null };
     const updated = { ...existing, name: "Seyi Vendor", loginMethod: "password", passwordHash: "hidden" };
