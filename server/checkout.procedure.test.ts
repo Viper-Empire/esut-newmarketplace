@@ -54,4 +54,10 @@ describe("checkout.place procedure", () => {
     expect(state.insertedTables).toContain(orders);
     expect(state.updatedTables).toContain(inventory);
   });
+
+  it("rejects a cart-quantity update for an item outside the caller’s cart scope", async () => {
+    state.selectResults = [[cart], []];
+    await expect(appRouter.createCaller(context()).cart.setQuantity({ itemId: 999, quantity: 1 })).rejects.toMatchObject({ code: "NOT_FOUND" });
+    expect(state.updatedTables).toEqual([]);
+  });
 });
