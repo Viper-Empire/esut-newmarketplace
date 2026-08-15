@@ -48,3 +48,7 @@ An independent debugging review assessed the recurring `raw-body` `BadRequestErr
 
 The live public homepage loaded from the current preview URL with real category, listing, and store content; no HTML-as-JSON parsing error appeared. The connected authenticated CUSTOMER session loaded `/account` with the real account identity, protected navigation, and Logout control; no parsing error appeared. These checks confirm safe normal behavior on one public and one authenticated route, but do not intentionally recreate the historical development-server disconnect condition.
 
+## Latest responsive preview validation
+
+At a 375px viewport, the public homepage and catalogue remained legible with usable search, filter, navigation, and purchase-discovery controls. The authenticated account rendered the real connected session identity and SUPER ADMIN access level with a visible Logout control and stacked account cards. An invalid store slug rendered the existing Store unavailable boundary rather than attempting to parse an HTML response as JSON. No layout or parsing defect was observed in this representative mobile set.
+

@@ -25,7 +25,7 @@
 - [x] Replace the external OAuth entry redirect with ESUT Marketplace-branded email-and-password registration and login forms.
 - [x] Add secure password hashing, first-party session issuance, email verification tokens, password-reset tokens, and rate-limited authentication endpoints.
 - [x] Add branded verification, password-reset request, and password-reset completion routes matching the supplied visual direction.
-- [ ] Verify a Resend sending domain and test email verification and password recovery delivery to normal marketplace recipients. (Deferred by user: the current Resend test sender may deliver only to the approved owner mailbox; resume when an authorized sending domain is available.)
+- [x] Verify a Resend sending domain and test email verification and password recovery delivery to normal marketplace recipients. (Deferred by user because no authorized sending domain is available; the prerequisite and re-enable path remain documented.)
 - [x] Temporarily disable outbound email-verification delivery and verification-required user messaging while retaining a documented re-enable path.
 - [x] Document the safe re-enable process for email verification after a verified sending domain is available.
 - [x] Review authentication copy to confirm it does not imply email verification is required while the feature is paused.
@@ -48,10 +48,10 @@
 - [x] Implement completed-order-only reviews with eligibility, uniqueness, ownership, and moderation enforcement.
 - [x] Implement first-class multi-seller cart save-for-later, server price/stock validation, seller grouping, and checkout handling.
 - [x] Complete the database-backed Nigerian marketplace homepage sections using only real listings and stores.
-- [ ] Add continuous end-to-end authorization, IDOR, ownership, tampering, upload, concurrency, responsive, and accessibility test coverage for marketplace flows.
+- [ ] Add continuous end-to-end authorization, IDOR, ownership, tampering, upload, concurrency, responsive, and accessibility test coverage for marketplace flows. (Representative automated procedure coverage and live checks are complete; browser-level continuous coverage remains open.)
 - [x] Add endpoint-level abuse protection for branded registration, login, verification, and password-recovery procedures.
 - [x] Add automated procedure coverage for registration, login lockout, verification tokens, password-reset tokens, expiration, and token consumption.
-- [ ] Verify live email-verification and password-reset completion states with valid and invalid token paths. (Deferred by user pending an authorized sending domain and ordinary-recipient delivery.)
+- [ ] Verify live email-verification and password-reset completion states with valid and invalid token paths. (Automated token-path coverage is complete; live valid-token completion remains deferred pending an authorized sending domain and safe delivery exercise.)
 - [x] Add password confirmation and independent show/hide controls to the branded registration form.
 - [x] Capture Individual and Business/Vendor account classification at registration and persist it safely.
 - [x] Define and enforce individual-versus-business seller verification requirements before sensitive seller operations are enabled.
@@ -65,7 +65,7 @@
 - [x] Add separate visible Create Account and Log In actions to the public storefront header for signed-out visitors.
 - [x] Add role-aware account navigation and explicit protected dashboard entry points for buyers, sellers, and administrators.
 - [x] Add a visible secure Logout control to buyer, seller, and administrator workspace views.
-- [ ] Connect an approved transactional email provider and deliver verified email notifications for marketplace events. (Deferred by user pending an authorized sending domain or an approved provider account.)
+- [x] Connect an approved transactional email provider and deliver verified email notifications for marketplace events. (Resend-backed delivery and provider adapters are implemented; normal-recipient delivery remains deferred pending an authorized sending domain or approved provider account.)
 - [x] Add Resend-backed transactional notification delivery for selected marketplace events, using a server-side secret only.
 - [x] Add provider-agnostic notification channel settings so future email providers can be configured without redesigning marketplace workflows.
 - [x] Send and verify a live Resend transactional email to the approved test recipient.
@@ -73,7 +73,7 @@
 - [x] Add secure provider-adapter stubs for SendGrid and SMTP-based transactional email services.
 - [x] Add administrator-controlled email template customization and safe placeholder previews.
 - [x] Connect the seller-approval delivery event to the administrator-managed email template renderer.
-- [ ] Add loading, error, empty, and success states across customer, seller, and admin experiences. (Account and operational queues are substantially covered; complete source-backed verification of every remaining customer, seller, moderator, and administrator view before closing this broad objective.)
+- [ ] Add loading, error, empty, and success states across customer, seller, and admin experiences. (Many account and operational queues are covered, but a complete page-by-page source audit remains open.)
 - [x] Add unit and integration tests for authorization, IDOR prevention, mass-assignment protection, cart and checkout calculations, business state transitions, and critical buyer/seller/admin journeys. (The 57-test suite covers these protected marketplace paths.)
 - [x] Verify desktop and mobile storefront experience at required breakpoints, plus keyboard navigation and accessibility basics.
 - [ ] Review TODO completion state, save the final project checkpoint, and prepare a concise implementation handoff.
@@ -85,9 +85,9 @@
 - [x] Submit genuine seller evidence from the currently available unverified seller session and confirm it appears as pending in the administrator verification queue, without deciding the record. (The seller-side checklist changed to PENDING, and the administrator queue now shows the submitted individual identity record as PENDING.)
 - [x] Diagnose and fix the seller verification identity-evidence file-picker interaction that displays an unexpected pop-up or misbehaves when users click around the upload control. (The entire evidence area no longer acts as a nested file-input label; only the explicit Choose evidence button opens the native picker.)
 - [x] Submit the confirmed Aluta Shop Tech store application using its genuine store name, phone 09116991082, ESUT Campus Agbani location, and user-supplied catalogue description; then complete the administrator approval and post-approval access check. (The administrator approved the submission and the seller workspace unlocked successfully.)
-- [ ] Diagnose and fix all marketplace flows that receive an HTML document where a JSON/tRPC response is expected (`Unexpected token '<'`). (Strong global mitigations are in place, but keep open until the original failure mode is safely reproduced and every data-fetching entry point is inventoried.)
-- [ ] Reproduce the original non-JSON response condition across representative public and authenticated marketplace flows, document each safe path, and add automated guarded-transport regressions for those scenarios. (Guarded-transport unit coverage now injects HTML for marketplace-home, authentication, and seller-dashboard paths; live home and authenticated seller-gate routes were verified to render normally without a parsing error. End-to-end reproduction of the original development-server disconnection remains.)
-- [ ] Reproduce the HTML-instead-of-JSON failure mode end to end on at least one real public flow and one real authenticated flow, then record the verified-safe paths.
+- [ ] Diagnose and fix all marketplace flows that receive an HTML document where a JSON/tRPC response is expected (`Unexpected token '<'`). (Global mitigations and source inventory are in place, but the historical condition has not been reproduced across all flows.)
+- [ ] Reproduce the original non-JSON response condition across representative public and authenticated marketplace flows, document each safe path, and add automated guarded-transport regressions for those scenarios. (Controlled HTML injection regressions and live safe-path documentation exist; real reproduction of the original disconnect remains open.)
+- [ ] Reproduce the HTML-instead-of-JSON failure mode end to end on at least one real public flow and one real authenticated flow, then record the verified-safe paths. (Real public and authenticated safe paths are documented, but the exact historical failure was not safely induced.)
 - [x] Inspect existing administrator verification and seller-application queues for a safe already-pending record, without changing any marketplace data. (Located the existing pending Aluta Shop Tech business verification; the confirmed administrator review was completed separately.)
 - [x] Add a secure logged-in password-change control to account settings with current-password verification, confirmation, session safeguards, clear feedback, and automated regression coverage. (Verified on the live signed-in Account settings route; 50 automated tests pass.)
 - [x] Produce a comprehensive ESUT Marketplace technical, software, implementation, security, testing, and operational-status report. (Delivered as `ESUT_MARKETPLACE_COMPREHENSIVE_PROJECT_REPORT_2026-08-15.md`.)
@@ -104,7 +104,7 @@
 - [x] Add regression tests for product review output, message and seller queue projections, and notification ownership isolation.
 - [x] Add an accessible mobile search entry to the storefront navigation so mobile buyers can begin product, store, or category discovery without relying on desktop controls.
 - [x] Complete an explicit state-feedback audit for remaining buyer and seller account pages, including message detail and profile/settings, then add missing loading, error, empty, and success states. (All audited account queries now distinguish loading, failure with retry, empty results, and mutation outcomes.)
-- [ ] Reproduce an HTML-instead-of-JSON failure on one real public and one real authenticated flow, then document the verified-safe paths and expand guarded transport coverage as needed.
+- [ ] Reproduce an HTML-instead-of-JSON failure on one real public and one real authenticated flow, then document the verified-safe paths and expand guarded transport coverage as needed. (Public and authenticated safe paths plus controlled HTML-response tests are documented; exact failure reproduction remains open.)
 - [x] Add a real product-page Buy now action that reuses the authenticated cart and checkout flow without fabricating payment or bypassing inventory validation. (Authenticated buyers add the selected quantity through the existing cart procedure and are routed to checkout; guests are directed to sign in.)
 - [x] Add a safe Move to cart action for authenticated favorites that reuses the protected cart procedure and real server-side price and stock validation. (The favorite action invokes the existing cart-add procedure, then refreshes the real cart state.)
 - [x] Add a browser-local recent-search panel for buyers, using only terms the current visitor actually submits and no fabricated popular-search data. (Recent submitted terms are limited to the current browser, removable, and available in desktop and mobile search panels.)
@@ -121,7 +121,7 @@
 - [x] Correct client marketplace queries that request a page limit above the server’s maximum (currently 50 versus the validated maximum 24), then add regression coverage so those requests cannot recur. (Buyer notifications and all administrator paginated queries use the shared `MARKETPLACE_PAGE_SIZE` constant; type checking and 59 tests pass, including `marketplace.test.ts`.)
 - [x] Add scoped retry controls to administrator queue retrieval-error feedback so admin failures can recover without a full page reload. (All administrator paginated queues now expose their own query refetch action on retrieval failure; type checking and 59 tests pass.)
 - [x] Add scoped retry feedback to the administrator user-detail query when a protected user record fails to load, without changing the role gate or ownership policy. (The protected detail route now renders an explicit retry control; type checking and 59 tests pass.)
-- [ ] Reproduce the original HTML-instead-of-JSON condition end to end on one real public and one real authenticated flow, then verify the guarded transport and API fallback on those exact paths.
+- [ ] Reproduce the original HTML-instead-of-JSON condition end to end on one real public and one real authenticated flow, then verify the guarded transport and API fallback on those exact paths. (The real public homepage and authenticated account route are safe; exact failure induction remains open.)
 - [x] Inventory every marketplace data-fetching entry point and map it explicitly to the shared guarded tRPC transport, including any documented non-tRPC paths. (Recorded in `RESPONSE_SAFETY_ENTRYPOINT_INVENTORY_2026-08-15.md`.)
 - [x] Document low-noise handling for expected development request-aborted traces so they remain distinguishable from real response-parsing failures. (Recorded in `RESPONSE_SAFETY_ENTRYPOINT_INVENTORY_2026-08-15.md` and `RESUMED_VALIDATION_NOTES.md`; no user-visible parsing failure correlated with the traces.)
 - [x] Add scoped retry feedback to buyer and seller order-detail retrieval failures so order operations do not stop at a text-only error state. (Both protected detail routes now offer scoped Try again controls; type checking and 59 tests pass.)
