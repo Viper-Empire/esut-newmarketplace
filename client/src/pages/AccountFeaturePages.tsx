@@ -1,6 +1,6 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { naira } from "@/lib/marketplace";
+import { MARKETPLACE_PAGE_SIZE, naira } from "@/lib/marketplace";
 import { trpc } from "@/lib/trpc";
 import { Bell, Eye, EyeOff, Flag, Gavel, Heart, LockKeyhole, MessageCircle, Pencil, ShieldCheck, Star, Store } from "lucide-react";
 import { FormEvent, useState } from "react";
@@ -21,7 +21,7 @@ export function BuyerOffersPage() {
 }
 
 export function NotificationsPage() {
-  const notices = trpc.notifications.list.useQuery({ page: 1, limit: 50 }); const unread = trpc.notifications.unreadCount.useQuery(); const utils = trpc.useUtils(); const refresh = () => { utils.notifications.list.invalidate(); utils.notifications.unreadCount.invalidate(); }; const read = trpc.notifications.markRead.useMutation({ onSuccess: refresh }); const markAll = trpc.notifications.markAllRead.useMutation({ onSuccess: () => { toast.success("All notifications marked as read."); refresh(); }, onError: error => toast.error(error.message) });
+  const notices = trpc.notifications.list.useQuery({ page: 1, limit: MARKETPLACE_PAGE_SIZE }); const unread = trpc.notifications.unreadCount.useQuery(); const utils = trpc.useUtils(); const refresh = () => { utils.notifications.list.invalidate(); utils.notifications.unreadCount.invalidate(); }; const read = trpc.notifications.markRead.useMutation({ onSuccess: refresh }); const markAll = trpc.notifications.markAllRead.useMutation({ onSuccess: () => { toast.success("All notifications marked as read."); refresh(); }, onError: error => toast.error(error.message) });
   return <Gate><main className="page-shell py-8"><p className="eyebrow text-[#00843d]">MY ACCOUNT</p><div className="mt-2 flex flex-wrap items-center justify-between gap-3"><h1 className="text-3xl font-extrabold">Notifications</h1>{unread.data?.count ? <Button variant="outline" size="sm" disabled={markAll.isPending} onClick={() => markAll.mutate()}>Mark all read ({unread.data.count})</Button> : null}</div><section className="mt-7 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">{notices.isLoading ? <p className="p-8 text-center text-slate-500">Loading notifications…</p> : notices.isError ? <div className="p-8 text-center text-[#b91c1c]"><p>We could not load notifications.</p><Button variant="outline" size="sm" className="mt-3" onClick={() => notices.refetch()}>Try again</Button></div> : notices.data?.length ? <div className="divide-y">{notices.data.map(notification => <Link key={notification.id} href={notification.targetRoute ?? "/account/notifications"} onClick={() => !notification.isRead && read.mutate({ id: notification.id })} className={`block p-5 transition hover:bg-slate-50 ${notification.isRead ? "" : "bg-[#eaf7ef]/60"}`}><div className="flex gap-3"><Bell className="mt-0.5 shrink-0 text-[#00843d]" size={18} /><div><p className="font-extrabold">{notification.title}</p><p className="mt-1 text-sm text-slate-600">{notification.message}</p><p className="mt-2 text-xs text-slate-400">{new Date(notification.createdAt).toLocaleString()}</p></div></div></Link>)}</div> : <p className="p-8 text-center text-slate-500">You have no notifications yet.</p>}</section></main></Gate>;
 }
 
