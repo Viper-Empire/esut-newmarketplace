@@ -50,7 +50,7 @@
 - [x] Complete the database-backed Nigerian marketplace homepage sections using only real listings and stores.
 - [ ] Add continuous end-to-end authorization, IDOR, ownership, tampering, upload, concurrency, responsive, and accessibility test coverage for marketplace flows.
 - [x] Add endpoint-level abuse protection for branded registration, login, verification, and password-recovery procedures.
-- [ ] Add automated procedure coverage for registration, login lockout, verification tokens, password-reset tokens, expiration, and token consumption.
+- [x] Add automated procedure coverage for registration, login lockout, verification tokens, password-reset tokens, expiration, and token consumption.
 - [ ] Verify live email-verification and password-reset completion states with valid and invalid token paths. (Blocked pending an authorized sending domain and ordinary-recipient delivery.)
 - [x] Add password confirmation and independent show/hide controls to the branded registration form.
 - [x] Capture Individual and Business/Vendor account classification at registration and persist it safely.
