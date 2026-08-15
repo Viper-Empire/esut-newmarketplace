@@ -25,6 +25,8 @@ export default function CheckoutPage() {
   });
 
   if (!isAuthenticated) return <main className="page-shell py-20 text-center"><h1 className="text-3xl font-extrabold">Sign in to checkout</h1><p className="mt-3 text-slate-600">Your protected checkout uses your authenticated account.</p><Link href="/cart"><Button className="mt-6 bg-[#e31b23]">Back to cart</Button></Link></main>;
+  if (cart.isLoading) return <main className="page-shell py-16">Loading your checkout…</main>;
+  if (cart.isError) return <main className="page-shell py-16"><div role="alert" className="rounded-2xl bg-[#fff3f3] p-8 text-center text-[#b91c1c] ring-1 ring-[#fecaca]"><h1 className="text-xl font-extrabold">We could not load checkout</h1><p className="mt-2 text-sm">Try again to retrieve your current cart before reviewing the campus-pickup order.</p><Button variant="outline" className="mt-4" onClick={() => cart.refetch()}>Try again</Button></div></main>;
   if (!cart.data?.items.length) return <main className="page-shell py-20 text-center"><h1 className="text-3xl font-extrabold">Your cart is empty</h1><Link href="/"><Button className="mt-6 bg-[#e31b23]">Continue shopping</Button></Link></main>;
 
   return <main className="page-shell py-8">
