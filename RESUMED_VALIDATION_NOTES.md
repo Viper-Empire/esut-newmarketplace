@@ -40,3 +40,7 @@ The connected CUSTOMER session received clear, role-specific boundaries from bot
 
 The representative route set now covers public homepage and catalogue, authenticated account and messages, seller approval gate, moderator boundary, administrator boundary, and responsive mobile account rendering. The original development-server disconnect has not been intentionally reproduced.
 
+## Request-aborted diagnosis
+
+An independent debugging review assessed the recurring `raw-body` `BadRequestError: request aborted` traces. The diagnosis is medium-to-high confidence that these are cancelled HTTP request streams caused by HMR reconnects, browser navigation, tab closure, or request supersession, not HTML returned from a marketplace tRPC route. The application continues to render the checked routes, TypeScript validation passes, and no user-visible response-parsing failure was observed. The traces remain documented as benign development noise unless a future network capture shows a correlated 400/500 user-facing failure.
+
