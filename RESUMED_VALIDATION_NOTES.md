@@ -44,3 +44,7 @@ The representative route set now covers public homepage and catalogue, authentic
 
 An independent debugging review assessed the recurring `raw-body` `BadRequestError: request aborted` traces. The diagnosis is medium-to-high confidence that these are cancelled HTTP request streams caused by HMR reconnects, browser navigation, tab closure, or request supersession, not HTML returned from a marketplace tRPC route. The application continues to render the checked routes, TypeScript validation passes, and no user-visible response-parsing failure was observed. The traces remain documented as benign development noise unless a future network capture shows a correlated 400/500 user-facing failure.
 
+## Latest live response-safety probe
+
+The live public homepage loaded from the current preview URL with real category, listing, and store content; no HTML-as-JSON parsing error appeared. The connected authenticated CUSTOMER session loaded `/account` with the real account identity, protected navigation, and Logout control; no parsing error appeared. These checks confirm safe normal behavior on one public and one authenticated route, but do not intentionally recreate the historical development-server disconnect condition.
+
