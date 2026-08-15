@@ -136,4 +136,19 @@ describe("buyer experience procedures", () => {
     const messageFields = state.selectArgs[2] as { sender?: Record<string, unknown> };
     expect(Object.keys(messageFields.sender ?? {})).toEqual(["name"]);
   });
+
+  it("returns only display-safe context for each participant-authorized conversation", async () => {
+    state.selectResults = [
+      [{ conversation: { id: 22 }, listing: { title: "Study Guide", slug: "study-guide" }, store: { name: "Campus Books", slug: "campus-books" } }],
+      [{ name: "Seller Test" }],
+      [{ body: "It is available.", createdAt: new Date("2026-08-15T12:00:00Z"), senderUserId: 44 }],
+    ];
+    await expect(appRouter.createCaller(context(81)).messaging.list()).resolves.toEqual([{
+      conversation: { id: 22 }, listing: { title: "Study Guide", slug: "study-guide" }, store: { name: "Campus Books", slug: "campus-books" }, counterparty: { name: "Seller Test" }, latestMessage: { body: "It is available.", createdAt: new Date("2026-08-15T12:00:00Z"), isMine: false },
+    }]);
+    const baseFields = state.selectArgs[0] as { listing?: Record<string, unknown>; store?: Record<string, unknown> };
+    expect(Object.keys(baseFields.listing ?? {})).toEqual(["title", "slug"]);
+    expect(Object.keys(baseFields.store ?? {})).toEqual(["name", "slug"]);
+    expect(state.selectArgs[1]).toEqual({ name: expect.anything() });
+  });
 });
