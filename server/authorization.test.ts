@@ -27,6 +27,9 @@ describe("marketplace role authorization", () => {
   it("rejects customers but permits sellers for seller-only operations", async () => {
     await expect(protectedRoutes.createCaller(contextFor("CUSTOMER")).sellerOnly()).rejects.toMatchObject({ code: "FORBIDDEN" });
     await expect(protectedRoutes.createCaller(contextFor("SELLER")).sellerOnly()).resolves.toEqual({ ok: true });
+    await expect(protectedRoutes.createCaller(contextFor("ADMIN")).sellerOnly()).resolves.toEqual({ ok: true });
+    await expect(protectedRoutes.createCaller(contextFor("SUPER_ADMIN")).sellerOnly()).resolves.toEqual({ ok: true });
+    await expect(protectedRoutes.createCaller(contextFor("MODERATOR")).sellerOnly()).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
   it("permits moderators only for scoped moderation operations", async () => {
     await expect(protectedRoutes.createCaller(contextFor("MODERATOR")).moderatorOnly()).resolves.toEqual({ ok: true });
