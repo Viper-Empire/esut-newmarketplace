@@ -31,6 +31,25 @@ test.describe("ESUT Marketplace browser smoke coverage", () => {
     await expect(page.getByRole("link", { name: "Start selling" })).toBeVisible();
   });
 
+  test("branded login and registration forms remain directly reachable", async ({ page }) => {
+    await page.goto("/login");
+    await expect(page.getByRole("heading", { name: /Log into your account/i })).toBeVisible();
+    await expect(page.getByLabel("Email address")).toBeVisible();
+    await expect(page.getByRole("textbox", { name: "Password" })).toBeVisible();
+
+    await page.goto("/register");
+    await expect(page.getByRole("heading", { name: /Create your account/i })).toBeVisible();
+    await expect(page.getByRole("group", { name: "I am registering as" })).toBeVisible();
+    await expect(page.getByLabel("Confirm password")).toBeVisible();
+  });
+
+  test("seller, moderator, and administrator routes preserve protected boundaries", async ({ page }) => {
+    for (const route of ["/seller", "/moderator", "/admin"]) {
+      await page.goto(route);
+      await expect(page.getByRole("heading", { name: /Sign in to access|access required|Welcome,/i }).first()).toBeVisible();
+    }
+  });
+
   test("interactive buttons have accessible names", async ({ page }) => {
     await page.goto("/");
     const unnamedButtons = await page.locator("button").evaluateAll(buttons => buttons.filter(button => !((button.textContent ?? "").trim() || button.getAttribute("aria-label") || button.getAttribute("title"))).length);
