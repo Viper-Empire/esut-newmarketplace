@@ -92,3 +92,14 @@
 - [x] Add a secure logged-in password-change control to account settings with current-password verification, confirmation, session safeguards, clear feedback, and automated regression coverage. (Verified on the live signed-in Account settings route; 50 automated tests pass.)
 - [x] Produce a comprehensive ESUT Marketplace technical, software, implementation, security, testing, and operational-status report. (Delivered as `ESUT_MARKETPLACE_COMPREHENSIVE_PROJECT_REPORT_2026-08-15.md`.)
 - [x] Produce a dedicated report explaining how buyers operate within ESUT Marketplace, including customer journeys, safeguards, and current service boundaries. (Delivered as `ESUT_MARKETPLACE_BUYER_OPERATIONS_REPORT_2026-08-15.md`.)
+- [x] Compare the supplied buyer-system implementation brief against the current Buyer Operations Report and codebase, publish a short gap analysis, and add only verified buyer-facing gaps to the implementation checklist. (Delivered as `BUYER_SYSTEM_GAP_ANALYSIS_2026-08-15.md` before buyer changes began.)
+- [x] Minimize client-facing user projections in public store reviews, seller offer/review queues, and buyer/seller message details so private account fields are never returned unnecessarily.
+- [x] Extend real marketplace search to match active listing titles, active store names, and active category names, with efficient limited results and no fake suggestions. (Active category-name and slug matches now return the category’s real active listings.)
+- [x] Add safe buyer cart usability controls for direct quantity entry and clearing only the current buyer’s active cart.
+- [x] Add buyer notification unread visibility, a safe mark-all-read action, and account/header shortcuts that use the real notification records.
+- [x] Add real product review summaries and product-level verified-purchase review display without fabricating ratings or reviews.
+- [x] Improve buyer order detail context with server-owned payment status and a safe route back to the associated seller store.
+- [x] Add automated regression coverage for buyer data minimization, cart clearing, notification ownership, search scope, and product review data. (57 tests pass.)
+- [x] Extend category-name search so real active listings in a matching category appear in the main buyer search results.
+- [x] Add regression tests for product review output, message and seller queue projections, and notification ownership isolation.
+- [x] Add an accessible mobile search entry to the storefront navigation so mobile buyers can begin product, store, or category discovery without relying on desktop controls.

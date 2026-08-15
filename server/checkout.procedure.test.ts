@@ -35,7 +35,7 @@ function context(): TrpcContext {
 }
 
 const cart = { id: 8, userId: 19 };
-const line = { item: { id: 12, cartId: 8, listingId: 65, quantity: 2, savedForLater: false }, listing: { id: 65, storeId: 77, status: "ACTIVE", title: "Campus calculator", priceKobo: 980_000 }, stock: { listingId: 65, quantity: 2, reservedQuantity: 0 }, image: null };
+const line = { item: { id: 12, cartId: 8, listingId: 65, quantity: 2, savedForLater: false }, listing: { id: 65, storeId: 77, status: "ACTIVE", title: "Campus calculator", priceKobo: 980_000 }, store: { id: 77, status: "ACTIVE" }, stock: { listingId: 65, quantity: 2, reservedQuantity: 0 }, image: null };
 
 describe("checkout.place procedure", () => {
   beforeEach(() => { state.selectResults = []; state.insertedTables = []; state.updatedTables = []; });

@@ -2,8 +2,8 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { condition, naira } from "@/lib/marketplace";
 import { trpc } from "@/lib/trpc";
-import { BadgeCheck, Heart, MapPin, Menu, Package, Search, ShoppingCart, UsersRound, X } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { BadgeCheck, Bell, Heart, MapPin, Menu, Package, Search, ShoppingCart, UsersRound, X } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
 
@@ -36,8 +36,37 @@ export function StorefrontProductCard({ row, showActions = true, compact = false
 }
 
 export function StorefrontHeader({ categories }: { categories: { id: number; name: string; slug: string }[] }) {
-  const [query, setQuery] = useState(""); const [mobileOpen, setMobileOpen] = useState(false); const [, go] = useLocation(); const { isAuthenticated, user } = useAuth();
-  return <><div className="announcement">Shop from verified ESUT sellers <span>•</span> Campus pickup available</div><header className="market-header"><div className="page-shell flex h-[76px] items-center gap-4"><Link href="/" className="flex shrink-0 items-center"><img src={logo} alt="ESUT Marketplace" className="h-14 w-14 object-contain"/><span className="hidden text-base font-black leading-4 text-[#111827] sm:block">ESUT<br/><em className="not-italic text-[#00843d]">Marketplace</em></span></Link><form className="hidden flex-1 md:block" onSubmit={event => { event.preventDefault(); go(`/explore?q=${encodeURIComponent(query)}`); }}><label className="searchbox"><Search size={19}/><input value={query} onChange={event => setQuery(event.target.value)} placeholder="What are you looking for today?"/><button type="submit">Search</button></label></form><nav className="ml-auto hidden items-center gap-4 lg:flex"><Link href="/cart" className="nav-icon"><ShoppingCart size={20}/><span>Cart</span></Link><Link href={isAuthenticated ? "/account" : "/login"} className="nav-icon"><UsersRound size={20}/><span>{isAuthenticated ? user?.name?.split(" ")[0] ?? "Account" : "Login"}</span></Link><Link href="/sell"><Button className="bg-[#00843d] hover:bg-[#006b32]">Sell on ESUT</Button></Link></nav><Link href="/cart" className="ml-auto lg:hidden"><ShoppingCart size={22}/></Link><button type="button" aria-label="Open navigation" className="lg:hidden" onClick={() => setMobileOpen(value => !value)}>{mobileOpen ? <X size={23}/> : <Menu size={23}/>}</button></div>{mobileOpen && <div className="border-t bg-white lg:hidden"><div className="page-shell grid gap-2 py-4"><Link href="/explore" onClick={() => setMobileOpen(false)} className="rounded-lg px-3 py-2 font-bold hover:bg-slate-50">Browse marketplace</Link><Link href={isAuthenticated ? "/account" : "/login"} onClick={() => setMobileOpen(false)} className="rounded-lg px-3 py-2 font-bold hover:bg-slate-50">{isAuthenticated ? "My account" : "Login"}</Link><Link href="/sell" onClick={() => setMobileOpen(false)} className="rounded-lg px-3 py-2 font-bold text-[#00843d] hover:bg-[#eaf7ef]">Sell on ESUT</Link></div></div>}<div className="border-t border-slate-100 bg-white"><div className="page-shell flex h-12 items-center gap-6 overflow-x-auto whitespace-nowrap text-sm font-semibold text-slate-600">{categories.map(category => <Link key={category.id} href={`/category/${category.slug}`} className="hover:text-[#00843d]">{category.name}</Link>)}<Link href="/explore" className="text-[#00843d]">More</Link></div></div></header></>;
+  const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [, go] = useLocation();
+  const { isAuthenticated, user } = useAuth();
+  const suggestions = trpc.marketplace.suggestions.useQuery({ q: debouncedQuery }, { enabled: debouncedQuery.length >= 2 });
+  const unread = trpc.notifications.unreadCount.useQuery(undefined, { enabled: isAuthenticated });
+  useEffect(() => { const timer = window.setTimeout(() => setDebouncedQuery(query.trim()), 220); return () => window.clearTimeout(timer); }, [query]);
+  const hasSuggestions = Boolean(suggestions.data && (suggestions.data.products.length || suggestions.data.stores.length || suggestions.data.categories.length));
+  const submitSearch = () => { if (query.trim()) { setMobileOpen(false); go(`/explore?q=${encodeURIComponent(query.trim())}`); } };
+  const mobileLink = (href: string, label: string, accent = false) => <Link href={href} onClick={() => setMobileOpen(false)} className={`rounded-lg px-3 py-2 font-bold hover:bg-slate-50 ${accent ? "text-[#00843d] hover:bg-[#eaf7ef]" : ""}`}>{label}</Link>;
+
+  return <>
+    <div className="announcement">Shop from verified ESUT sellers <span>•</span> Campus pickup available</div>
+    <header className="market-header">
+      <div className="page-shell flex h-[76px] items-center gap-4">
+        <Link href="/" className="flex shrink-0 items-center"><img src={logo} alt="ESUT Marketplace" className="h-14 w-14 object-contain"/><span className="hidden text-base font-black leading-4 text-[#111827] sm:block">ESUT<br/><em className="not-italic text-[#00843d]">Marketplace</em></span></Link>
+        <div className="relative hidden flex-1 md:block">
+          <form onSubmit={event => { event.preventDefault(); submitSearch(); }}><label className="searchbox"><Search size={19}/><input value={query} onChange={event => setQuery(event.target.value)} placeholder="Search products, stores or categories" autoComplete="off"/><button type="submit">Search</button></label></form>
+          {debouncedQuery.length >= 2 && <div className="absolute left-0 right-0 top-[calc(100%+0.45rem)] z-40 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl">{suggestions.isFetching ? <p className="px-4 py-3 text-sm text-slate-500">Searching marketplace…</p> : hasSuggestions ? <div className="divide-y divide-slate-100"><button type="button" onClick={submitSearch} className="block w-full px-4 py-3 text-left text-sm font-bold text-[#00843d] hover:bg-[#eaf7ef]">Search marketplace for “{debouncedQuery}”</button>{suggestions.data?.products.map(product => <Link key={`product-${product.slug}`} href={`/product/${product.slug}`} onClick={() => setQuery("")} className="block px-4 py-3 text-sm hover:bg-slate-50"><span className="font-bold">{product.title}</span><span className="ml-2 text-xs text-slate-500">Product · {product.storeName}</span></Link>)}{suggestions.data?.stores.map(store => <Link key={`store-${store.slug}`} href={`/store/${store.slug}`} onClick={() => setQuery("")} className="block px-4 py-3 text-sm hover:bg-slate-50"><span className="font-bold">{store.name}</span><span className="ml-2 text-xs text-slate-500">Marketplace store</span></Link>)}{suggestions.data?.categories.map(category => <Link key={`category-${category.slug}`} href={`/category/${category.slug}`} onClick={() => setQuery("")} className="block px-4 py-3 text-sm hover:bg-slate-50"><span className="font-bold">{category.name}</span><span className="ml-2 text-xs text-slate-500">Category</span></Link>)}</div> : <p className="px-4 py-3 text-sm text-slate-500">No matching products, stores, or categories yet.</p>}</div>}
+        </div>
+        <nav className="ml-auto hidden items-center gap-4 lg:flex">
+          {isAuthenticated && <><Link href="/account/favorites" className="nav-icon"><Heart size={20}/><span>Favorites</span></Link><Link href="/account/notifications" className="nav-icon relative"><Bell size={20}/><span>Updates</span>{unread.data?.count ? <b className="absolute -right-2 -top-2 min-w-5 rounded-full bg-[#e31b23] px-1 text-center text-[10px] leading-5 text-white">{unread.data.count > 9 ? "9+" : unread.data.count}</b> : null}</Link></>}
+          <Link href="/cart" className="nav-icon"><ShoppingCart size={20}/><span>Cart</span></Link><Link href={isAuthenticated ? "/account" : "/login"} className="nav-icon"><UsersRound size={20}/><span>{isAuthenticated ? user?.name?.split(" ")[0] ?? "Account" : "Login"}</span></Link><Link href="/sell"><Button className="bg-[#00843d] hover:bg-[#006b32]">Sell on ESUT</Button></Link>
+        </nav>
+        <Link href="/cart" className="ml-auto lg:hidden"><ShoppingCart size={22}/></Link><button type="button" aria-label="Open navigation" className="lg:hidden" onClick={() => setMobileOpen(value => !value)}>{mobileOpen ? <X size={23}/> : <Menu size={23}/>}</button>
+      </div>
+      {mobileOpen && <div className="border-t bg-white lg:hidden"><div className="page-shell grid gap-2 py-4"><form onSubmit={event => { event.preventDefault(); submitSearch(); }} className="mb-2 flex overflow-hidden rounded-xl border border-slate-300"><label className="flex min-w-0 flex-1 items-center gap-2 px-3"><Search size={17} className="text-slate-400"/><input value={query} onChange={event => setQuery(event.target.value)} placeholder="Search marketplace" className="min-w-0 flex-1 py-2 text-sm outline-none" autoComplete="off"/></label><button type="submit" className="bg-[#e31b23] px-4 text-sm font-bold text-white">Search</button></form>{mobileLink("/explore", "Browse marketplace")}{isAuthenticated && <>{mobileLink("/account/favorites", "Favorites")}{mobileLink("/account/notifications", `Notifications${unread.data?.count ? ` (${unread.data.count})` : ""}`)}{mobileLink("/account/messages", "Messages")}</>}{mobileLink(isAuthenticated ? "/account" : "/login", isAuthenticated ? "My account" : "Login")}{mobileLink("/sell", "Sell on ESUT", true)}</div></div>}
+      <div className="border-t border-slate-100 bg-white"><div className="page-shell flex h-12 items-center gap-6 overflow-x-auto whitespace-nowrap text-sm font-semibold text-slate-600">{categories.map(category => <Link key={category.id} href={`/category/${category.slug}`} className="hover:text-[#00843d]">{category.name}</Link>)}<Link href="/explore" className="text-[#00843d]">More</Link></div></div>
+    </header>
+  </>;
 }
 
 export function StorefrontFooter() {
