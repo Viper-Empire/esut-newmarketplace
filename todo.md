@@ -115,3 +115,4 @@
 
 *Resume note: deferred Resend sender-domain verification and normal-recipient email delivery remain future prerequisites confirmed by the user.*
 
+- [x] Add explicit retry controls to buyer favorites, offers, and notifications retrieval-error states so failure feedback provides recovery rather than text-only guidance. (Each retrieval-error branch now offers a scoped Try again action.)
