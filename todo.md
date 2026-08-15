@@ -73,7 +73,7 @@
 - [x] Add secure provider-adapter stubs for SendGrid and SMTP-based transactional email services.
 - [x] Add administrator-controlled email template customization and safe placeholder previews.
 - [x] Connect the seller-approval delivery event to the administrator-managed email template renderer.
-- [ ] Add loading, error, empty, and success states across customer, seller, and admin experiences. (Operational queues are substantially covered; complete an explicit audit and add missing states in message detail, profile/settings, and any remaining account flows.)
+- [ ] Add loading, error, empty, and success states across customer, seller, and admin experiences. (Account and operational queues are substantially covered; complete source-backed verification of every remaining customer, seller, moderator, and administrator view before closing this broad objective.)
 - [x] Add unit and integration tests for authorization, IDOR prevention, mass-assignment protection, cart and checkout calculations, business state transitions, and critical buyer/seller/admin journeys. (The 57-test suite covers these protected marketplace paths.)
 - [x] Verify desktop and mobile storefront experience at required breakpoints, plus keyboard navigation and accessibility basics.
 - [ ] Review TODO completion state, save the final project checkpoint, and prepare a concise implementation handoff.
@@ -103,5 +103,5 @@
 - [x] Extend category-name search so real active listings in a matching category appear in the main buyer search results.
 - [x] Add regression tests for product review output, message and seller queue projections, and notification ownership isolation.
 - [x] Add an accessible mobile search entry to the storefront navigation so mobile buyers can begin product, store, or category discovery without relying on desktop controls.
-- [ ] Complete an explicit state-feedback audit for remaining buyer and seller account pages, including message detail and profile/settings, then add missing loading, error, empty, and success states.
+- [x] Complete an explicit state-feedback audit for remaining buyer and seller account pages, including message detail and profile/settings, then add missing loading, error, empty, and success states. (All audited account queries now distinguish loading, failure with retry, empty results, and mutation outcomes.)
 - [ ] Reproduce an HTML-instead-of-JSON failure on one real public and one real authenticated flow, then document the verified-safe paths and expand guarded transport coverage as needed.
