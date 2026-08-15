@@ -64,6 +64,18 @@ test.describe("ESUT Marketplace browser smoke coverage", () => {
     await expect(page.locator("body")).not.toContainText("Unexpected token");
   });
 
+  test("cart route preserves a guest-cart access boundary", async ({ page }) => {
+    await page.goto("/cart");
+    await expect(page.getByRole("heading", { name: /Your guest cart/i })).toBeVisible();
+    await expect(page.getByText(/Sign in to merge them securely/i)).toBeVisible();
+  });
+
+  test("password-recovery route exposes its real availability boundary", async ({ page }) => {
+    await page.goto("/forgot-password");
+    await expect(page.getByRole("heading", { name: /Password reset/i })).toBeVisible();
+    await expect(page.getByText(/password-recovery|reset link/i).first()).toBeVisible();
+  });
+
   test("interactive buttons have accessible names", async ({ page }) => {
     await page.goto("/");
     const unnamedButtons = await page.locator("button").evaluateAll(buttons => buttons.filter(button => !((button.textContent ?? "").trim() || button.getAttribute("aria-label") || button.getAttribute("title"))).length);
