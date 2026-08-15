@@ -109,3 +109,9 @@
 - [x] Add a safe Move to cart action for authenticated favorites that reuses the protected cart procedure and real server-side price and stock validation. (The favorite action invokes the existing cart-add procedure, then refreshes the real cart state.)
 - [x] Add a browser-local recent-search panel for buyers, using only terms the current visitor actually submits and no fabricated popular-search data. (Recent submitted terms are limited to the current browser, removable, and available in desktop and mobile search panels.)
 - [x] Enrich the participant-authorized buyer and seller conversation list with real listing, counterparty, latest-message, and timestamp context without exposing private account fields. (The list exposes only public listing/store data, counterparty name, and latest participant-authorized message context; regression coverage verifies the safe projection.)
+- [x] Resume checklist reconciliation from the latest checkpoint and identify the next feasible in-scope quality item without reopening deferred email-domain work. (Completed: public and authenticated validation was selected as the next feasible milestone; email-domain work remains deferred.)
+- [x] Run representative public and authenticated buyer-flow validation for response safety, ownership boundaries, responsive behavior, and accessibility, documenting any remaining actionable gaps. (Public homepage and catalogue, authenticated account and messages, and 375px mobile account rendering were checked; findings are recorded in `RESUMED_VALIDATION_NOTES.md`. No actionable response-safety or layout defect was observed.)
+- [x] Save a resumable checkpoint after the resumed validation milestone and update the implementation handoff record. (The validation notes and checkpoint will preserve this resumed state for future work.)
+
+*Resume note: deferred Resend sender-domain verification and normal-recipient email delivery remain future prerequisites confirmed by the user.*
+
