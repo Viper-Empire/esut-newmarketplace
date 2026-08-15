@@ -76,6 +76,30 @@ test.describe("ESUT Marketplace browser smoke coverage", () => {
     await expect(page.getByText(/password-recovery|reset link/i).first()).toBeVisible();
   });
 
+  test("high-traffic public catalog routes avoid raw parse errors when HTML is returned", async ({ page }) => {
+    for (const route of ["/explore", "/product/nonexistent-safe-probe"]) {
+      await page.route("**/api/trpc/**", request => request.fulfill({ status: 200, contentType: "text/html", body: "<!doctype html><html><body>unexpected document</body></html>" }));
+      await page.goto(route);
+      await expect(page.locator("body")).not.toContainText("Unexpected token");
+    }
+  });
+
+  test("high-traffic buyer routes avoid raw parse errors when HTML is returned", async ({ page }) => {
+    for (const route of ["/cart", "/checkout"]) {
+      await page.route("**/api/trpc/**", request => request.fulfill({ status: 200, contentType: "text/html", body: "<!doctype html><html><body>unexpected document</body></html>" }));
+      await page.goto(route);
+      await expect(page.locator("body")).not.toContainText("Unexpected token");
+    }
+  });
+
+  test("seller, moderator, and administrator routes avoid raw parse errors when HTML is returned", async ({ page }) => {
+    for (const route of ["/sell", "/seller", "/moderator", "/admin"]) {
+      await page.route("**/api/trpc/**", request => request.fulfill({ status: 200, contentType: "text/html", body: "<!doctype html><html><body>unexpected document</body></html>" }));
+      await page.goto(route);
+      await expect(page.locator("body")).not.toContainText("Unexpected token");
+    }
+  });
+
   test("interactive buttons have accessible names", async ({ page }) => {
     await page.goto("/");
     const unnamedButtons = await page.locator("button").evaluateAll(buttons => buttons.filter(button => !((button.textContent ?? "").trim() || button.getAttribute("aria-label") || button.getAttribute("title"))).length);
