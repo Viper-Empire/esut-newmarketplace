@@ -7,6 +7,7 @@ import { registerOAuthRoutes } from "./oauth";
 import { registerStorageProxy } from "./storageProxy";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
+import { registerApiFallback } from "./apiFallback";
 import { serveStatic, setupVite } from "./vite";
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -44,6 +45,9 @@ async function startServer() {
       createContext,
     })
   );
+  // API routes must never fall through to the SPA HTML response, otherwise clients
+  // attempting to parse an API payload receive an opaque `Unexpected token '<'` error.
+  registerApiFallback(app);
   // development mode uses Vite, production mode uses static files
   if (process.env.NODE_ENV === "development") {
     await setupVite(app, server);

@@ -60,7 +60,7 @@
 - [x] Add a role-aware seller onboarding checklist that shows verification and application progress before seller tools unlock.
 - [x] Implement secure evidence-file upload and administrator evidence review for individual and business seller verification.
 - [x] Add automated coverage proving an existing account claims a password without losing its role, store, or marketplace records.
-- [ ] Verify the live seller evidence submission, administrator review, and post-approval gate loop. (Requires manual authenticated buyer/seller/administrator test accounts.)
+- [ ] Verify the live seller evidence submission, administrator review, and post-approval gate loop. (Partial: an existing Aluta Shop Tech evidence submission was reviewed and approved, the seller submitted a genuine store application, an administrator approved it, and the seller workspace unlocked. A live seller-side evidence submission remains to be exercised.)
 - [x] Add clear Login and Create Account routes that initiate the supported secure account session flow.
 - [x] Add separate visible Create Account and Log In actions to the public storefront header for signed-out visitors.
 - [x] Add role-aware account navigation and explicit protected dashboard entry points for buyers, sellers, and administrators.
@@ -81,4 +81,7 @@
 - [x] Build seller settings controls and expose them from the verified seller workspace.
 - [x] Add a customer-facing report-submission entry point from listing, store, message, and review experiences.
 - [x] Build a moderator-specific workspace and procedures, or formally document a supported administrator-only moderation policy.
-- [ ] Conduct a consented live seller-evidence, administrator-review, and post-approval access-gate verification using authentic marketplace sessions only. (Partial: seller session showed APPROVED verification and seller-tool access; administrator session displayed approved evidence and store applications. A pending submission is required to exercise the real review decision loop.)
+- [ ] Conduct a consented live seller-evidence, administrator-review, and post-approval access-gate verification using authentic marketplace sessions only. (Partial: the authentic Aluta Shop Tech session now opens the protected seller workspace after administrator review and approval; a newly submitted seller-side evidence record has not yet been exercised.)
+- [x] Submit the confirmed Aluta Shop Tech store application using its genuine store name, phone 09116991082, ESUT Campus Agbani location, and user-supplied catalogue description; then complete the administrator approval and post-approval access check. (The administrator approved the submission and the seller workspace unlocked successfully.)
+- [ ] Diagnose and fix all marketplace flows that receive an HTML document where a JSON/tRPC response is expected (`Unexpected token '<'`). (Unknown `/api/*` routes now return structured JSON 404 responses before reaching the SPA HTML fallback, and a shared tRPC transport guard prevents raw parsing errors. The originally reported failing marketplace action still needs end-to-end reproduction and verification.)
+- [x] Inspect existing administrator verification and seller-application queues for a safe already-pending record, without changing any marketplace data. (Located the existing pending Aluta Shop Tech business verification; the confirmed administrator review was completed separately.)
