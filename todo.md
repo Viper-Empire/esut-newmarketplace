@@ -90,3 +90,4 @@
 - [ ] Reproduce the HTML-instead-of-JSON failure mode end to end on at least one real public flow and one real authenticated flow, then record the verified-safe paths.
 - [x] Inspect existing administrator verification and seller-application queues for a safe already-pending record, without changing any marketplace data. (Located the existing pending Aluta Shop Tech business verification; the confirmed administrator review was completed separately.)
 - [x] Add a secure logged-in password-change control to account settings with current-password verification, confirmation, session safeguards, clear feedback, and automated regression coverage. (Verified on the live signed-in Account settings route; 50 automated tests pass.)
+- [x] Produce a comprehensive ESUT Marketplace technical, software, implementation, security, testing, and operational-status report. (Delivered as `ESUT_MARKETPLACE_COMPREHENSIVE_PROJECT_REPORT_2026-08-15.md`.)
