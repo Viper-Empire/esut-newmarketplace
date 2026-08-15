@@ -50,6 +50,28 @@ test.describe("ESUT Marketplace browser smoke coverage", () => {
     }
   });
 
+  test("hostile identifiers cannot bypass buyer, seller, or administrator ownership boundaries", async ({ page }) => {
+    for (const route of ["/account/orders/not-a-real-order", "/seller/products/999999/edit", "/admin/users/999999"]) {
+      await page.goto(route);
+      await expect(page.getByRole("heading", { name: /Sign in to access|Sign in to view this order|access required|Seller approval required|Administrator access required/i }).first()).toBeVisible();
+      await expect(page.locator("body")).not.toContainText("Unexpected token");
+    }
+  });
+
+  test("guest requests cannot reach upload or inventory mutation controls through seller URLs", async ({ page }) => {
+    for (const route of ["/seller/products/new", "/seller/products/999999/edit", "/seller/inventory"]) {
+      await page.goto(route);
+      await expect(page.getByRole("heading", { name: /Sign in to access seller tools|Verified seller access required/i })).toBeVisible();
+      await expect(page.getByRole("button", { name: /Upload image|Save/i })).toHaveCount(0);
+    }
+  });
+
+  test("rapid repeated guest checkout navigation never exposes an order-submission action", async ({ page }) => {
+    for (let attempt = 0; attempt < 3; attempt += 1) await page.goto("/checkout", { waitUntil: "domcontentloaded" });
+    await expect(page.getByRole("heading", { name: /Sign in to checkout/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /Place order/i })).toHaveCount(0);
+  });
+
   test("guarded transport presents a recovery boundary when the public query returns HTML", async ({ page }) => {
     await page.route("**/api/trpc/**", route => route.fulfill({ status: 200, contentType: "text/html", body: "<!doctype html><html><body>unexpected document</body></html>" }));
     await page.goto("/");
