@@ -19,6 +19,7 @@ export default function ProductPage() {
   const startMessage = trpc.messaging.start.useMutation({ onSuccess: data => { toast.success("Conversation started."); navigate(`/account/messages/${data.conversationId}`); }, onError: error => toast.error(error.message) });
   const report = trpc.support.report.useMutation({ onSuccess: () => { toast.success("Your report was submitted for administrator review."); setReportOpen(false); setReportReason(""); setReportDetails(""); }, onError: error => toast.error(error.message) });
   if (product.isLoading) return <div className="page-shell py-16">Loading this listing…</div>;
+  if (product.isError) return <div className="page-shell py-16"><div role="alert" className="rounded-2xl bg-[#fff3f3] p-8 text-center text-[#b91c1c] ring-1 ring-[#fecaca]"><h1 className="text-xl font-extrabold">We could not load this listing</h1><p className="mt-2 text-sm">Try again to retrieve the latest product, seller, and review details.</p><Button variant="outline" className="mt-4" onClick={() => product.refetch()}>Try again</Button></div></div>;
   if (!product.data) return <div className="page-shell py-16">This listing is unavailable.</div>;
   const { listing, store, category, images, productReviews, reviewSummary } = product.data; const activeImage = images[activeImageIndex] ?? images[0];
   const requestOffer = () => { if (isAuthenticated) setOfferOpen(value => !value); else toast.error("Sign in to make an offer"); };
