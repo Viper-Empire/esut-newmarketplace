@@ -1,17 +1,29 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { TrpcContext } from "./_core/context";
-import { hashPassword } from "./localAuth";
-import { authTokens, orders, profiles, stores, users } from "../drizzle/schema";
+import { hashPassword, verifyPassword } from "./localAuth";
+import { auditLogs, authTokens, orders, profiles, stores, users } from "../drizzle/schema";
 
-const mockState = vi.hoisted(() => ({ selectResults: [] as unknown[][], insertResults: [] as unknown[], insertValues: [] as { table: unknown; value: unknown }[], cookies: [] as unknown[], updatedTables: [] as unknown[], deletedTables: [] as unknown[] }));
+const mockState = vi.hoisted(() => ({ selectResults: [] as unknown[][], insertResults: [] as unknown[], insertValues: [] as { table: unknown; value: unknown }[], cookies: [] as unknown[], updatedTables: [] as unknown[], updatedValues: [] as { table: unknown; value: unknown }[], deletedTables: [] as unknown[] }));
 
 vi.mock("./db", () => ({
   getDb: async () => ({
     select: () => ({ from: () => ({ where: () => ({ limit: async () => (mockState.selectResults.shift() ?? []).filter((row: any) => !row?.expiresAt || (row.expiresAt > new Date() && row.consumedAt === null)) }) }) }),
     insert: (table: unknown) => ({ values: (value: unknown) => { mockState.insertValues.push({ table, value }); const result = mockState.insertResults.shift() ?? []; return Object.assign(Promise.resolve(result), { onDuplicateKeyUpdate: async () => result }); } }),
-    update: (table: unknown) => { mockState.updatedTables.push(table); return { set: () => ({ where: async () => [] }) }; },
+    update: (table: unknown) => { mockState.updatedTables.push(table); return { set: (value: unknown) => { mockState.updatedValues.push({ table, value }); return { where: async () => [] }; } }; },
     delete: (table: unknown) => { mockState.deletedTables.push(table); return { where: async () => [] }; },
-    transaction: async (callback: (tx: { update: (table: unknown) => { set: () => { where: () => Promise<unknown[]> } } }) => Promise<unknown>) => callback({ update: (table: unknown) => { mockState.updatedTables.push(table); return { set: () => ({ where: async () => [] }) }; } }),
+    transaction: async (callback: (tx: any) => Promise<unknown>) => callback({
+      update: (table: unknown) => {
+        mockState.updatedTables.push(table);
+        return { set: (value: unknown) => { mockState.updatedValues.push({ table, value }); return { where: async () => [] }; } };
+      },
+      delete: (table: unknown) => {
+        mockState.deletedTables.push(table);
+        return { where: async () => [] };
+      },
+      insert: (table: unknown) => ({
+        values: async (value: unknown) => { mockState.insertValues.push({ table, value }); return []; },
+      }),
+    }),
   }),
 }));
 vi.mock("./_core/sdk", () => ({ sdk: { createSessionToken: vi.fn(async () => "test-session-token") } }));
@@ -23,7 +35,7 @@ function context(): TrpcContext {
 }
 
 describe("paused email-verification authentication procedures", () => {
-  beforeEach(() => { mockState.selectResults = []; mockState.insertResults = []; mockState.insertValues = []; mockState.cookies = []; mockState.updatedTables = []; mockState.deletedTables = []; });
+  beforeEach(() => { mockState.selectResults = []; mockState.insertResults = []; mockState.insertValues = []; mockState.cookies = []; mockState.updatedTables = []; mockState.updatedValues = []; mockState.deletedTables = []; });
 
   it("returns a registration response that does not require or claim verification delivery", async () => {
     const created = { id: 31, openId: "local_test", name: "Ada Student", email: "ada@example.com", loginMethod: "password", passwordHash: "hidden", role: "CUSTOMER", isActive: true, failedLoginCount: 0, lockedUntil: null, createdAt: new Date(), updatedAt: new Date(), lastSignedIn: null };
@@ -126,5 +138,30 @@ describe("paused email-verification authentication procedures", () => {
     await appRouter.createCaller({ ...context(), user }).profile.update({ phone: "08000000000", location: "ESUT", role: "ADMIN" } as any);
     expect(mockState.insertValues[0]).toMatchObject({ table: profiles, value: { userId: 88, phone: "08000000000", location: "ESUT" } });
     expect(mockState.insertValues[0]?.value).not.toHaveProperty("role");
+  });
+
+  it("requires the current password, renews the active session, and records a password change without exposing the password", async () => {
+    const oldPasswordHash = await hashPassword("CampusPass123!");
+    const account = { id: 93, openId: "password-change", name: "Security Student", email: "security@example.com", loginMethod: "password", passwordHash: oldPasswordHash, role: "CUSTOMER" as const, isActive: true, failedLoginCount: 3, lockedUntil: new Date(Date.now() + 60_000), createdAt: new Date(), updatedAt: new Date(), lastSignedIn: null };
+    mockState.selectResults = [[], [account]];
+    await expect(appRouter.createCaller({ ...context(), user: account }).auth.changePassword({ currentPassword: "CampusPass123!", newPassword: "ChangedCampusPass123!", confirmPassword: "ChangedCampusPass123!" })).resolves.toEqual({ success: true });
+    const passwordUpdate = mockState.updatedValues.find(entry => entry.table === users)?.value as { passwordHash?: string; failedLoginCount?: number; lockedUntil?: unknown };
+    expect(passwordUpdate.passwordHash).toBeDefined();
+    expect(passwordUpdate.passwordHash).not.toBe(oldPasswordHash);
+    await expect(verifyPassword("ChangedCampusPass123!", passwordUpdate.passwordHash)).resolves.toBe(true);
+    expect(passwordUpdate).not.toHaveProperty("currentPassword");
+    expect(passwordUpdate).not.toHaveProperty("newPassword");
+    expect(passwordUpdate).toMatchObject({ failedLoginCount: 0, lockedUntil: null });
+    expect(mockState.deletedTables).toContain(authTokens);
+    expect(mockState.insertValues.some(entry => entry.table === auditLogs && (entry.value as { action?: string }).action === "PASSWORD_CHANGED")).toBe(true);
+    expect(mockState.cookies).toHaveLength(1);
+  });
+
+  it("rejects an incorrect current password before changing credentials or issuing a fresh session", async () => {
+    const account = { id: 94, openId: "wrong-password", name: "Security Student", email: "wrong@example.com", loginMethod: "password", passwordHash: await hashPassword("CampusPass123!"), role: "CUSTOMER" as const, isActive: true, failedLoginCount: 0, lockedUntil: null, createdAt: new Date(), updatedAt: new Date(), lastSignedIn: null };
+    mockState.selectResults = [[], [account]];
+    await expect(appRouter.createCaller({ ...context(), user: account }).auth.changePassword({ currentPassword: "IncorrectPass123!", newPassword: "ChangedCampusPass123!", confirmPassword: "ChangedCampusPass123!" })).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+    expect(mockState.updatedTables).toEqual([]);
+    expect(mockState.cookies).toEqual([]);
   });
 });
