@@ -25,7 +25,7 @@
 - [x] Replace the external OAuth entry redirect with ESUT Marketplace-branded email-and-password registration and login forms.
 - [x] Add secure password hashing, first-party session issuance, email verification tokens, password-reset tokens, and rate-limited authentication endpoints.
 - [x] Add branded verification, password-reset request, and password-reset completion routes matching the supplied visual direction.
-- [ ] Verify a Resend sending domain and test email verification and password recovery delivery to normal marketplace recipients. (Blocked: the current Resend test sender may deliver only to the approved owner mailbox; no authorized sending domain is available.)
+- [ ] Verify a Resend sending domain and test email verification and password recovery delivery to normal marketplace recipients. (Deferred by user: the current Resend test sender may deliver only to the approved owner mailbox; resume when an authorized sending domain is available.)
 - [x] Temporarily disable outbound email-verification delivery and verification-required user messaging while retaining a documented re-enable path.
 - [x] Document the safe re-enable process for email verification after a verified sending domain is available.
 - [x] Review authentication copy to confirm it does not imply email verification is required while the feature is paused.
@@ -51,7 +51,7 @@
 - [ ] Add continuous end-to-end authorization, IDOR, ownership, tampering, upload, concurrency, responsive, and accessibility test coverage for marketplace flows.
 - [x] Add endpoint-level abuse protection for branded registration, login, verification, and password-recovery procedures.
 - [x] Add automated procedure coverage for registration, login lockout, verification tokens, password-reset tokens, expiration, and token consumption.
-- [ ] Verify live email-verification and password-reset completion states with valid and invalid token paths. (Blocked pending an authorized sending domain and ordinary-recipient delivery.)
+- [ ] Verify live email-verification and password-reset completion states with valid and invalid token paths. (Deferred by user pending an authorized sending domain and ordinary-recipient delivery.)
 - [x] Add password confirmation and independent show/hide controls to the branded registration form.
 - [x] Capture Individual and Business/Vendor account classification at registration and persist it safely.
 - [x] Define and enforce individual-versus-business seller verification requirements before sensitive seller operations are enabled.
@@ -65,7 +65,7 @@
 - [x] Add separate visible Create Account and Log In actions to the public storefront header for signed-out visitors.
 - [x] Add role-aware account navigation and explicit protected dashboard entry points for buyers, sellers, and administrators.
 - [x] Add a visible secure Logout control to buyer, seller, and administrator workspace views.
-- [ ] Connect an approved transactional email provider and deliver verified email notifications for marketplace events. (Blocked pending an authorized sending domain or an approved provider account.)
+- [ ] Connect an approved transactional email provider and deliver verified email notifications for marketplace events. (Deferred by user pending an authorized sending domain or an approved provider account.)
 - [x] Add Resend-backed transactional notification delivery for selected marketplace events, using a server-side secret only.
 - [x] Add provider-agnostic notification channel settings so future email providers can be configured without redesigning marketplace workflows.
 - [x] Send and verify a live Resend transactional email to the approved test recipient.
