@@ -50,6 +50,20 @@ test.describe("ESUT Marketplace browser smoke coverage", () => {
     }
   });
 
+  test("guarded transport presents a recovery boundary when the public query returns HTML", async ({ page }) => {
+    await page.route("**/api/trpc/**", route => route.fulfill({ status: 200, contentType: "text/html", body: "<!doctype html><html><body>unexpected document</body></html>" }));
+    await page.goto("/");
+    await expect(page.getByRole("heading", { name: /We could not load marketplace collections/i })).toBeVisible({ timeout: 20_000 });
+    await expect(page.locator("body")).not.toContainText("Unexpected token");
+  });
+
+  test("guarded authentication transport keeps a protected route at its access boundary when HTML is returned", async ({ page }) => {
+    await page.route("**/api/trpc/**", route => route.fulfill({ status: 200, contentType: "text/html", body: "<!doctype html><html><body>unexpected document</body></html>" }));
+    await page.goto("/account");
+    await expect(page.getByRole("heading", { name: /Sign in to access your account/i })).toBeVisible();
+    await expect(page.locator("body")).not.toContainText("Unexpected token");
+  });
+
   test("interactive buttons have accessible names", async ({ page }) => {
     await page.goto("/");
     const unnamedButtons = await page.locator("button").evaluateAll(buttons => buttons.filter(button => !((button.textContent ?? "").trim() || button.getAttribute("aria-label") || button.getAttribute("title"))).length);
