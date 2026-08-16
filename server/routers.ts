@@ -150,6 +150,20 @@ export const appRouter = router({
     }),
     store: publicProcedure.input(z.object({ slug: z.string().min(1).max(180) })).query(async ({ input }) => { const db = await ensureDb(); const store = (await db.select().from(stores).where(and(eq(stores.slug, input.slug), eq(stores.status, "ACTIVE"))).limit(1))[0]; if (!store) throw new TRPCError({ code: "NOT_FOUND", message: "This store is unavailable." }); const [products, storeReviews] = await Promise.all([db.select({ listing: listings, image: listingImages }).from(listings).leftJoin(listingImages, and(eq(listingImages.listingId, listings.id), eq(listingImages.isPrimary, true))).where(and(eq(listings.storeId, store.id), eq(listings.status, "ACTIVE"))).orderBy(desc(listings.publishedAt)).limit(24), db.select({ review: { id: reviews.id, rating: reviews.rating, comment: reviews.comment, sellerResponse: reviews.sellerResponse, createdAt: reviews.createdAt }, buyer: { name: users.name }, listing: { title: listings.title, slug: listings.slug } }).from(reviews).innerJoin(users, eq(reviews.buyerUserId, users.id)).innerJoin(listings, eq(reviews.listingId, listings.id)).where(and(eq(reviews.storeId, store.id), eq(reviews.status, "PUBLISHED"))).orderBy(desc(reviews.createdAt)).limit(12)]); return { store, products, reviews: storeReviews }; }),
   }),
+  buyer: router({
+    dashboard: protectedProcedure.query(async ({ ctx }) => {
+      const db = await ensureDb();
+      const [orderRows, favoriteRows, unreadRows, recentUpdates] = await Promise.all([
+        db.select({ order: { id: orders.id, publicId: orders.publicId, status: orders.status, totalKobo: orders.totalKobo, createdAt: orders.createdAt }, store: { name: stores.name, slug: stores.slug } }).from(orders).innerJoin(stores, eq(orders.storeId, stores.id)).where(eq(orders.buyerUserId, ctx.user.id)).orderBy(desc(orders.createdAt)).limit(8),
+        db.select({ id: favorites.id }).from(favorites).where(eq(favorites.userId, ctx.user.id)),
+        db.select({ total: sql<number>`count(*)` }).from(notifications).where(and(eq(notifications.userId, ctx.user.id), eq(notifications.isRead, false))),
+        db.select({ id: notifications.id, title: notifications.title, message: notifications.message, targetRoute: notifications.targetRoute, createdAt: notifications.createdAt, isRead: notifications.isRead }).from(notifications).where(eq(notifications.userId, ctx.user.id)).orderBy(desc(notifications.createdAt)).limit(5),
+      ]);
+      const ordersToCollect = orderRows.filter(row => row.order.status === "READY_FOR_PICKUP").length;
+      const activeOrders = orderRows.filter(row => ["PENDING", "CONFIRMED", "PROCESSING", "READY_FOR_PICKUP"].includes(row.order.status)).length;
+      return { ordersToCollect, activeOrders, savedListings: favoriteRows.length, unreadUpdates: Number(unreadRows[0]?.total ?? 0), recentOrders: orderRows.slice(0, 4), recentUpdates };
+    }),
+  }),
   favorites: router({
     list: protectedProcedure.query(async ({ ctx }) => { const db = await ensureDb(); return db.select({ listing: listings, store: stores, image: listingImages }).from(favorites).innerJoin(listings, eq(favorites.listingId, listings.id)).innerJoin(stores, eq(listings.storeId, stores.id)).leftJoin(listingImages, and(eq(listingImages.listingId, listings.id), eq(listingImages.isPrimary, true))).where(eq(favorites.userId, ctx.user.id)); }),
     toggle: protectedProcedure.input(z.object({ listingId: z.number().int().positive() })).mutation(async ({ ctx, input }) => { const db = await ensureDb(); const exists = await db.select().from(favorites).where(and(eq(favorites.userId, ctx.user.id), eq(favorites.listingId, input.listingId))).limit(1); if (exists[0]) { await db.delete(favorites).where(eq(favorites.id, exists[0].id)); return { favorited: false }; } await db.insert(favorites).values({ userId: ctx.user.id, listingId: input.listingId }); return { favorited: true }; }),
