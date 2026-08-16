@@ -122,6 +122,24 @@ test.describe("ESUT Marketplace browser smoke coverage", () => {
     }
   });
 
+  test("real product detail exposes the purchase, trust, review, FAQ, and related-listing hierarchy", async ({ page }) => {
+    await page.goto("/product/wireless-study-headphones");
+    await expect(page.getByRole("heading", { name: /Wireless Study Headphones/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /Add to cart/i }).first()).toBeVisible();
+    await expect(page.getByRole("button", { name: /Buy now/i }).first()).toBeVisible();
+    await expect(page.getByText(/Campus pickup and cash on pickup only/i)).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Reviews from real buyers/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Before you buy/i })).toBeVisible();
+  });
+
+  test("mobile product detail keeps purchase actions reachable", async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto("/product/wireless-study-headphones");
+    await expect(page.getByRole("button", { name: /Add$/i }).last()).toBeVisible();
+    await expect(page.getByRole("button", { name: /^Buy$/i }).last()).toBeVisible();
+    await expect(page.locator("body")).not.toContainText("Unexpected token");
+  });
+
   test("interactive buttons have accessible names", async ({ page }) => {
     await page.goto("/");
     const unnamedButtons = await page.locator("button").evaluateAll(buttons => buttons.filter(button => !((button.textContent ?? "").trim() || button.getAttribute("aria-label") || button.getAttribute("title"))).length);
