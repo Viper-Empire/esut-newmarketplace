@@ -5,7 +5,7 @@ const connection = await mysql.createConnection(process.env.DATABASE_URL);
 const categories = [
   ["Electronics", "electronics", "Smart devices and accessories", "⌁"], ["Fashion", "fashion", "Campus style and essentials", "✦"],
   ["Phones & Accessories", "phones", "Phones, chargers and more", "◉"], ["Books", "books", "Textbooks and study materials", "▤"],
-  ["Hostel & Home", "hostel-home", "Everything for your space", "⌂"], ["Food & Groceries", "food", "Everyday food and groceries", "◒"],
+  ["Hostel & Lodge", "hostel-home", "Everything for your space", "⌂"], ["Food & Groceries", "food", "Everyday food and groceries", "◒"],
   ["Services", "services", "Campus services and skills", "⌘"], ["Computing", "computing", "Laptops and computing", "⌗"],
 ];
 for (const [index, category] of categories.entries()) await connection.execute("INSERT IGNORE INTO categories (name, slug, description, icon, isFeatured, isActive, sortOrder) VALUES (?, ?, ?, ?, 1, 1, ?)", [...category, index]);

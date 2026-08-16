@@ -5,7 +5,7 @@ import { trpc } from "@/lib/trpc";
 import { ArrowRight, BadgeCheck, ShieldCheck, ShoppingCart, Sparkles, Store } from "lucide-react";
 import { Link } from "wouter";
 
-const categoryIcons: Record<string, string> = { Electronics: "⌁", Fashion: "✦", "Phones & Accessories": "◉", Books: "▤", "Hostel & Home": "⌂", "Food & Groceries": "◒", Services: "⌘", Computing: "⌗" };
+const categoryIcons: Record<string, string> = { Electronics: "⌁", Fashion: "✦", "Phones & Accessories": "◉", Books: "▤", "Hostel & Lodge": "⌂", "Food & Groceries": "◒", Services: "⌘", Computing: "⌗" };
 
 function ProductSection({ eyebrow, title, rows, empty, accent = "#00843d" }: { eyebrow: string; title: string; rows: any[]; empty: string; accent?: string }) { return <section className="page-shell py-9"><div className="section-head"><div><p className="eyebrow" style={{ color: accent }}>{eyebrow}</p><h2>{title}</h2></div><Link href="/explore" className="view-link">View all <ArrowRight size={16}/></Link></div>{rows.length ? <div className="product-grid">{rows.slice(0, 8).map(row => <StorefrontProductCard key={row.listing.id} row={row}/>)}</div> : <StorefrontEmptyState>{empty}</StorefrontEmptyState>}</section>; }
 
