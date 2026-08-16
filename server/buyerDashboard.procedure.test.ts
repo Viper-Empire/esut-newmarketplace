@@ -40,6 +40,8 @@ describe("buyer dashboard procedure", () => {
     expect(summary).toMatchObject({ ordersToCollect: 1, activeOrders: 1, savedListings: 2, unreadUpdates: 3 });
     expect(summary.recentOrders).toHaveLength(2);
     expect(summary.recentUpdates).toHaveLength(1);
+    expect(summary.pickupReminders).toHaveLength(1);
+    expect(summary.pickupReminders[0]).toMatchObject({ title: "Pickup reminder", order: { publicId: "ESUT-READY" } });
     expect(summary.recentOrders[0]?.store).toEqual({ name: "Campus Store", slug: "campus-store" });
   });
 });

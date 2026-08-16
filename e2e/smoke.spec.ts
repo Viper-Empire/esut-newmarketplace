@@ -44,9 +44,9 @@ test.describe("ESUT Marketplace browser smoke coverage", () => {
   });
 
   test("seller, moderator, and administrator routes preserve protected boundaries", async ({ page }) => {
-    for (const route of ["/seller", "/moderator", "/admin"]) {
+    for (const route of ["/seller", "/seller/orders", "/moderator", "/admin", "/admin/analytics"]) {
       await page.goto(route);
-      await expect(page.getByRole("heading", { name: /Sign in to access|access required|Welcome,/i }).first()).toBeVisible();
+      await expect(page.getByRole("heading", { name: /Sign in to access|access required|Seller approval required|Welcome,/i }).first()).toBeVisible();
     }
   });
 
@@ -115,7 +115,7 @@ test.describe("ESUT Marketplace browser smoke coverage", () => {
   });
 
   test("seller, moderator, and administrator routes avoid raw parse errors when HTML is returned", async ({ page }) => {
-    for (const route of ["/sell", "/seller", "/moderator", "/admin"]) {
+    for (const route of ["/sell", "/seller", "/seller/orders", "/moderator", "/admin", "/admin/analytics"]) {
       await page.route("**/api/trpc/**", request => request.fulfill({ status: 200, contentType: "text/html", body: "<!doctype html><html><body>unexpected document</body></html>" }));
       await page.goto(route);
       await expect(page.locator("body")).not.toContainText("Unexpected token");
