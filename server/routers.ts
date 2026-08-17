@@ -173,6 +173,29 @@ export const appRouter = router({
       const activeOrders = orderRows.filter(row => ["PENDING", "CONFIRMED", "PROCESSING", "READY_FOR_PICKUP"].includes(row.order.status)).length;
       const pickupReminders = orderRows.filter(row => row.order.status === "READY_FOR_PICKUP").map(row => ({ order: row.order, store: row.store, title: "Pickup reminder", message: `Your order ${row.order.publicId} is ready for campus pickup. Pay cash when you collect it.` })); return { ordersToCollect, activeOrders, savedListings: favoriteRows.length, unreadUpdates: Number(unreadRows[0]?.total ?? 0), recentOrders: orderRows.slice(0, 4), recentUpdates, pickupReminders };
     }),
+    sellerJourney: protectedProcedure.query(async ({ ctx }) => {
+      const db = await ensureDb();
+      const [profileRows, verificationRows, applicationRows, storeRows] = await Promise.all([
+        db.select().from(profiles).where(eq(profiles.userId, ctx.user.id)).limit(1),
+        db.select().from(verificationRequests).where(eq(verificationRequests.userId, ctx.user.id)).orderBy(desc(verificationRequests.createdAt)).limit(1),
+        db.select().from(sellerApplications).where(eq(sellerApplications.userId, ctx.user.id)).limit(1),
+        db.select().from(stores).where(eq(stores.ownerUserId, ctx.user.id)).limit(1),
+      ]);
+      const profile = profileRows[0] ?? null;
+      const verification = verificationRows[0] ?? null;
+      const application = applicationRows[0] ?? null;
+      const store = storeRows[0] ?? null;
+      const listingRows = store ? await db.select({ id: listings.id, status: listings.status }).from(listings).where(eq(listings.storeId, store.id)) : [];
+      const state = store?.status === "ACTIVE" ? "ACTIVE_SELLER" : application?.status === "PENDING" ? "STORE_PENDING" : verification?.status === "APPROVED" ? "VERIFICATION_APPROVED" : verification?.status === "REJECTED" || application?.status === "REJECTED" ? "ACTION_REQUIRED" : verification?.status === "PENDING" ? "VERIFICATION_PENDING" : "NOT_STARTED";
+      return {
+        state,
+        accountType: profile?.accountType ?? null,
+        verification: verification ? { status: verification.status, type: verification.verificationType, createdAt: verification.createdAt, reviewNote: verification.reviewNote } : null,
+        application: application ? { status: application.status, sellerType: application.sellerType, createdAt: application.createdAt, reviewNote: application.reviewNote } : null,
+        store: store ? { id: store.id, name: store.name, slug: store.slug, status: store.status, isVerified: store.isVerified } : null,
+        progress: { profileComplete: Boolean(store?.name && store.location && store.description), firstProductCreated: listingRows.length > 0, storeApproved: store?.status === "ACTIVE", publishedListing: listingRows.some(listing => listing.status === "ACTIVE") },
+      };
+    }),
   }),
   favorites: router({
     list: protectedProcedure.query(async ({ ctx }) => { const db = await ensureDb(); return db.select({ listing: listings, store: stores, image: listingImages }).from(favorites).innerJoin(listings, eq(favorites.listingId, listings.id)).innerJoin(stores, eq(listings.storeId, stores.id)).leftJoin(listingImages, and(eq(listingImages.listingId, listings.id), eq(listingImages.isPrimary, true))).where(eq(favorites.userId, ctx.user.id)); }),

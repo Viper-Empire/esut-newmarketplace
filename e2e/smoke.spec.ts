@@ -40,7 +40,19 @@ test.describe("ESUT Marketplace browser smoke coverage", () => {
     await page.goto("/register");
     await expect(page.getByRole("heading", { name: /Create your account/i })).toBeVisible();
     await expect(page.getByRole("group", { name: "I am registering as" })).toBeVisible();
+    await expect(page.getByRole("button", { name: /A Buyer/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /An Individual Seller/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /A Business Vendor/i })).toBeVisible();
     await expect(page.getByLabel("Confirm password")).toBeVisible();
+  });
+
+  test("guest seller onboarding explains the application path and requirements", async ({ page }) => {
+    await page.goto("/sell");
+    await expect(page.getByRole("heading", { name: /Become a seller from your buyer account/i })).toBeVisible();
+    await expect(page.locator("#main-content").getByRole("link", { name: "Create account" })).toBeVisible();
+    await expect(page.locator("#main-content").getByRole("link", { name: "Log in" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Questions before you apply/i })).toBeVisible();
+    await expect(page.getByText(/Can I still buy products after becoming a seller/i)).toBeVisible();
   });
 
   test("seller, moderator, and administrator routes preserve protected boundaries", async ({ page }) => {
