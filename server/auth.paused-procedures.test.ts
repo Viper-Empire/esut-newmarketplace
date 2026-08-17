@@ -133,6 +133,21 @@ describe("paused email-verification authentication procedures", () => {
     expect(mockState.deletedTables).toEqual([]);
   });
 
+  it("maps registration intent to the existing profile account type without elevating the user role", async () => {
+    const created = { id: 61, openId: "local-intent", name: "Buyer Member", email: "buyer-intent@example.com", loginMethod: "password", passwordHash: "hidden", role: "CUSTOMER", isActive: true, failedLoginCount: 0, lockedUntil: null, createdAt: new Date(), updatedAt: new Date(), lastSignedIn: null };
+    mockState.selectResults = [[], [], [created]];
+    mockState.insertResults = [[], [{ insertId: 61 }], []];
+    await appRouter.createCaller(context()).auth.register({ firstName: "Buyer", lastName: "Member", email: "buyer-intent@example.com", phone: "08000000001", registrationIntent: "BUYER", password: "CampusPass123!" });
+    expect(mockState.insertValues.find(entry => entry.table === profiles)?.value).toMatchObject({ accountType: "INDIVIDUAL" });
+
+    mockState.selectResults = [[], [], [created]];
+    mockState.insertResults = [[], [{ insertId: 62 }], []];
+    mockState.insertValues = [];
+    await appRouter.createCaller(context()).auth.register({ firstName: "Business", lastName: "Vendor", email: "business-intent@example.com", phone: "08000000002", registrationIntent: "BUSINESS_VENDOR", password: "CampusPass123!" });
+    expect(mockState.insertValues.find(entry => entry.table === profiles)?.value).toMatchObject({ accountType: "BUSINESS" });
+    expect(created.role).toBe("CUSTOMER");
+  });
+
   it("strips attempted role changes from a profile update", async () => {
     const user = { id: 88, openId: "profile-owner", name: "Profile Owner", email: "profile@example.com", loginMethod: "password", role: "CUSTOMER" as const, isActive: true, createdAt: new Date(), updatedAt: new Date(), lastSignedIn: null };
     await appRouter.createCaller({ ...context(), user }).profile.update({ phone: "08000000000", location: "ESUT", role: "ADMIN" } as any);
