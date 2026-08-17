@@ -175,3 +175,9 @@
 - [x] Integrate pickup-code display and seller handoff confirmation controls into buyer and seller order detail workflows with clear failure, replay, and accessibility states. (Buyer order detail shows the code only while ready; seller detail provides labeled numeric verification, retry feedback, replay protection, and legacy-code recovery.)
 - [x] Add ownership, tampering, invalid-code, replay, lifecycle, concurrency, and browser regression coverage for pickup confirmation. (Added cryptography and seller-procedure tests; full validation passes with 76 Vitest tests and 19 Chromium scenarios.)
 - [x] Update buyer-seller and seller-administrator operational reports with the two-party confirmation flow, validate all suites, and save a resumable checkpoint. (Both reports now document two-party handoff semantics, encrypted storage, one-time consumption, failure limits, and administrator evidence boundaries.)
+
+- [ ] Implement the highest-priority buyer checkout-to-pickup gap identified in the audit: a complete, observable, policy-driven pickup coordination and exception state flow around existing checkout, ready-for-pickup, buyer notifications, seller handoff, and pickup confirmation code behavior.
+- [ ] Optimize administrator drill-down analytics with stable metric definitions, historical comparisons, filters, source-record links, export-safe views, and operational alert thresholds.
+- [ ] Optimize the seller cockpit with actionable SLA/order aging, pickup readiness, inventory reconciliation, listing-quality feedback, notification health, and guided exception states.
+
+- [x] Correct the storefront header and mobile CTA label from “Sell on ESUT” to the intended “Buy / Sell” wording from the visual edit request, then validate the rendered result and checkpoint it. (Applied manually after the visual editor reported no target match; TypeScript check passed and the live storefront visibly renders “Buy / Sell” in the desktop CTA.)
