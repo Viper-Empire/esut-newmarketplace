@@ -96,3 +96,12 @@ The buyer’s order queries require the authenticated buyer ID. Seller order que
 ## Authoritative Source Files
 
 The primary implementation sources are [`server/routers.ts`](server/routers.ts), [`server/orderLifecycle.ts`](server/orderLifecycle.ts), [`client/src/pages/OrderPages.tsx`](client/src/pages/OrderPages.tsx), [`client/src/pages/AccountPage.tsx`](client/src/pages/AccountPage.tsx), [`drizzle/schema.ts`](drizzle/schema.ts), and [`server/checkoutPolicies.ts`](server/checkoutPolicies.ts).
+
+
+## Two-Party Pickup Confirmation Code
+
+Each seller-specific order receives a six-digit pickup code at checkout. The database stores only an authenticated encrypted ciphertext; the buyer sees the decrypted code only on the buyer-owned order detail while the order is `READY_FOR_PICKUP` and the code has not been consumed. The seller never receives the code through a list or detail query.
+
+At the physical handoff, the buyer reads the code to the seller. The seller enters it into the protected seller order detail form. The server verifies the seller’s store ownership, the order’s `READY_FOR_PICKUP` state, the encrypted code, and the failed-attempt limit before moving the order to `COMPLETED`. The code is then atomically marked verified and removed from the readable ciphertext field, while the existing inventory commitment, cash payment status, order history, audit log, and notifications are committed in the same transaction.
+
+Incorrect entries increment a server-side counter and do not change lifecycle, payment, inventory, history, or audit completion records. After five failed attempts, the order’s code-entry path is locked and the participants must use support/dispute handling. A consumed code cannot be replayed, and direct seller or bulk completion without a verified code is rejected by the shared lifecycle helper.

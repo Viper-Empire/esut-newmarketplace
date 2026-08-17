@@ -29,6 +29,7 @@ vi.mock("./db", () => ({
 
 import type { TrpcContext } from "./_core/context";
 import { orders, orderStatusHistory } from "../drizzle/schema";
+import { encryptPickupCode } from "./pickupCode";
 import { appRouter } from "./routers";
 
 function context(role: "CUSTOMER" | "SELLER"): TrpcContext {
@@ -57,6 +58,20 @@ describe("seller order operations", () => {
     state.selectResults = [[{ verificationStatus: "APPROVED" }], [row("ESUT-0001", "PENDING"), row("ESUT-0002", "CONFIRMED")]];
     await expect(appRouter.createCaller(context("SELLER")).seller.bulkTransitionOrders({ publicIds: ["ESUT-0001", "ESUT-0002"], status: "CONFIRMED" })).rejects.toMatchObject({ code: "BAD_REQUEST" });
     expect(state.updatedTables).toEqual([]);
+  });
+
+  it("confirms a ready pickup only with the buyer code and records completion effects", async () => {
+    state.selectResults = [[{ verificationStatus: "APPROVED" }], [{ order: { id: 9, publicId: "ESUT-READY9", status: "READY_FOR_PICKUP", buyerUserId: 21, storeId: 8, paymentStatus: "UNPAID", pickupCodeCiphertext: encryptPickupCode("123456"), pickupCodeVerifiedAt: null, pickupCodeFailedAttempts: 0 }, store: { id: 8, ownerUserId: 55 } }], [], [{ id: 8, ownerUserId: 55 }]];
+    const result = await appRouter.createCaller(context("SELLER")).seller.confirmPickup({ publicId: "ESUT-READY9", code: "123456" });
+    expect(result).toEqual({ success: true });
+    expect(state.updatedTables).toContain(orders);
+    expect(state.insertedTables).toContain(orderStatusHistory);
+  });
+
+  it("rejects an incorrect pickup code without completing the order", async () => {
+    state.selectResults = [[{ verificationStatus: "APPROVED" }], [{ order: { id: 9, publicId: "ESUT-READY9", status: "READY_FOR_PICKUP", buyerUserId: 21, storeId: 8, paymentStatus: "UNPAID", pickupCodeCiphertext: encryptPickupCode("123456"), pickupCodeVerifiedAt: null, pickupCodeFailedAttempts: 0 }, store: { id: 8, ownerUserId: 55 } }]];
+    await expect(appRouter.createCaller(context("SELLER")).seller.confirmPickup({ publicId: "ESUT-READY9", code: "654321" })).rejects.toMatchObject({ code: "BAD_REQUEST" });
+    expect(state.insertedTables).toEqual([]);
   });
 
   it("applies a valid seller-owned batch inside one transaction and records order effects", async () => {

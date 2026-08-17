@@ -243,6 +243,10 @@ export const orders = mysqlTable("orders", {
   feesKobo: int("feesKobo").default(0).notNull(),
   totalKobo: int("totalKobo").notNull(),
   reservationExpiresAt: timestamp("reservationExpiresAt"),
+  pickupCodeCiphertext: text("pickupCodeCiphertext"),
+  pickupCodeIssuedAt: timestamp("pickupCodeIssuedAt"),
+  pickupCodeVerifiedAt: timestamp("pickupCodeVerifiedAt"),
+  pickupCodeFailedAttempts: int("pickupCodeFailedAttempts").default(0).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 }, (table) => [index("orders_buyer_idx").on(table.buyerUserId, table.createdAt), index("orders_store_idx").on(table.storeId, table.createdAt), index("orders_batch_idx").on(table.orderBatchId)]);

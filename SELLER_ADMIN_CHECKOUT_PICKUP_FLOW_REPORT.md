@@ -119,3 +119,12 @@ Batch updates are bounded and transaction-safe. The server validates all selecte
 ## Authoritative Source Files
 
 The current flow is grounded in [`server/routers.ts`](server/routers.ts), [`server/orderLifecycle.ts`](server/orderLifecycle.ts), [`drizzle/schema.ts`](drizzle/schema.ts), [`client/src/pages/OrderPages.tsx`](client/src/pages/OrderPages.tsx), [`client/src/pages/AdminPage.tsx`](client/src/pages/AdminPage.tsx), [`client/src/pages/AdminSuitePages.tsx`](client/src/pages/AdminSuitePages.tsx), and [`client/src/pages/AccountPage.tsx`](client/src/pages/AccountPage.tsx).
+
+
+## Two-Party Pickup Confirmation and Administrator Evidence
+
+The current handoff control adds a two-party confirmation step to the seller completion path. A six-digit code is generated per seller-specific order and stored encrypted. The buyer-only order detail reveals it only when the order is ready for pickup. The seller must collect the code from the buyer at the physical handoff and submit it through the seller-owned order detail mutation.
+
+The server rejects codes for another seller’s order, codes entered before `READY_FOR_PICKUP`, malformed or incorrect codes, replay attempts, and attempts after five failures. A successful match is consumed atomically with the `COMPLETED` transition, cash payment status, inventory commitment, status history, audit log, and participant notifications. This gives administrators a stronger operational trail: completion now indicates seller action plus possession of the buyer-visible handoff code, rather than an unverified seller button alone.
+
+Administrator order transitions continue to respect the shared lifecycle helper. They cannot bypass the pickup-code requirement for completion. If a dispute requires exceptional intervention, the administrator must resolve it through the supported dispute policy; a future administrator-assisted confirmation workflow would need explicit buyer-consent, evidence, and audit requirements before being introduced.
