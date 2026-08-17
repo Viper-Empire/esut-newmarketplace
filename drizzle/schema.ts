@@ -18,6 +18,7 @@ export const storeStatuses = ["PENDING", "ACTIVE", "SUSPENDED", "CLOSED"] as con
 export const listingStatuses = ["DRAFT", "PENDING_REVIEW", "ACTIVE", "RESERVED", "SOLD", "ARCHIVED"] as const;
 export const listingConditions = ["NEW", "LIKE_NEW", "USED_GOOD", "USED_FAIR", "REFURBISHED"] as const;
 export const orderStatuses = ["PENDING", "CONFIRMED", "PROCESSING", "READY_FOR_PICKUP", "COMPLETED", "CANCELLED", "DISPUTED"] as const;
+export const pickupCoordinationStatuses = ["NOT_STARTED", "SELLER_INSTRUCTIONS_SET", "BUYER_ACKNOWLEDGED", "MEETING_AGREED", "BUYER_NO_SHOW", "SELLER_NO_SHOW", "CODE_LOCKED", "ESCALATED", "CLOSED"] as const;
 export const offerStatuses = ["PENDING", "COUNTERED", "ACCEPTED", "REJECTED", "EXPIRED", "CANCELLED"] as const;
 export const reviewStatuses = ["PUBLISHED", "REPORTED", "REMOVED"] as const;
 
@@ -250,6 +251,23 @@ export const orders = mysqlTable("orders", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 }, (table) => [index("orders_buyer_idx").on(table.buyerUserId, table.createdAt), index("orders_store_idx").on(table.storeId, table.createdAt), index("orders_batch_idx").on(table.orderBatchId)]);
+
+export const pickupCoordinations = mysqlTable("pickupCoordinations", {
+  id: int("id").autoincrement().primaryKey(),
+  orderId: int("orderId").notNull().unique(),
+  status: mysqlEnum("status", pickupCoordinationStatuses).default("NOT_STARTED").notNull(),
+  pickupLocation: varchar("pickupLocation", { length: 240 }),
+  pickupInstructions: text("pickupInstructions"),
+  proposedWindowStart: timestamp("proposedWindowStart"),
+  proposedWindowEnd: timestamp("proposedWindowEnd"),
+  buyerAcknowledgedAt: timestamp("buyerAcknowledgedAt"),
+  sellerInstructionsUpdatedAt: timestamp("sellerInstructionsUpdatedAt"),
+  lastContactAt: timestamp("lastContactAt"),
+  exceptionReason: varchar("exceptionReason", { length: 80 }),
+  closedAt: timestamp("closedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => [index("pickup_coordination_status_idx").on(table.status, table.updatedAt)]);
 
 export const orderItems = mysqlTable("orderItems", {
   id: int("id").autoincrement().primaryKey(),
