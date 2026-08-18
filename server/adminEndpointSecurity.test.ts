@@ -17,6 +17,8 @@ describe("administrator endpoint security boundary", () => {
     const caller = appRouter.createCaller(contextFor(null));
     await expect(caller.admin.dashboard()).rejects.toMatchObject({ code: "FORBIDDEN" });
     await expect(caller.admin.auditLogs({ page: 1, limit: 10 })).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(caller.admin.listingVideoEvidenceUrl({ listingId: 1 })).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(caller.admin.reviewListingVideoEvidence({ listingId: 1, approve: true, note: "Unauthorized evidence approval" })).rejects.toMatchObject({ code: "FORBIDDEN" });
     await expect(caller.admin.reversibleActions({ page: 1, limit: 10 })).rejects.toMatchObject({ code: "FORBIDDEN" });
     await expect(caller.admin.undoReversibleAction({ id: 1, note: "Unauthorized recovery attempt" })).rejects.toMatchObject({ code: "FORBIDDEN" });
     await expect(caller.admin.redoReversibleAction({ id: 1, note: "Unauthorized recovery attempt" })).rejects.toMatchObject({ code: "FORBIDDEN" });
@@ -26,6 +28,8 @@ describe("administrator endpoint security boundary", () => {
     const caller = appRouter.createCaller(contextFor(role));
     await expect(caller.admin.dashboard()).rejects.toMatchObject({ code: "FORBIDDEN" });
     await expect(caller.admin.auditLogs({ page: 1, limit: 10 })).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(caller.admin.listingVideoEvidenceUrl({ listingId: 1 })).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(caller.admin.reviewListingVideoEvidence({ listingId: 1, approve: false, note: "Unauthorized evidence review" })).rejects.toMatchObject({ code: "FORBIDDEN" });
     await expect(caller.admin.setUserActive({ id: 902, isActive: false, note: "Security boundary test" })).rejects.toMatchObject({ code: "FORBIDDEN" });
     await expect(caller.admin.reversibleActions({ page: 1, limit: 10 })).rejects.toMatchObject({ code: "FORBIDDEN" });
     await expect(caller.admin.undoReversibleAction({ id: 1, note: "Security boundary test" })).rejects.toMatchObject({ code: "FORBIDDEN" });

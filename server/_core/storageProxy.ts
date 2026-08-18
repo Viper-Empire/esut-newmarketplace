@@ -1,6 +1,9 @@
 import type { Express } from "express";
 import { ENV } from "./env";
 import { sdk } from "./sdk";
+import { eq } from "drizzle-orm";
+import { getDb } from "../db";
+import { listingVideoEvidence, listings, stores } from "../../drizzle/schema";
 
 export function registerStorageProxy(app: Express) {
   app.get("/manus-storage/*", async (req, res) => {
@@ -16,6 +19,21 @@ export function registerStorageProxy(app: Express) {
         if (!user.isActive || !["ADMIN", "SUPER_ADMIN"].includes(user.role)) {
           res.status(403).send("Forbidden");
           return;
+        }
+      } catch {
+        res.status(401).send("Authentication required");
+        return;
+      }
+    }
+
+    if (key.startsWith("listing-video-evidence/")) {
+      try {
+        const db = await getDb();
+        const evidence = db ? (await db.select({ evidence: listingVideoEvidence, listing: listings, store: stores }).from(listingVideoEvidence).innerJoin(listings, eq(listingVideoEvidence.listingId, listings.id)).innerJoin(stores, eq(listings.storeId, stores.id)).where(eq(listingVideoEvidence.storageKey, key)).limit(1))[0] : null;
+        if (!evidence) { res.status(404).send("Not found"); return; }
+        if (evidence.evidence.status !== "APPROVED") {
+          const user = await sdk.authenticateRequest(req);
+          if (!user.isActive || !(["ADMIN", "SUPER_ADMIN"].includes(user.role) || evidence.store.ownerUserId === user.id)) { res.status(403).send("Forbidden"); return; }
         }
       } catch {
         res.status(401).send("Authentication required");

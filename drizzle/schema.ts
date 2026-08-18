@@ -210,6 +210,20 @@ export const listingImages = mysqlTable("listingImages", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 }, (table) => [index("listing_images_idx").on(table.listingId, table.sortOrder)]);
 
+export const listingVideoEvidence = mysqlTable("listingVideoEvidence", {
+  id: int("id").autoincrement().primaryKey(),
+  listingId: int("listingId").notNull().unique(),
+  storageKey: varchar("storageKey", { length: 600 }).notNull(),
+  mimeType: mysqlEnum("mimeType", ["video/mp4", "video/webm"]).notNull(),
+  sizeBytes: int("sizeBytes").notNull(),
+  status: mysqlEnum("status", ["PENDING", "APPROVED", "REJECTED"]).default("PENDING").notNull(),
+  reviewedBy: int("reviewedBy"),
+  reviewedAt: timestamp("reviewedAt"),
+  reviewNote: text("reviewNote"),
+  uploadedAt: timestamp("uploadedAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => [index("listing_video_status_idx").on(table.status, table.uploadedAt)]);
+
 export const inventory = mysqlTable("inventory", {
   id: int("id").autoincrement().primaryKey(),
   listingId: int("listingId").notNull().unique(),
