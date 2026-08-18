@@ -12,6 +12,11 @@ describe("seller product publication boundaries", () => {
     await expect(caller.seller.setProductStatus({ id: 1, status: "ACTIVE" as never })).rejects.toMatchObject({ code: "BAD_REQUEST" });
   });
 
+  it("requires a valid product reference before a seller can submit evidence for administrator review", async () => {
+    const caller = appRouter.createCaller(elevatedContext());
+    await expect(caller.seller.submitProductForReview({ id: 0 })).rejects.toMatchObject({ code: "BAD_REQUEST" });
+  });
+
   it("rejects unsupported video evidence MIME types before storage access", async () => {
     const caller = appRouter.createCaller(elevatedContext());
     await expect(caller.seller.uploadProductVideoEvidence({ listingId: 1, video: { filename: "evidence.exe", mimeType: "application/octet-stream" as never, dataUrl: "data:application/octet-stream;base64,AAAA" } })).rejects.toMatchObject({ code: "BAD_REQUEST" });
