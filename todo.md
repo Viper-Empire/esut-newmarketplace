@@ -242,3 +242,9 @@
 - [x] Add server-authorized audit-log date-range and actor filters with bounded query inputs and safe empty/error states. (Action, actor name/email, from-date, and to-date filters are server-evaluated with bounded pagination.)
 - [x] Add a visual administrator security-alert projection for repeated failed actions and unusual role changes without exposing secrets. (Dashboard derives repeated failed-login alerts and role-change alerts from immutable audit records, with direct investigation link.)
 - [x] Add regression coverage and document the secure administrator login and role-assignment path. (Added `SECURE_ADMIN_LOGIN_GUIDE.md`; TypeScript, 81 Vitest tests, desktop/mobile visual review pass.)
+
+- [x] Recheck live role assignments and inventory every administrator route/procedure, moderator boundary, session gate, and private evidence access point without changing production data. (Live inventory found 5 active CUSTOMER, 5 active SELLER, and 1 active SUPER_ADMIN; no role was changed.)
+- [x] Execute signed-out, ordinary-member, role-tampering, IDOR, inactive-session, storage, and administrator-route authorization tests. (Production-router tests and live no-cookie checks passed; admin dashboard/audit returned 403, private evidence returned 401.)
+- [x] Produce a security verification report with confirmed results, residual operational risks, and any required hardening fixes. (Added `ADMIN_ENDPOINT_SECURITY_VERIFICATION_REPORT.md` and removed production tRPC stack-trace disclosure.)
+
+- [x] Prevent production tRPC error responses from exposing server stack traces or filesystem/module paths while preserving safe error codes and developer diagnostics in logs. (Sanitized tRPC error formatter; live response recheck shows safe FORBIDDEN without stack/path markers.)
