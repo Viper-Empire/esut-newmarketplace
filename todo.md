@@ -248,3 +248,14 @@
 - [x] Produce a security verification report with confirmed results, residual operational risks, and any required hardening fixes. (Added `ADMIN_ENDPOINT_SECURITY_VERIFICATION_REPORT.md` and removed production tRPC stack-trace disclosure.)
 
 - [x] Prevent production tRPC error responses from exposing server stack traces or filesystem/module paths while preserving safe error codes and developer diagnostics in logs. (Sanitized tRPC error formatter; live response recheck shows safe FORBIDDEN without stack/path markers.)
+
+- [x] Inventory and trace every buyer, seller, and administrator dashboard route, visible feature, tRPC contract, role boundary, and cross-role state change. (Results documented in `DASHBOARD_COMMUNICATION_AUDIT_REPORT.md`.)
+- [x] Verify buyer-to-seller-to-administrator communication chains, navigation destinations, query/mutation refresh behavior, and recoverable runtime states. (Source trace, authenticated browser review, request-log diagnosis, protected-boundary review, and live seller queue validation completed.)
+- [x] Repair only confirmed broken, incomplete, or insecure dashboard communication features and add focused regression coverage. (Repaired over-limit dashboard queries, seller action-queue filtering, unsafe bulk completion, seller route feedback, and seller cache synchronization; added pickup-code bulk-completion regression coverage.)
+- [x] Deliver a cross-role dashboard communication audit report, reconcile the checklist, and checkpoint validated fixes.
+
+- [x] Make seller action-queue order links honor the selected status filter and preserve a safe reset path.
+- [x] Remove bulk completion from seller operations because the secure buyer pickup-code handoff requires one-order confirmation.
+- [x] Apply consistent verified-seller route feedback to seller offers, reviews, messages, and settings rather than allowing generic account gates to surface confusing server errors.
+- [x] Invalidate linked seller dashboard, analytics, action-queue, and product/inventory queries after store, catalogue, stock, and order mutations.
+- [x] Align buyer, seller, and administrator dashboard query page limits with the server’s bounded pagination contract so valid pages do not fail input validation.

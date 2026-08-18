@@ -48,13 +48,19 @@ describe("seller order operations", () => {
     await expect(appRouter.createCaller(context("CUSTOMER")).seller.orders({ page: 1, limit: 12 })).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
 
-  it("rejects duplicate selections before a batch mutation can run", async () => {
-    state.selectResults = [[{ verificationStatus: "APPROVED" }]];
-    await expect(appRouter.createCaller(context("SELLER")).seller.bulkTransitionOrders({ publicIds: ["ESUT-0001", "ESUT-0001"], status: "CONFIRMED" })).rejects.toMatchObject({ code: "BAD_REQUEST" });
-    expect(state.updatedTables).toEqual([]);
-  });
+	it("rejects duplicate selections before a batch mutation can run", async () => {
+		state.selectResults = [[{ verificationStatus: "APPROVED" }]];
+		await expect(appRouter.createCaller(context("SELLER")).seller.bulkTransitionOrders({ publicIds: ["ESUT-0001", "ESUT-0001"], status: "CONFIRMED" })).rejects.toMatchObject({ code: "BAD_REQUEST" });
+		expect(state.updatedTables).toEqual([]);
+	});
 
-  it("validates all selected lifecycle transitions before applying a batch", async () => {
+	it("refuses bulk completion because every physical handoff requires an individual buyer code", async () => {
+		state.selectResults = [[{ verificationStatus: "APPROVED" }]];
+		await expect(appRouter.createCaller(context("SELLER")).seller.bulkTransitionOrders({ publicIds: ["ESUT-0001"], status: "COMPLETED" as never })).rejects.toMatchObject({ code: "BAD_REQUEST" });
+		expect(state.updatedTables).toEqual([]);
+	});
+
+	it("validates all selected lifecycle transitions before applying a batch", async () => {
     state.selectResults = [[{ verificationStatus: "APPROVED" }], [row("ESUT-0001", "PENDING"), row("ESUT-0002", "CONFIRMED")]];
     await expect(appRouter.createCaller(context("SELLER")).seller.bulkTransitionOrders({ publicIds: ["ESUT-0001", "ESUT-0002"], status: "CONFIRMED" })).rejects.toMatchObject({ code: "BAD_REQUEST" });
     expect(state.updatedTables).toEqual([]);

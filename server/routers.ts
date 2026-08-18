@@ -26,7 +26,7 @@ const ensureDb = async () => {
 };
 const pager = z.object({ page: z.number().int().min(1).default(1), limit: z.number().int().min(1).max(24).default(12) });
 const sellerOrderFilters = pager.extend({ status: z.enum(orderStatusValues).optional(), search: z.string().trim().max(80).optional(), from: z.coerce.date().optional(), to: z.coerce.date().optional() });
-const sellerBulkStatusInput = z.object({ publicIds: z.array(z.string().min(8).max(40)).min(1).max(25), status: z.enum(["CONFIRMED", "PROCESSING", "READY_FOR_PICKUP", "COMPLETED", "CANCELLED"]), note: z.string().min(3).max(500).optional() });
+const sellerBulkStatusInput = z.object({ publicIds: z.array(z.string().min(8).max(40)).min(1).max(25), status: z.enum(["CONFIRMED", "PROCESSING", "READY_FOR_PICKUP", "CANCELLED"]), note: z.string().min(3).max(500).optional() });
 const getCart = async (userId: number) => {
   const db = await ensureDb();
   const current = await db.select().from(carts).where(eq(carts.userId, userId)).limit(1);
