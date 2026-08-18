@@ -238,3 +238,7 @@
 
 - [x] Add a protected administrator audit-log section with paginated sensitive-action records, actor attribution, target context, timestamps, and safe metadata display. (Added action filtering, bounded pagination, safe actor projection, and metadata redaction.)
 - [x] Add audit-log loading, empty, error, responsive, and authorization regression coverage without exposing secrets or private evidence content. (Protected route reviewed visually; TypeScript and all 81 Vitest tests pass; the UI explicitly excludes passwords, tokens, evidence keys, storage URLs, and secret values.)
+
+- [x] Add server-authorized audit-log date-range and actor filters with bounded query inputs and safe empty/error states. (Action, actor name/email, from-date, and to-date filters are server-evaluated with bounded pagination.)
+- [x] Add a visual administrator security-alert projection for repeated failed actions and unusual role changes without exposing secrets. (Dashboard derives repeated failed-login alerts and role-change alerts from immutable audit records, with direct investigation link.)
+- [x] Add regression coverage and document the secure administrator login and role-assignment path. (Added `SECURE_ADMIN_LOGIN_GUIDE.md`; TypeScript, 81 Vitest tests, desktop/mobile visual review pass.)
