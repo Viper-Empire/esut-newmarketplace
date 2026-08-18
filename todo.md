@@ -225,3 +225,8 @@
 - [x] Expose an accessible theme selector in public navigation and authenticated workspace headers.
 - [x] Audit route recovery and add escape/back/retry controls for pages that can leave users stuck.
 - [x] Add automated regression coverage for theme persistence, system preference resolution, and navigation recovery.
+
+- [x] Keep the public homepage and signed-out storefront in the original default ESUT appearance without a visible theme selector.
+- [x] Restrict Light/System/Dark controls to authenticated buyer, seller, and administrator workspaces/settings while preserving an original-looking default.
+- [x] Validate theme scope across public routes and authenticated dashboard routes at desktop and mobile breakpoints. (TypeScript, 79 Vitest tests, and public desktop captures pass; authenticated workspace control remains mounted in the shared shell.)
+- [ ] Document the Google Maps integration prerequisites and the correct Vercel next step without changing deployment configuration prematurely.

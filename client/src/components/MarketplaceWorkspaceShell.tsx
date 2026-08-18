@@ -1,4 +1,6 @@
 import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
+import { useTheme } from "@/contexts/ThemeContext";
 import { ChevronDown, LogOut, Menu, Store } from "lucide-react";
 import ThemePreferenceSelect from "@/components/ThemePreferenceSelect";
 import type { LucideIcon } from "lucide-react";
@@ -35,6 +37,8 @@ export function MarketplaceWorkspaceShell({
   children,
 }: MarketplaceWorkspaceShellProps) {
   const [location] = useLocation();
+  const { theme } = useTheme();
+  useEffect(() => { const root = document.documentElement; root.classList.toggle("dark", theme === "dark"); root.dataset.theme = theme; }, [theme]);
   const sectionLabel = kind === "seller" ? "Seller portal" : "Buyer account";
   const initial = (userName?.trim().charAt(0) || "E").toUpperCase();
 
