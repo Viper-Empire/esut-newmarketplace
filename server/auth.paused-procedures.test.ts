@@ -125,7 +125,8 @@ describe("paused email-verification authentication procedures", () => {
     mockState.insertResults = [[], []];
     const linkedMarketplaceRecords = { store: { ownerUserId: 52, id: 9 }, order: { buyerUserId: 52, id: 77 } };
     const result = await appRouter.createCaller(context()).auth.register({ firstName: "Seyi", lastName: "Vendor", email: "seller@example.com", phone: "08098765432", accountType: "BUSINESS", password: "CampusPass123!" });
-    expect(result.user).toMatchObject({ id: 52, openId: "legacy-seller-open-id", role: "SELLER", loginMethod: "password" });
+    expect(result.user).toMatchObject({ id: 52, role: "SELLER", loginMethod: "password" });
+    expect(result.user).not.toHaveProperty("openId");
     expect(linkedMarketplaceRecords).toEqual({ store: { ownerUserId: 52, id: 9 }, order: { buyerUserId: 52, id: 77 } });
     expect(mockState.updatedTables).toEqual([users]);
     expect(mockState.updatedTables).not.toContain(stores);

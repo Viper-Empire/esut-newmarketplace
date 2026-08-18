@@ -230,3 +230,8 @@
 - [x] Restrict Light/System/Dark controls to authenticated buyer, seller, and administrator workspaces/settings while preserving an original-looking default.
 - [x] Validate theme scope across public routes and authenticated dashboard routes at desktop and mobile breakpoints. (TypeScript, 79 Vitest tests, and public desktop captures pass; authenticated workspace control remains mounted in the shared shell.)
 - [x] Document the Google Maps integration prerequisites and the correct Vercel next step without changing deployment configuration prematurely. (Added `GOOGLE_MAPS_AND_VERCEL_NEXT_STEPS.md`; the existing `MapView` proxy wrapper is documented and Vercel is not treated as a premature deployment target.)
+
+- [x] Inventory public, authenticated, seller, moderator, and administrator routes/procedures and document intentional versus sensitive access points. (Documented in `SECURITY_ENDPOINT_AND_ADMIN_AUDIT.md`.)
+- [x] Audit administrator authorization, session/cookie protections, IDOR boundaries, sensitive response fields, upload/evidence access, and secret exposure. (Confirmed server-side role gates; hardened inactive-session rejection, client user allowlist, cookie policy, and private evidence storage access.)
+- [x] Implement verified high-priority administrator security hardening without weakening legitimate marketplace workflows. (Applied SDK, cookie, storage-proxy, and response-projection hardening.)
+- [x] Add regression coverage and a security audit handoff covering endpoint exposure, access controls, encryption boundaries, and residual risks. (Added `server/securityHardening.test.ts`; 29 test files and 81 tests pass; delivered `SECURITY_ENDPOINT_AND_ADMIN_AUDIT.md`.)
