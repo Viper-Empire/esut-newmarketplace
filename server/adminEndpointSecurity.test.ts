@@ -39,6 +39,7 @@ describe("administrator endpoint security boundary", () => {
   it("does not treat client-supplied role-like inputs as authorization", async () => {
     const caller = appRouter.createCaller(contextFor("CUSTOMER"));
     await expect(caller.admin.auditLogs({ page: 1, limit: 10, actor: "ADMIN" })).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(caller.admin.listings({ page: 1, limit: 12, status: "PENDING_REVIEW" })).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
 
   it("allows only administrator roles through the production guard", async () => {
