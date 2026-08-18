@@ -11,6 +11,7 @@ const buyerNavigation: WorkspaceNavItem[] = [
   { label: "Overview", href: "/account", icon: LayoutDashboard },
   { label: "My orders", href: "/account/orders", icon: PackageCheck },
   { label: "Saved listings", href: "/account/favorites", icon: Heart },
+  { label: "Product reminders", href: "/account/reminders", icon: Bell },
   { label: "My offers", href: "/account/offers", icon: Tag },
   { label: "Messages", href: "/account/messages", icon: MessageCircle },
   { label: "Notifications", href: "/account/notifications", icon: Bell },

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { TrpcContext } from "./_core/context";
-import { appRouter, listingEvidenceDecisionNotification } from "./routers";
+import { appRouter, listingEvidenceDecisionNotification, publicBuyerDisplayName, reminderTime } from "./routers";
 
 function elevatedContext(): TrpcContext {
   return { user: { id: 41, openId: "seller-publishing-validation", name: "Validation Admin", email: "validation@example.com", loginMethod: "password", role: "ADMIN", isActive: true, createdAt: new Date(), updatedAt: new Date(), lastSignedIn: null }, req: { protocol: "https", headers: {} } as TrpcContext["req"], res: {} as TrpcContext["res"] };
@@ -35,5 +35,19 @@ describe("seller product publication boundaries", () => {
     expect(returned).toEqual({ title: "Product evidence needs attention: Verified campus calculator", message: "Your product was returned to draft. Administrator note: Please show the item serial number clearly.", targetRoute: "/seller/products/24/evidence" });
     expect(published).toEqual({ title: "Product published: Verified campus calculator", message: "Your evidence for “Verified campus calculator” was approved and the listing is now live.", targetRoute: "/seller/products/24/evidence" });
     expect(JSON.stringify(returned)).not.toMatch(/storage|signed|video\/|key/i);
+  });
+
+  it("reduces public reviewer identity to a display-safe first name and initial", () => {
+    expect(publicBuyerDisplayName("John David Okafor")).toBe("John D.");
+    expect(publicBuyerDisplayName("Ada")).toBe("Ada");
+    expect(publicBuyerDisplayName(null)).toBe("Verified buyer");
+  });
+
+  it("derives reminder times on the server and rejects missing or past custom dates", () => {
+    const now = new Date("2026-08-18T12:00:00.000Z");
+    expect(reminderTime({ reminderType: "TOMORROW" }, now).toISOString()).toBe("2026-08-19T12:00:00.000Z");
+    expect(reminderTime({ reminderType: "THREE_DAYS" }, now).toISOString()).toBe("2026-08-21T12:00:00.000Z");
+    expect(() => reminderTime({ reminderType: "CUSTOM" }, now)).toThrow(/Choose a reminder time/);
+    expect(() => reminderTime({ reminderType: "CUSTOM", scheduledFor: new Date("2026-08-18T12:00:30.000Z") }, now)).toThrow(/Choose a reminder time/);
   });
 });

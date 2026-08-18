@@ -109,7 +109,7 @@ describe("buyer experience procedures", () => {
     ];
     const result = await appRouter.createCaller(publicContext()).marketplace.product({ slug: "study-guide" });
     expect(result.reviewSummary).toEqual({ count: 1, averageRating: 4 });
-    expect(result.productReviews[0]).toMatchObject({ review: { rating: 4 }, buyer: { name: "Buyer Test" } });
+    expect(result.productReviews[0]).toMatchObject({ review: { rating: 4 }, buyer: { name: "Buyer T." } });
   });
 
   it("uses a display-safe buyer projection for public store reviews", async () => {
@@ -117,7 +117,7 @@ describe("buyer experience procedures", () => {
     await appRouter.createCaller(publicContext()).marketplace.store({ slug: "campus-books" });
     const reviewFields = state.selectArgs[2] as { review?: Record<string, unknown>; buyer?: Record<string, unknown> };
     expect(Object.keys(reviewFields.buyer ?? {})).toEqual(["name"]);
-    expect(Object.keys(reviewFields.review ?? {})).toEqual(["id", "rating", "comment", "sellerResponse", "createdAt"]);
+    expect(Object.keys(reviewFields.review ?? {})).toEqual(["id", "rating", "title", "comment", "sellerResponse", "createdAt"]);
   });
 
   it("uses display-safe buyer and sender projections in seller queues and participant messages", async () => {

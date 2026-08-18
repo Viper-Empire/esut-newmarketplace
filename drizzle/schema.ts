@@ -21,6 +21,8 @@ export const orderStatuses = ["PENDING", "CONFIRMED", "PROCESSING", "READY_FOR_P
 export const pickupCoordinationStatuses = ["NOT_STARTED", "SELLER_INSTRUCTIONS_SET", "BUYER_ACKNOWLEDGED", "MEETING_AGREED", "BUYER_NO_SHOW", "SELLER_NO_SHOW", "CODE_LOCKED", "ESCALATED", "CLOSED"] as const;
 export const offerStatuses = ["PENDING", "COUNTERED", "ACCEPTED", "REJECTED", "EXPIRED", "CANCELLED"] as const;
 export const reviewStatuses = ["PUBLISHED", "REPORTED", "REMOVED"] as const;
+export const productReminderTypes = ["TOMORROW", "THREE_DAYS", "ONE_WEEK", "CUSTOM"] as const;
+export const productReminderStatuses = ["ACTIVE", "TRIGGERED", "CANCELLED", "UNAVAILABLE"] as const;
 export const reversibleModerationActionTypes = ["USER_ACTIVE", "STORE_STATUS", "LISTING_STATUS", "REPORT_STATUS", "REVIEW_STATUS"] as const;
 
 export const users = mysqlTable("users", {
@@ -260,6 +262,27 @@ export const favorites = mysqlTable("favorites", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 }, (table) => [uniqueIndex("favorite_unique_idx").on(table.userId, table.listingId), index("favorites_listing_idx").on(table.listingId)]);
 
+export const productReminders = mysqlTable("productReminders", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  listingId: int("listingId").notNull(),
+  storeId: int("storeId"),
+  reminderType: mysqlEnum("reminderType", productReminderTypes).notNull(),
+  scheduledFor: timestamp("scheduledFor").notNull(),
+  note: varchar("note", { length: 500 }),
+  status: mysqlEnum("status", productReminderStatuses).default("ACTIVE").notNull(),
+  notificationSentAt: timestamp("notificationSentAt"),
+  triggeredAt: timestamp("triggeredAt"),
+  cancelledAt: timestamp("cancelledAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => [
+  uniqueIndex("product_reminder_user_listing_unique_idx").on(table.userId, table.listingId),
+  index("product_reminder_user_status_schedule_idx").on(table.userId, table.status, table.scheduledFor),
+  index("product_reminder_due_idx").on(table.status, table.scheduledFor),
+  index("product_reminder_listing_idx").on(table.listingId),
+]);
+
 export const carts = mysqlTable("carts", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull().unique(),
@@ -397,6 +420,7 @@ export const reviews = mysqlTable("reviews", {
   storeId: int("storeId").notNull(),
   buyerUserId: int("buyerUserId").notNull(),
   rating: int("rating").notNull(),
+  title: varchar("title", { length: 180 }),
   comment: text("comment"),
   sellerResponse: text("sellerResponse"),
   status: mysqlEnum("status", reviewStatuses).default("PUBLISHED").notNull(),

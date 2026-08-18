@@ -9,6 +9,7 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { registerApiFallback } from "./apiFallback";
 import { serveStatic, setupVite } from "./vite";
+import { registerProductReminderSchedule } from "../productReminderSchedule";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -45,6 +46,7 @@ async function startServer() {
       createContext,
     })
   );
+  registerProductReminderSchedule(app);
   // API routes must never fall through to the SPA HTML response, otherwise clients
   // attempting to parse an API payload receive an opaque `Unexpected token '<'` error.
   registerApiFallback(app);
