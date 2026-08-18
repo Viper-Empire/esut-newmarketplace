@@ -211,3 +211,17 @@
 
 - [x] Add real administrator-visible timestamps to seller timeline events using existing verification, application, review, and store lifecycle records, with explicit unavailable states and no fabricated dates. (Added additive `reviewedAt` fields, recorded them on administrator decisions, cleared them on resubmission, exposed the existing store record, and rendered submitted/review-completed/activation timestamps with unavailable-state copy.)
 - [x] Validate timestamp ownership, formatting, responsive/accessibility behavior, regression coverage, checklist reconciliation, and checkpoint creation. (TypeScript, 77 Vitest tests, 20 Chromium scenarios, additive migration review/application, and authenticated `/sell` preview all pass.)
+
+- [ ] Add durable applicant resubmission history for seller verification and store applications, preserving each submitted attempt, status, review note, review timestamp, and safe ownership linkage without exposing evidence content.
+- [ ] Add administrator actor attribution to review events using authorized administrator identity snapshots or safe joins, with applicant-safe display and administrator audit detail.
+- [ ] Define migration, lifecycle backfill, retention/privacy, accessibility, regression, and browser validation steps for the history and actor-attribution features before implementation approval.
+
+- [x] Audit and unify theme behavior across storefront, buyer workspace, seller workspace, administrator workspace, store/shop pages, auth, checkout, and order flows without breaking ESUT brand contrast or existing workspace navigation. (Shared provider, semantic dark-mode overrides, public header control, workspace control, settings control, and recovery-state review completed.)
+- [x] Add a user-selectable Light/System/Dark preference with persisted account/browser behavior, accessible controls, system-preference synchronization, and safe fallback when theme storage is unavailable. (Completed with localStorage fallback, operating-system change listener, root theme class/data attribute, and accessible selectors.)
+- [x] Audit and fix pages that can strand users: missing escape routes, nested route dead ends, loading loops, stale protected boundaries, missing back/navigation actions, and error states without recovery controls. (Signed-out account gates now offer login, registration, and marketplace escape routes; 404 now offers back, home, and browse routes; existing query retry controls preserved.)
+- [x] Add responsive, keyboard, contrast, route-recovery, and browser regression coverage; reconcile the checklist and checkpoint the theme/navigation improvements. (79 Vitest tests, TypeScript validation, and desktop/mobile visual captures pass.)
+
+- [x] Unify Light/System/Dark theme preference behavior across storefronts, accounts, seller workspace, and administrator views.
+- [x] Expose an accessible theme selector in public navigation and authenticated workspace headers.
+- [x] Audit route recovery and add escape/back/retry controls for pages that can leave users stuck.
+- [x] Add automated regression coverage for theme persistence, system preference resolution, and navigation recovery.
