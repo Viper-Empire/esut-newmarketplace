@@ -1,0 +1,1 @@
+ALTER TABLE `orderStatusHistory` MODIFY COLUMN `actorUserId` int;

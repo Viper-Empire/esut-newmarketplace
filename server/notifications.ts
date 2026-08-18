@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { marketplaceSettings } from "../drizzle/schema";
 import { getDb } from "./db";
 
-export type NotificationProvider = "RESEND" | "SENDGRID" | "SMTP" | "DISABLED";
+export type NotificationProvider = "RESEND" | "DISABLED";
 export type TransactionalEmail = {
   to: string;
   subject: string;
@@ -12,6 +12,7 @@ export type TransactionalEmail = {
 };
 
 type NotificationChannelSettings = { provider: NotificationProvider; orderUpdates: boolean; sellerApplications: boolean; offerUpdates: boolean; reviews: boolean };
+export type TransactionalEmailEvent = "orderUpdates" | "sellerApplications" | "offerUpdates" | "reviews";
 
 export type EmailTemplateKey = "seller_application_approved" | "seller_application_rejected" | "order_created" | "order_status_updated";
 export type ManagedEmailTemplate = { subject: string; body: string };
@@ -22,12 +23,13 @@ const defaultTemplates: Record<EmailTemplateKey, ManagedEmailTemplate> = {
   order_status_updated: { subject: "Your ESUT Marketplace order {{orderId}} was updated", body: "Hello {{name}},\n\nYour order status is now {{orderStatus}}." },
 };
 
-async function configuredProvider(): Promise<NotificationProvider> {
+async function configuredNotificationSettings(): Promise<NotificationChannelSettings> {
   const db = await getDb();
-  if (!db) return ENV.resendApiKey && ENV.resendFromEmail ? "RESEND" : "DISABLED";
+  const fallback: NotificationChannelSettings = { provider: ENV.resendApiKey && ENV.resendFromEmail ? "RESEND" : "DISABLED", orderUpdates: true, sellerApplications: true, offerUpdates: true, reviews: true };
+  if (!db) return fallback;
   const rows = await db.select({ value: marketplaceSettings.value }).from(marketplaceSettings).where(eq(marketplaceSettings.settingKey, "notification_channels")).limit(1);
   const settings = rows[0]?.value as Partial<NotificationChannelSettings> | undefined;
-  return settings?.provider ?? (ENV.resendApiKey && ENV.resendFromEmail ? "RESEND" : "DISABLED");
+  return { ...fallback, ...settings, provider: settings?.provider === "RESEND" ? "RESEND" : settings?.provider === "DISABLED" ? "DISABLED" : fallback.provider };
 }
 
 export async function renderManagedEmailTemplate(key: EmailTemplateKey, values: Record<string, string>): Promise<ManagedEmailTemplate> {
@@ -43,13 +45,11 @@ export async function renderManagedEmailTemplate(key: EmailTemplateKey, values: 
  * Email delivery is intentionally isolated from marketplace workflows. A future provider
  * only needs to implement this contract and be selected in marketplace settings.
  */
-export async function sendTransactionalEmail(email: TransactionalEmail): Promise<{ provider: NotificationProvider; delivered: boolean }> {
-  const provider = await configuredProvider();
+export async function sendTransactionalEmail(email: TransactionalEmail, event?: TransactionalEmailEvent): Promise<{ provider: NotificationProvider; delivered: boolean; suppressed?: boolean }> {
+  const settings = await configuredNotificationSettings();
+  const provider = settings.provider;
+  if (event && !settings[event]) return { provider, delivered: false, suppressed: true };
   if (provider === "DISABLED") return { provider, delivered: false };
-  if (provider === "SENDGRID" || provider === "SMTP") {
-    console.warn(`[Notifications] ${provider} is selected but no adapter has been installed yet.`);
-    return { provider, delivered: false };
-  }
   if (!ENV.resendApiKey || !ENV.resendFromEmail) return { provider, delivered: false };
 
   const response = await fetch("https://api.resend.com/emails", {

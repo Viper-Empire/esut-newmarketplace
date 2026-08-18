@@ -358,7 +358,7 @@ export const orderStatusHistory = mysqlTable("orderStatusHistory", {
   orderId: int("orderId").notNull(),
   oldStatus: mysqlEnum("oldStatus", orderStatuses),
   newStatus: mysqlEnum("newStatus", orderStatuses).notNull(),
-  actorUserId: int("actorUserId").notNull(),
+  actorUserId: int("actorUserId"),
   note: text("note"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });

@@ -1,4 +1,8 @@
 import { Toaster } from "@/components/ui/sonner";
+import { Button } from "@/components/ui/button";
+import PublicAccountActions from "@/components/PublicAccountActions";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import NotFound from "@/pages/NotFound";
 import Home from "@/pages/Home";
 import ProductPage from "@/pages/ProductPage";
@@ -8,6 +12,8 @@ import CheckoutPage from "@/pages/CheckoutPage";
 import SellPage from "@/pages/SellPage";
 import SellerDashboardPage from "@/pages/SellerDashboardPage";
 import AdminPage from "@/pages/AdminPage";
+import AdminVerificationsPage from "@/pages/AdminVerificationsPage";
+import AdminReservationExpiryPage from "@/pages/AdminReservationExpiryPage";
 import AdminRecoveryPage from "@/pages/AdminRecoveryPage";
 import NotificationSettingsPage from "@/pages/NotificationSettingsPage";
 import AuthPage from "@/pages/AuthPage";
@@ -19,12 +25,80 @@ import { AdminAnalyticsPage, AdminAuditLogsPage, AdminCategoriesPage, AdminDispu
 import ModeratorPage from "@/pages/ModeratorPage";
 import StorePage from "@/pages/StorePage";
 import { ForgotPasswordPage, ResetPasswordPage, VerifyEmailPage } from "@/pages/PasswordRecoveryPage";
-import PublicAccountActions from "@/components/PublicAccountActions";
-import { Route, Switch } from "wouter";
-import ErrorBoundary from "./components/ErrorBoundary";
-import { ThemeProvider } from "./contexts/ThemeContext";
-import { Button } from "@/components/ui/button";
-import { Link } from "wouter";
-function NoticePage({ title, copy }: { title: string; copy: string }) { return <main className="page-shell py-20"><p className="eyebrow text-[#00843d]">ESUT MARKETPLACE</p><h1 className="mt-3 text-4xl font-extrabold">{title}</h1><p className="mt-4 max-w-xl text-slate-600">{copy}</p><Link href="/"><Button className="mt-7 bg-[#e31b23]">Return to marketplace</Button></Link></main> }
-function App(){ return <ErrorBoundary><ThemeProvider defaultTheme="system" switchable><a className="skip-link" href="#main-content">Skip to page content</a><Toaster/><PublicAccountActions/><div id="main-content" tabIndex={-1}><Switch><Route path="/" component={Home}/><Route path="/login">{()=> <AuthPage mode="login"/>}</Route><Route path="/register">{()=> <AuthPage mode="register"/>}</Route><Route path="/forgot-password" component={ForgotPasswordPage}/><Route path="/reset-password" component={ResetPasswordPage}/><Route path="/verify-email" component={VerifyEmailPage}/><Route path="/account" component={AccountPage}/><Route path="/account/orders" component={BuyerOrdersPage}/><Route path="/account/orders/:id" component={BuyerOrderDetailPage}/><Route path="/account/favorites" component={BuyerFavoritesPage}/><Route path="/account/reminders" component={BuyerReminderDashboardPage}/><Route path="/account/offers" component={BuyerOffersPage}/><Route path="/account/messages">{()=> <MessagesPage/>}</Route><Route path="/account/messages/:id">{()=> <MessagesPage/>}</Route><Route path="/account/notifications" component={NotificationsPage}/><Route path="/account/reviews" component={BuyerReviewsPage}/><Route path="/account/support" component={AccountSupportPage}/><Route path="/account/verification" component={AccountVerificationPage}/><Route path="/account/profile" component={ProfilePage}/><Route path="/account/settings" component={AccountSettingsPage}/><Route path="/product/:slug" component={ProductPage}/><Route path="/store/:slug" component={StorePage}/><Route path="/cart" component={CartPage}/><Route path="/checkout" component={CheckoutPage}/><Route path="/explore" component={ExplorePage}/><Route path="/sell" component={SellPage}/><Route path="/seller" component={SellerDashboardPage}/><Route path="/seller/store" component={SellerStorePage}/><Route path="/seller/products" component={SellerProductsPage}/><Route path="/seller/products/new">{()=> <SellerProductFormPage/>}</Route><Route path="/seller/products/:id/evidence" component={SellerProductEvidencePage}/><Route path="/seller/products/:id/edit">{()=> <SellerProductFormPage edit/>}</Route><Route path="/seller/inventory" component={SellerInventoryPage}/><Route path="/seller/orders" component={SellerOrdersPage}/><Route path="/seller/orders/:id" component={SellerOrderDetailPage}/><Route path="/seller/offers">{()=> <VerifiedSellerRouteGate><SellerOffersPage/></VerifiedSellerRouteGate>}</Route><Route path="/seller/messages">{()=> <VerifiedSellerRouteGate><MessagesPage seller/></VerifiedSellerRouteGate>}</Route><Route path="/seller/messages/:id">{()=> <VerifiedSellerRouteGate><MessagesPage seller/></VerifiedSellerRouteGate>}</Route><Route path="/seller/reviews">{()=> <VerifiedSellerRouteGate><SellerReviewsPage/></VerifiedSellerRouteGate>}</Route><Route path="/seller/analytics" component={SellerAnalyticsPage}/><Route path="/seller/settings">{()=> <VerifiedSellerRouteGate><SellerSettingsPage/></VerifiedSellerRouteGate>}</Route><Route path="/moderator" component={ModeratorPage}/><Route path="/admin/settings/notifications" component={NotificationSettingsPage}/><Route path="/admin/settings" component={AdminSettingsPage}/><Route path="/admin" component={AdminPage}/><Route path="/admin/recovery" component={AdminRecoveryPage}/><Route path="/admin/analytics" component={AdminAnalyticsPage}/><Route path="/admin/users" component={AdminUsersPage}/><Route path="/admin/users/:id">{()=> <AdminUserDetailPage/>}</Route><Route path="/admin/sellers" component={AdminSellersPage}/><Route path="/admin/stores" component={AdminStoresPage}/><Route path="/admin/listings" component={AdminListingsPage}/><Route path="/admin/categories" component={AdminCategoriesPage}/><Route path="/admin/orders" component={AdminOrdersPage}/><Route path="/admin/orders/:id" component={AdminOrderDetailPage}/><Route path="/admin/offers" component={AdminOffersPage}/><Route path="/admin/verifications" component={AdminPage}/><Route path="/admin/reports" component={AdminReportsPage}/><Route path="/admin/disputes" component={AdminDisputesPage}/><Route path="/admin/reviews" component={AdminReviewsPage}/><Route path="/admin/notifications" component={AdminNotificationsPage}/><Route path="/admin/audit-logs" component={AdminAuditLogsPage}/><Route path="/category/:slug" component={ExplorePage}/><Route component={NotFound}/></Switch></div></ThemeProvider></ErrorBoundary> }
+import { Link, Route, Switch } from "wouter";
+
+function NoticePage({ title, copy }: { title: string; copy: string }) {
+  return <main className="page-shell py-20"><p className="eyebrow text-[#00843d]">ESUT MARKETPLACE</p><h1 className="mt-3 text-4xl font-extrabold">{title}</h1><p className="mt-4 max-w-xl text-slate-600">{copy}</p><Link href="/"><Button className="mt-7 bg-[#e31b23]">Return to marketplace</Button></Link></main>;
+}
+
+function App() {
+  return <ErrorBoundary><ThemeProvider defaultTheme="system" switchable><a className="skip-link" href="#main-content">Skip to page content</a><Toaster/><PublicAccountActions/><div id="main-content" tabIndex={-1}><Switch>
+    <Route path="/" component={Home}/>
+    <Route path="/login">{() => <AuthPage mode="login"/>}</Route>
+    <Route path="/register">{() => <AuthPage mode="register"/>}</Route>
+    <Route path="/forgot-password" component={ForgotPasswordPage}/>
+    <Route path="/reset-password" component={ResetPasswordPage}/>
+    <Route path="/verify-email" component={VerifyEmailPage}/>
+    <Route path="/account" component={AccountPage}/>
+    <Route path="/account/orders" component={BuyerOrdersPage}/>
+    <Route path="/account/orders/:id" component={BuyerOrderDetailPage}/>
+    <Route path="/account/favorites" component={BuyerFavoritesPage}/>
+    <Route path="/account/reminders" component={BuyerReminderDashboardPage}/>
+    <Route path="/account/offers" component={BuyerOffersPage}/>
+    <Route path="/account/messages">{() => <MessagesPage/>}</Route>
+    <Route path="/account/messages/:id">{() => <MessagesPage/>}</Route>
+    <Route path="/account/notifications" component={NotificationsPage}/>
+    <Route path="/account/reviews" component={BuyerReviewsPage}/>
+    <Route path="/account/support" component={AccountSupportPage}/>
+    <Route path="/account/verification" component={AccountVerificationPage}/>
+    <Route path="/account/profile" component={ProfilePage}/>
+    <Route path="/account/settings" component={AccountSettingsPage}/>
+    <Route path="/product/:slug" component={ProductPage}/>
+    <Route path="/store/:slug" component={StorePage}/>
+    <Route path="/cart" component={CartPage}/>
+    <Route path="/checkout" component={CheckoutPage}/>
+    <Route path="/explore" component={ExplorePage}/>
+    <Route path="/sell" component={SellPage}/>
+    <Route path="/seller" component={SellerDashboardPage}/>
+    <Route path="/seller/store" component={SellerStorePage}/>
+    <Route path="/seller/products" component={SellerProductsPage}/>
+    <Route path="/seller/products/new">{() => <SellerProductFormPage/>}</Route>
+    <Route path="/seller/products/:id/evidence" component={SellerProductEvidencePage}/>
+    <Route path="/seller/products/:id/edit">{() => <SellerProductFormPage edit/>}</Route>
+    <Route path="/seller/inventory" component={SellerInventoryPage}/>
+    <Route path="/seller/orders" component={SellerOrdersPage}/>
+    <Route path="/seller/orders/:id" component={SellerOrderDetailPage}/>
+    <Route path="/seller/offers">{() => <VerifiedSellerRouteGate><SellerOffersPage/></VerifiedSellerRouteGate>}</Route>
+    <Route path="/seller/messages">{() => <VerifiedSellerRouteGate><MessagesPage seller/></VerifiedSellerRouteGate>}</Route>
+    <Route path="/seller/messages/:id">{() => <VerifiedSellerRouteGate><MessagesPage seller/></VerifiedSellerRouteGate>}</Route>
+    <Route path="/seller/reviews">{() => <VerifiedSellerRouteGate><SellerReviewsPage/></VerifiedSellerRouteGate>}</Route>
+    <Route path="/seller/analytics" component={SellerAnalyticsPage}/>
+    <Route path="/seller/settings">{() => <VerifiedSellerRouteGate><SellerSettingsPage/></VerifiedSellerRouteGate>}</Route>
+    <Route path="/moderator" component={ModeratorPage}/>
+    <Route path="/admin/settings/notifications" component={NotificationSettingsPage}/>
+    <Route path="/admin/settings" component={AdminSettingsPage}/>
+    <Route path="/admin" component={AdminPage}/>
+    <Route path="/admin/recovery" component={AdminRecoveryPage}/>
+    <Route path="/admin/analytics" component={AdminAnalyticsPage}/>
+    <Route path="/admin/users" component={AdminUsersPage}/>
+    <Route path="/admin/users/:id">{() => <AdminUserDetailPage/>}</Route>
+    <Route path="/admin/sellers" component={AdminSellersPage}/>
+    <Route path="/admin/stores" component={AdminStoresPage}/>
+    <Route path="/admin/listings" component={AdminListingsPage}/>
+    <Route path="/admin/categories" component={AdminCategoriesPage}/>
+    <Route path="/admin/orders" component={AdminOrdersPage}/>
+    <Route path="/admin/orders/:id" component={AdminOrderDetailPage}/>
+    <Route path="/admin/offers" component={AdminOffersPage}/>
+    <Route path="/admin/verifications" component={AdminVerificationsPage}/>
+    <Route path="/admin/reservations" component={AdminReservationExpiryPage}/>
+    <Route path="/admin/reports" component={AdminReportsPage}/>
+    <Route path="/admin/disputes" component={AdminDisputesPage}/>
+    <Route path="/admin/reviews" component={AdminReviewsPage}/>
+    <Route path="/admin/notifications" component={AdminNotificationsPage}/>
+    <Route path="/admin/audit-logs" component={AdminAuditLogsPage}/>
+    <Route path="/category/:slug" component={ExplorePage}/>
+    <Route component={NotFound}/>
+  </Switch></div></ThemeProvider></ErrorBoundary>;
+}
+
 export default App;
