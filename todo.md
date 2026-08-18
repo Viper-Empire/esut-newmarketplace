@@ -235,3 +235,6 @@
 - [x] Audit administrator authorization, session/cookie protections, IDOR boundaries, sensitive response fields, upload/evidence access, and secret exposure. (Confirmed server-side role gates; hardened inactive-session rejection, client user allowlist, cookie policy, and private evidence storage access.)
 - [x] Implement verified high-priority administrator security hardening without weakening legitimate marketplace workflows. (Applied SDK, cookie, storage-proxy, and response-projection hardening.)
 - [x] Add regression coverage and a security audit handoff covering endpoint exposure, access controls, encryption boundaries, and residual risks. (Added `server/securityHardening.test.ts`; 29 test files and 81 tests pass; delivered `SECURITY_ENDPOINT_AND_ADMIN_AUDIT.md`.)
+
+- [x] Add a protected administrator audit-log section with paginated sensitive-action records, actor attribution, target context, timestamps, and safe metadata display. (Added action filtering, bounded pagination, safe actor projection, and metadata redaction.)
+- [x] Add audit-log loading, empty, error, responsive, and authorization regression coverage without exposing secrets or private evidence content. (Protected route reviewed visually; TypeScript and all 81 Vitest tests pass; the UI explicitly excludes passwords, tokens, evidence keys, storage URLs, and secret values.)
