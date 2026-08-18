@@ -21,6 +21,7 @@ export const orderStatuses = ["PENDING", "CONFIRMED", "PROCESSING", "READY_FOR_P
 export const pickupCoordinationStatuses = ["NOT_STARTED", "SELLER_INSTRUCTIONS_SET", "BUYER_ACKNOWLEDGED", "MEETING_AGREED", "BUYER_NO_SHOW", "SELLER_NO_SHOW", "CODE_LOCKED", "ESCALATED", "CLOSED"] as const;
 export const offerStatuses = ["PENDING", "COUNTERED", "ACCEPTED", "REJECTED", "EXPIRED", "CANCELLED"] as const;
 export const reviewStatuses = ["PUBLISHED", "REPORTED", "REMOVED"] as const;
+export const reversibleModerationActionTypes = ["USER_ACTIVE", "STORE_STATUS", "LISTING_STATUS", "REPORT_STATUS", "REVIEW_STATUS"] as const;
 
 export const users = mysqlTable("users", {
   id: int("id").autoincrement().primaryKey(),
@@ -426,6 +427,28 @@ export const auditLogs = mysqlTable("auditLogs", {
   requestId: varchar("requestId", { length: 100 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 }, (table) => [index("audit_target_idx").on(table.targetType, table.targetId), index("audit_actor_idx").on(table.actorUserId, table.createdAt)]);
+
+export const adminReversibleActions = mysqlTable("adminReversibleActions", {
+  id: bigint("id", { mode: "number" }).autoincrement().primaryKey(),
+  actionType: mysqlEnum("actionType", reversibleModerationActionTypes).notNull(),
+  targetType: varchar("targetType", { length: 80 }).notNull(),
+  targetId: varchar("targetId", { length: 80 }).notNull(),
+  actorUserId: int("actorUserId").notNull(),
+  beforeState: json("beforeState").notNull(),
+  afterState: json("afterState").notNull(),
+  status: mysqlEnum("status", ["ACTIVE", "UNDONE", "REDONE", "SUPERSEDED"]).default("ACTIVE").notNull(),
+  revision: int("revision").default(0).notNull(),
+  undoneByUserId: int("undoneByUserId"),
+  undoneAt: timestamp("undoneAt"),
+  redoByUserId: int("redoByUserId"),
+  redoneAt: timestamp("redoneAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => [
+  index("admin_reversible_target_idx").on(table.targetType, table.targetId, table.createdAt),
+  index("admin_reversible_status_idx").on(table.status, table.createdAt),
+  index("admin_reversible_actor_idx").on(table.actorUserId, table.createdAt),
+]);
 
 export const marketplaceSettings = mysqlTable("marketplaceSettings", {
   id: int("id").autoincrement().primaryKey(),
