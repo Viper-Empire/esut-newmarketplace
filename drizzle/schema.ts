@@ -124,6 +124,38 @@ export const verificationRequests = mysqlTable("verificationRequests", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 }, (table) => [index("verification_user_idx").on(table.userId), index("verification_status_idx").on(table.status)]);
 
+export const sellerVerificationAttempts = mysqlTable("sellerVerificationAttempts", {
+  id: int("id").autoincrement().primaryKey(),
+  verificationRequestId: int("verificationRequestId").notNull(),
+  applicantUserId: int("applicantUserId").notNull(),
+  attemptNumber: int("attemptNumber").notNull(),
+  verificationType: mysqlEnum("verificationType", ["INDIVIDUAL_IDENTITY", "BUSINESS_ENTITY"]).notNull(),
+  status: mysqlEnum("status", ["PENDING", "APPROVED", "REJECTED"]).default("PENDING").notNull(),
+  reviewerUserId: int("reviewerUserId"),
+  reviewNote: text("reviewNote"),
+  submittedAt: timestamp("submittedAt").defaultNow().notNull(),
+  reviewedAt: timestamp("reviewedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => [index("seller_verification_attempt_applicant_idx").on(table.applicantUserId, table.submittedAt), index("seller_verification_attempt_request_idx").on(table.verificationRequestId, table.attemptNumber)]);
+
+export const sellerApplicationAttempts = mysqlTable("sellerApplicationAttempts", {
+  id: int("id").autoincrement().primaryKey(),
+  sellerApplicationId: int("sellerApplicationId").notNull(),
+  applicantUserId: int("applicantUserId").notNull(),
+  attemptNumber: int("attemptNumber").notNull(),
+  sellerType: mysqlEnum("sellerType", ["INDIVIDUAL", "BUSINESS"]).notNull(),
+  proposedStoreName: varchar("proposedStoreName", { length: 160 }).notNull(),
+  description: text("description").notNull(),
+  phone: varchar("phone", { length: 32 }).notNull(),
+  location: varchar("location", { length: 180 }).notNull(),
+  status: mysqlEnum("status", ["PENDING", "APPROVED", "REJECTED"]).default("PENDING").notNull(),
+  reviewerUserId: int("reviewerUserId"),
+  reviewNote: text("reviewNote"),
+  submittedAt: timestamp("submittedAt").defaultNow().notNull(),
+  reviewedAt: timestamp("reviewedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => [index("seller_application_attempt_applicant_idx").on(table.applicantUserId, table.submittedAt), index("seller_application_attempt_request_idx").on(table.sellerApplicationId, table.attemptNumber)]);
+
 export const categories = mysqlTable("categories", {
   id: int("id").autoincrement().primaryKey(),
   parentId: int("parentId"),
