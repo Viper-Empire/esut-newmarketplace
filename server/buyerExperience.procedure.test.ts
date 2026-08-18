@@ -114,10 +114,15 @@ describe("buyer experience procedures", () => {
 
   it("uses a display-safe buyer projection for public store reviews", async () => {
     state.selectResults = [[{ id: 1, slug: "campus-books", status: "ACTIVE" }], [], []];
-    await appRouter.createCaller(publicContext()).marketplace.store({ slug: "campus-books" });
+    await appRouter.createCaller(publicContext()).marketplace.store({ slug: "campus-books", reviewSort: "RATING" });
     const reviewFields = state.selectArgs[2] as { review?: Record<string, unknown>; buyer?: Record<string, unknown> };
     expect(Object.keys(reviewFields.buyer ?? {})).toEqual(["name"]);
     expect(Object.keys(reviewFields.review ?? {})).toEqual(["id", "rating", "title", "comment", "sellerResponse", "createdAt"]);
+  });
+
+  it("rejects unsupported public shop review sort values before querying marketplace records", async () => {
+    await expect(appRouter.createCaller(publicContext()).marketplace.store({ slug: "campus-books", reviewSort: "OLDEST" as never })).rejects.toMatchObject({ code: "BAD_REQUEST" });
+    expect(state.selectArgs).toHaveLength(0);
   });
 
   it("uses display-safe buyer and sender projections in seller queues and participant messages", async () => {

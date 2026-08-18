@@ -24,7 +24,7 @@ export type StorefrontListingRow = {
   listing: { id: number; slug: string; title: string; priceKobo: number; compareAtPriceKobo?: number | null; condition: string; location: string };
   store: { name: string; isVerified?: boolean };
   image?: { url: string; altText?: string | null } | null;
-  availability?: { availableUnits: number; status: "IN_STOCK" | "LOW_STOCK" | "AWAITING_STOCK" };
+  availability?: { availableUnits: number; status: "IN_STOCK" | "LOW_STOCK" | "AWAITING_STOCK" | "UNAVAILABLE" };
 };
 
 export function ProductPrice({ priceKobo, compareAtPriceKobo }: { priceKobo: number; compareAtPriceKobo?: number | null }) {
@@ -40,7 +40,7 @@ export function StorefrontEmptyState({ icon, children, className = "" }: { icon?
 }
 
 export function StorefrontProductCard({ row, showActions = true, compact = false }: { row: StorefrontListingRow; showActions?: boolean; compact?: boolean }) {
-  const { listing, store, image, availability } = row; const { isAuthenticated } = useAuth(); const [, go] = useLocation(); const availabilityText = availability?.status === "AWAITING_STOCK" ? "Awaiting stock" : availability?.status === "LOW_STOCK" ? `${availability.availableUnits} left` : availability ? "In stock" : "Check availability"; const awaitingStock = availability?.status === "AWAITING_STOCK";
+  const { listing, store, image, availability } = row; const { isAuthenticated } = useAuth(); const [, go] = useLocation(); const availabilityText = availability?.status === "UNAVAILABLE" ? "Unavailable" : availability?.status === "AWAITING_STOCK" ? "Awaiting stock" : availability?.status === "LOW_STOCK" ? `${availability.availableUnits} left` : availability ? "In stock" : "Check availability"; const awaitingStock = availability?.status === "AWAITING_STOCK" || availability?.status === "UNAVAILABLE";
   const add = trpc.cart.add.useMutation({ onSuccess: () => { toast.success("Added to cart"); go("/cart"); }, onError: error => toast.error(error.message) });
   const save = trpc.favorites.toggle.useMutation({ onSuccess: data => toast.success(data.favorited ? "Saved to favorites" : "Removed from favorites"), onError: () => toast.error("Sign in to save products") });
   const discount = listing.compareAtPriceKobo ? Math.round((1 - listing.priceKobo / listing.compareAtPriceKobo) * 100) : 0;
