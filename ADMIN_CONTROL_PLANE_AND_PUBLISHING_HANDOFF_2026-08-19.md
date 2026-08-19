@@ -130,9 +130,18 @@ The administrator command center now returns and presents real counts for total 
 | Mobile review | Seller catalogue, product moderation, operations summary, and staff provisioning verified at 375px. |
 | Runtime review | Development log tail after the visual pass contained normal connection/debug records and no current compile or browser runtime error. |
 
+## Production Scheduler Activation Record
+
+Following publication, the two existing authenticated callback jobs were activated as project-owned schedules. Their durable task identifiers were stored in `marketplaceSettings`, and matching super-administrator audit records were added. Both callback handlers require the platform cron identity and the corresponding stored task identifier; a public request cannot invoke the worker.
+
+| Job | Interval | First production result | Current verification status |
+|---|---:|---|---|
+| Product reminders | Every 10 minutes | HTTP 200; `scanned: 0`, `triggered: 0`, `unavailable: 0` | Scheduler and idempotent no-work path are verified. A genuine buyer-created due reminder is still required to observe one real notification delivery without seeding data. |
+| Reservation expiry | Every 5 minutes | HTTP 200; `candidateCount: 2`, `expiredCount: 2`, `skippedCount: 0`, `failureCount: 0` | Verified against real overdue reservations. The persisted health record shows no failed order IDs or partial failures. |
+
 ## Remaining Operational Notes
 
-The two intentionally deferred production-only scheduler activations remain unchanged: product-reminder delivery and reservation-expiry processing must be enabled only after the user publishes a checkpoint and deliberately configures their protected schedules. This control-plane work neither publishes the application nor activates those schedules.
+The control-plane and both production schedules are active. The sole pending checklist validation is a real buyer reminder delivery: a signed-in buyer must create a product reminder through the normal marketplace interface, set it to become due, and allow the next ten-minute job to process it. This is intentionally not simulated through direct database insertion, preserving the policy that marketplace data must not be fabricated merely to satisfy a test.
 
 The project preserves the existing legacy evidence review rather than silently changing the state of old `PENDING_REVIEW` listings. If the team decides that all historical pending-evidence listings should be migrated, that should be a separate reviewed data-migration decision rather than an automatic code deployment side effect.
 
