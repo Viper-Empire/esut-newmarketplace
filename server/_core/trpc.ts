@@ -31,6 +31,15 @@ const requireUser = t.middleware(async opts => {
 
 export const protectedProcedure = t.procedure.use(requireUser);
 
+export const operationsProcedure = protectedProcedure.use(
+  t.middleware(async opts => {
+    if (!opts.ctx.user || !["SUPPORT", "MODERATOR", "ADMIN", "SUPER_ADMIN"].includes(opts.ctx.user.role)) {
+      throw new TRPCError({ code: "FORBIDDEN", message: NOT_ADMIN_ERR_MSG });
+    }
+    return opts.next({ ctx: { ...opts.ctx, user: opts.ctx.user } });
+  }),
+);
+
 export const moderatorProcedure = protectedProcedure.use(
   t.middleware(async opts => {
     if (!opts.ctx.user || !["MODERATOR", "ADMIN", "SUPER_ADMIN"].includes(opts.ctx.user.role)) {
@@ -63,5 +72,14 @@ export const adminProcedure = t.procedure.use(
         user: ctx.user,
       },
     });
+  }),
+);
+
+export const superAdminProcedure = protectedProcedure.use(
+  t.middleware(async opts => {
+    if (!opts.ctx.user || opts.ctx.user.role !== "SUPER_ADMIN") {
+      throw new TRPCError({ code: "FORBIDDEN", message: NOT_ADMIN_ERR_MSG });
+    }
+    return opts.next({ ctx: { ...opts.ctx, user: opts.ctx.user } });
   }),
 );

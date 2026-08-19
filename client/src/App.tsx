@@ -22,6 +22,7 @@ import { AdminOrderDetailPage, AdminOrdersPage, BuyerOrderDetailPage, BuyerOrder
 import { SellerAnalyticsPage, SellerInventoryPage, SellerProductEvidencePage, SellerProductFormPage, SellerProductsPage, SellerStorePage } from "@/pages/SellerManagePages";
 import { AccountSettingsPage, AccountSupportPage, AccountVerificationPage, BuyerFavoritesPage, BuyerOffersPage, BuyerReminderDashboardPage, BuyerReviewsPage, MessagesPage, NotificationsPage, ProfilePage, SellerOffersPage, SellerReviewsPage, SellerSettingsPage, VerifiedSellerRouteGate } from "@/pages/AccountFeaturePages";
 import { AdminAnalyticsPage, AdminAuditLogsPage, AdminCategoriesPage, AdminDisputesPage, AdminListingsPage, AdminNotificationsPage, AdminOffersPage, AdminReportsPage, AdminReviewsPage, AdminSellersPage, AdminSettingsPage, AdminStoresPage, AdminUserDetailPage, AdminUsersPage } from "@/pages/AdminSuitePages";
+import { AdminOperationsPage, AdminStaffPage } from "@/pages/AdminControlPlanePages";
 import ModeratorPage from "@/pages/ModeratorPage";
 import StorePage from "@/pages/StorePage";
 import { ForgotPasswordPage, ResetPasswordPage, VerifyEmailPage } from "@/pages/PasswordRecoveryPage";
@@ -75,6 +76,8 @@ function App() {
     <Route path="/seller/analytics" component={SellerAnalyticsPage}/>
     <Route path="/seller/settings">{() => <VerifiedSellerRouteGate><SellerSettingsPage/></VerifiedSellerRouteGate>}</Route>
     <Route path="/moderator" component={ModeratorPage}/>
+    <Route path="/admin/operations" component={AdminOperationsPage}/>
+    <Route path="/admin/staff" component={AdminStaffPage}/>
     <Route path="/admin/settings/notifications" component={NotificationSettingsPage}/>
     <Route path="/admin/settings" component={AdminSettingsPage}/>
     <Route path="/admin" component={AdminPage}/>

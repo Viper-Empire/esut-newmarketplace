@@ -31,11 +31,12 @@ describe("administrator launch analytics", () => {
     const today = new Date();
     state.selectResults = [
       [{ id: 1 }], [{ id: 1 }, { id: 2 }], [{ id: 1 }], [{ id: 1 }], [{ id: 1 }, { id: 2 }, { id: 3 }],
+      [{ id: 99 }], [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }], [{ id: 1 }, { id: 2 }],
       [{ status: "COMPLETED", totalKobo: 180000, createdAt: today }, { status: "READY_FOR_PICKUP", totalKobo: 50000, createdAt: today }],
-      [{ id: 1 }, { id: 2 }, { id: 3 }], [{ id: 1 }, { id: 2 }], [{ stock: { quantity: 2, reservedQuantity: 0 } }, { stock: { quantity: 12, reservedQuantity: 1 } }],
+      [{ id: 1 }], [{ id: 1 }, { id: 2 }, { id: 3 }], [{ id: 1 }, { id: 2 }], [{ stock: { quantity: 2, reservedQuantity: 0 } }, { stock: { quantity: 12, reservedQuantity: 1 } }],
     ];
     const dashboard = await appRouter.createCaller(context("ADMIN")).admin.dashboard();
-    expect(dashboard).toMatchObject({ pendingVerifications: 1, pendingApplications: 2, openReports: 1, activeDisputes: 1, activeListings: 3, recentOrderVolume: 2, completedSalesLast7DaysKobo: 180000, readyForPickupCount: 1, newMemberCount: 3, activeSellerCount: 2, lowStockListingCount: 1 });
+    expect(dashboard).toMatchObject({ totalUserCount: 4, activeBuyerCount: 2, pendingVerifications: 1, pendingApplications: 2, openReports: 1, activeDisputes: 1, activeListings: 3, flaggedListingCount: 1, requiresAttentionCount: 6, orderTodayCount: 1, recentOrderVolume: 2, completedSalesLast7DaysKobo: 180000, readyForPickupCount: 1, newMemberCount: 3, activeSellerCount: 2, lowStockListingCount: 1 });
     expect(dashboard.last7Days).toHaveLength(7);
   });
 

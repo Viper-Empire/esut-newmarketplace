@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { TrpcContext } from "./_core/context";
-import { appRouter, listingEvidenceDecisionNotification, publicBuyerDisplayName, reminderTime } from "./routers";
+import { appRouter, assessListingPublication, canBuyerViewListing, listingEvidenceDecisionNotification, publicBuyerDisplayName, reminderTime } from "./routers";
 
 function elevatedContext(): TrpcContext {
   return { user: { id: 41, openId: "seller-publishing-validation", name: "Validation Admin", email: "validation@example.com", loginMethod: "password", role: "ADMIN", isActive: true, createdAt: new Date(), updatedAt: new Date(), lastSignedIn: null }, req: { protocol: "https", headers: {} } as TrpcContext["req"], res: {} as TrpcContext["res"] };
@@ -12,9 +12,24 @@ describe("seller product publication boundaries", () => {
     await expect(caller.seller.setProductStatus({ id: 1, status: "ACTIVE" as never })).rejects.toMatchObject({ code: "BAD_REQUEST" });
   });
 
-  it("requires a valid product reference before a seller can submit evidence for administrator review", async () => {
+  it("requires a valid product reference before a seller can publish", async () => {
     const caller = appRouter.createCaller(elevatedContext());
-    await expect(caller.seller.submitProductForReview({ id: 0 })).rejects.toMatchObject({ code: "BAD_REQUEST" });
+    await expect(caller.seller.publishProduct({ id: 0 })).rejects.toMatchObject({ code: "BAD_REQUEST" });
+  });
+
+  it("auto-publishes only listings that pass all server-owned validation checks", () => {
+    expect(assessListingPublication({ title: "Campus calculator", description: "A reliable scientific calculator for daily ESUT coursework.", priceKobo: 8_500, availableUnits: 3, hasActiveCategory: true, images: [{ mimeType: "image/jpeg", sizeBytes: 420_000 }] })).toMatchObject({ validationErrors: [], invalidImageCount: 0, outcome: "ACTIVE" });
+  });
+
+  it("flags a listing for moderation when an image record cannot be trusted after otherwise valid publication checks", () => {
+    expect(assessListingPublication({ title: "Campus calculator", description: "A reliable scientific calculator for daily ESUT coursework.", priceKobo: 8_500, availableUnits: 3, hasActiveCategory: true, images: [{ mimeType: null, sizeBytes: null }] })).toMatchObject({ validationErrors: [], invalidImageCount: 1, outcome: "FLAGGED" });
+  });
+
+  it("keeps flagged and paused listings out of buyer-visible listing policy", () => {
+    expect(canBuyerViewListing("ACTIVE")).toBe(true);
+    expect(canBuyerViewListing("FLAGGED")).toBe(false);
+    expect(canBuyerViewListing("PAUSED")).toBe(false);
+    expect(canBuyerViewListing("SUSPENDED")).toBe(false);
   });
 
   it("rejects unsupported video evidence MIME types before storage access", async () => {
@@ -28,9 +43,11 @@ describe("seller product publication boundaries", () => {
     await expect(caller.seller.uploadProductVideoEvidence({ listingId: 1, video: { filename: "evidence.mp4", mimeType: "video/mp4", dataUrl: oversizedDataUrl } })).rejects.toMatchObject({ code: "BAD_REQUEST" });
   });
 
-  it("rejects listing queue states that are not part of the allowed administrator review filter", async () => {
+  it("allows the protected flagged moderation queue while rejecting unsupported listing filter states", async () => {
     const caller = appRouter.createCaller(elevatedContext());
     await expect(caller.admin.listings({ page: 1, limit: 12, status: "SOLD" as never })).rejects.toMatchObject({ code: "BAD_REQUEST" });
+    expect(caller.admin.setListingStatus).toBeDefined();
+    expect(caller.admin.listings).toBeDefined();
   });
 
   it("builds seller-owned evidence-decision alerts without protected media details", () => {

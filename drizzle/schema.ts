@@ -13,9 +13,9 @@ import {
   varchar,
 } from "drizzle-orm/mysql-core";
 
-export const marketplaceRoles = ["CUSTOMER", "SELLER", "MODERATOR", "ADMIN", "SUPER_ADMIN"] as const;
+export const marketplaceRoles = ["CUSTOMER", "SELLER", "SUPPORT", "MODERATOR", "ADMIN", "SUPER_ADMIN"] as const;
 export const storeStatuses = ["PENDING", "ACTIVE", "SUSPENDED", "CLOSED"] as const;
-export const listingStatuses = ["DRAFT", "PENDING_REVIEW", "ACTIVE", "RESERVED", "SOLD", "ARCHIVED"] as const;
+export const listingStatuses = ["DRAFT", "PENDING_VALIDATION", "PENDING_REVIEW", "ACTIVE", "PAUSED", "OUT_OF_STOCK", "FLAGGED", "SUSPENDED", "RESERVED", "SOLD", "ARCHIVED"] as const;
 export const listingConditions = ["NEW", "LIKE_NEW", "USED_GOOD", "USED_FAIR", "REFURBISHED"] as const;
 export const orderStatuses = ["PENDING", "CONFIRMED", "PROCESSING", "READY_FOR_PICKUP", "COMPLETED", "CANCELLED", "DISPUTED"] as const;
 export const pickupCoordinationStatuses = ["NOT_STARTED", "SELLER_INSTRUCTIONS_SET", "BUYER_ACKNOWLEDGED", "MEETING_AGREED", "BUYER_NO_SHOW", "SELLER_NO_SHOW", "CODE_LOCKED", "ESCALATED", "CLOSED"] as const;
@@ -204,6 +204,8 @@ export const listingImages = mysqlTable("listingImages", {
   listingId: int("listingId").notNull(),
   storageKey: varchar("storageKey", { length: 600 }).notNull(),
   url: text("url").notNull(),
+  mimeType: mysqlEnum("mimeType", ["image/jpeg", "image/png", "image/webp"]),
+  sizeBytes: int("sizeBytes"),
   altText: varchar("altText", { length: 280 }),
   width: int("width"),
   height: int("height"),
