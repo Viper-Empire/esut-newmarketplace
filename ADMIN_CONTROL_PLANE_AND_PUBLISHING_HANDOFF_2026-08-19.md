@@ -136,12 +136,14 @@ Following publication, the two existing authenticated callback jobs were activat
 
 | Job | Interval | First production result | Current verification status |
 |---|---:|---|---|
-| Product reminders | Every 10 minutes | HTTP 200; `scanned: 0`, `triggered: 0`, `unavailable: 0` | Scheduler and idempotent no-work path are verified. A genuine buyer-created due reminder is still required to observe one real notification delivery without seeding data. |
+| Product reminders | Every 10 minutes | HTTP 200 zero-work run, followed by HTTP 200 on a real buyer-created due reminder: `scanned: 1`, `triggered: 1`, `unavailable: 0` | Verified. The reminder transitioned to `TRIGGERED` and exactly one owner-scoped in-app `PRODUCT_REMINDER` alert was persisted. |
 | Reservation expiry | Every 5 minutes | HTTP 200; `candidateCount: 2`, `expiredCount: 2`, `skippedCount: 0`, `failureCount: 0` | Verified against real overdue reservations. The persisted health record shows no failed order IDs or partial failures. |
 
-## Remaining Operational Notes
+## Operational Completion Notes
 
-The control-plane and both production schedules are active. The sole pending checklist validation is a real buyer reminder delivery: a signed-in buyer must create a product reminder through the normal marketplace interface, set it to become due, and allow the next ten-minute job to process it. This is intentionally not simulated through direct database insertion, preserving the policy that marketplace data must not be fabricated merely to satisfy a test.
+The control-plane and both production schedules are active and their first real operational paths have been observed. The genuine buyer reminder was created through the normal marketplace user interface rather than direct database insertion. It became due, was processed by the authenticated production callback, transitioned once, and created exactly one owner-scoped in-app alert. The reservation worker separately processed two real overdue reservations with no failures.
+
+The scheduler system remains manageable from the project’s scheduling dashboard, where owners can review history or pause a job. Changes to callback code should always be saved and published before altering the corresponding production schedule.
 
 The project preserves the existing legacy evidence review rather than silently changing the state of old `PENDING_REVIEW` listings. If the team decides that all historical pending-evidence listings should be migrated, that should be a separate reviewed data-migration decision rather than an automatic code deployment side effect.
 
