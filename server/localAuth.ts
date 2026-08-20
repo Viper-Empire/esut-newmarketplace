@@ -5,7 +5,15 @@ const scrypt = promisify(scryptCallback);
 const keyLength = 64;
 
 export function normalizeEmail(email: string) {
-  return email.trim().toLowerCase();
+  return email.normalize("NFKC").trim().toLowerCase();
+}
+
+/** Production mailbox policy: normalized ASCII mailbox syntax, no controls or whitespace. */
+export function isValidMarketplaceEmail(email: string) {
+  const normalized = normalizeEmail(email);
+  return normalized.length <= 320
+    && !/[\u0000-\u001F\u007F\s]/.test(normalized)
+    && /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$/.test(normalized);
 }
 
 /**

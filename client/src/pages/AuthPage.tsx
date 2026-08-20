@@ -12,7 +12,7 @@ import { toast } from "sonner";
 const logo = "/manus-storage/esut-main-logo_0f99c6ab.png";
 type RegistrationIntent = "BUYER" | "INDIVIDUAL_SELLER" | "BUSINESS_VENDOR";
 
-const emailPattern = /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/;
+const emailPattern = /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$/;
 const nigerianPhonePattern = /^(?:0|\+?234)[7-9]\d{9}$/;
 const compactPhone = (value: string) => value.trim().replace(/[\s()-]/g, "");
 

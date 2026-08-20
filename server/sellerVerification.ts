@@ -1,4 +1,7 @@
 import { z } from "zod";
+import { isValidMarketplaceEmail, normalizeEmail } from "./localAuth";
+
+const marketplaceEmailInput = z.string().max(320).transform(normalizeEmail).refine(isValidMarketplaceEmail, { message: "Enter a valid email address." });
 
 export const verificationEvidenceSchema = z.object({
   filename: z.string().trim().min(1).max(120),
@@ -9,7 +12,7 @@ export const verificationEvidenceSchema = z.object({
 export const sellerVerificationInput = z.discriminatedUnion("sellerType", [
   z.object({
     sellerType: z.literal("INDIVIDUAL"),
-    esutEmail: z.string().email().max(320),
+    esutEmail: marketplaceEmailInput,
     registrationNumber: z.string().trim().min(4).max(80),
     evidence: verificationEvidenceSchema,
   }),

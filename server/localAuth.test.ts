@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createOpaqueToken, hashOpaqueToken, hashPassword, isValidNigerianPhone, normalizeEmail, normalizeNigerianPhone, verifyPassword } from "./localAuth";
+import { createOpaqueToken, hashOpaqueToken, hashPassword, isValidMarketplaceEmail, isValidNigerianPhone, normalizeEmail, normalizeNigerianPhone, verifyPassword } from "./localAuth";
 
 describe("local authentication primitives", () => {
   it("normalizes email and verifies only the original password", async () => {
@@ -7,6 +7,12 @@ describe("local authentication primitives", () => {
     expect(normalizeEmail("  Student@ESUT.edu.ng ")).toBe("student@esut.edu.ng");
     expect(await verifyPassword("CampusPass123!", passwordHash)).toBe(true);
     expect(await verifyPassword("wrong-password", passwordHash)).toBe(false);
+  });
+  it("accepts strict normalized mailbox syntax and rejects malformed or control-character email input", () => {
+    expect(isValidMarketplaceEmail("Buyer.Name+shop@Example.COM")).toBe(true);
+    expect(isValidMarketplaceEmail("buyer@example")).toBe(false);
+    expect(isValidMarketplaceEmail("buyer name@example.com")).toBe(false);
+    expect(isValidMarketplaceEmail("buyer@exam\u0000ple.com")).toBe(false);
   });
   it("accepts formatted Nigerian mobile numbers and stores a canonical E.164 representation", () => {
     expect(normalizeNigerianPhone("0911 699 1082")).toBe("+2349116991082");
