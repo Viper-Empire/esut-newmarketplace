@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
-import { and, eq, gte, sql } from "drizzle-orm";
-import { auditLogs, inventory, inventoryReservations, marketplaceEvents, notifications, orders, orderStatusHistory, pickupCoordinations, stores } from "../drizzle/schema";
+import { and, eq, gte, inArray, sql } from "drizzle-orm";
+import { auditLogs, inventory, inventoryReservations, marketplaceEvents, notifications, orders, orderStatusHistory, pickupCoordinations, stores, users } from "../drizzle/schema";
 import { assertAllowedOrderTransition, type OrderStatus } from "./orderLifecycle";
 import { encryptPickupCode, generatePickupCode } from "./pickupCode";
 
@@ -35,4 +35,6 @@ export async function applyOrderTransition(tx: any, order: any, nextStatus: Orde
   await tx.insert(marketplaceEvents).values({ userId: order.buyerUserId, eventType: "ORDER_STATUS_UPDATED", aggregateKey: `order:${order.id}`, targetRoute: `/account/orders/${order.publicId}` });
   if (sellerId && sellerId !== actorUserId) await tx.insert(notifications).values({ userId: sellerId, type: "ORDER_STATUS", title: `Order ${nextStatus.toLowerCase().replaceAll("_", " ")}`, message: `Order ${order.publicId} is now ${nextStatus.toLowerCase().replaceAll("_", " ")}.`, targetRoute: `/seller/orders/${order.publicId}` });
   if (sellerId && sellerId !== actorUserId) await tx.insert(marketplaceEvents).values({ userId: sellerId, eventType: "ORDER_STATUS_UPDATED", aggregateKey: `order:${order.id}`, targetRoute: `/seller/orders/${order.publicId}` });
+  const administrators = await tx.select({ id: users.id }).from(users).where(inArray(users.role, ["ADMIN", "SUPER_ADMIN"]));
+  if (administrators.length) await tx.insert(marketplaceEvents).values(administrators.map((administrator: { id: number }) => ({ userId: administrator.id, eventType: "ORDER_STATUS_UPDATED", aggregateKey: `order:${order.id}`, targetRoute: `/admin/orders/${order.publicId}` })));
 }

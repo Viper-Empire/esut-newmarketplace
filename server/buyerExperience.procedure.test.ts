@@ -116,7 +116,9 @@ describe("buyer experience procedures", () => {
     state.selectResults = [[{ id: 1, slug: "campus-books", status: "ACTIVE" }], [], []];
     await appRouter.createCaller(publicContext()).marketplace.store({ slug: "campus-books", reviewSort: "RATING" });
     const reviewFields = state.selectArgs[2] as { review?: Record<string, unknown>; buyer?: Record<string, unknown> };
-    expect(Object.keys(reviewFields.buyer ?? {})).toEqual(["name"]);
+    expect(Object.keys(reviewFields.buyer ?? {})).toEqual(["name", "avatarUrl", "isAvatarPublic"]);
+    expect(reviewFields.buyer).not.toHaveProperty("email");
+    expect(reviewFields.buyer).not.toHaveProperty("id");
     expect(Object.keys(reviewFields.review ?? {})).toEqual(["id", "rating", "title", "comment", "sellerResponse", "createdAt"]);
   });
 

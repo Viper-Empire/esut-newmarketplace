@@ -1,5 +1,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { useMarketplaceEventRefresh } from "@/hooks/useMarketplaceEventRefresh";
 import PublicAccountActions from "@/components/PublicAccountActions";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { ThemeProvider } from "@/contexts/ThemeContext";
@@ -35,8 +37,14 @@ function NoticePage({ title, copy }: { title: string; copy: string }) {
   return <main className="page-shell py-20"><p className="eyebrow text-[#00843d]">ESUT MARKETPLACE</p><h1 className="mt-3 text-4xl font-extrabold">{title}</h1><p className="mt-4 max-w-xl text-slate-600">{copy}</p><Link href="/"><Button className="mt-7 bg-[#e31b23]">Return to marketplace</Button></Link></main>;
 }
 
+function ActiveWorkspaceEventRefresh() {
+  const { user } = useAuth();
+  useMarketplaceEventRefresh(user?.role);
+  return null;
+}
+
 function App() {
-  return <ErrorBoundary><ThemeProvider defaultTheme="system" switchable><a className="skip-link" href="#main-content">Skip to page content</a><Toaster/><PublicAccountActions/><div id="main-content" tabIndex={-1}><Switch>
+  return <ErrorBoundary><ThemeProvider defaultTheme="system" switchable><a className="skip-link" href="#main-content">Skip to page content</a><Toaster/><ActiveWorkspaceEventRefresh/><PublicAccountActions/><div id="main-content" tabIndex={-1}><Switch>
     <Route path="/" component={Home}/>
     <Route path="/login">{() => <AuthPage mode="login"/>}</Route>
     <Route path="/register">{() => <AuthPage mode="register"/>}</Route>
