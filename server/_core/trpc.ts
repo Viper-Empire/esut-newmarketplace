@@ -4,6 +4,12 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 import type { TrpcContext } from "./context";
 
+const retryAtFromCause = (cause: unknown) => {
+  if (!cause || typeof cause !== "object") return undefined;
+  const retryAt = (cause as { retryAt?: unknown }).retryAt;
+  return typeof retryAt === "string" && Number.isFinite(Date.parse(retryAt)) ? retryAt : undefined;
+};
+
 const t = initTRPC.context<TrpcContext>().create({
   transformer: superjson,
   errorFormatter: ({ shape, error }) => {
@@ -11,7 +17,8 @@ const t = initTRPC.context<TrpcContext>().create({
     const message = error.cause instanceof ZodError
       ? "Please check the information you entered and try again."
       : shape.message;
-    return { ...shape, message, data: safeData };
+    const retryAt = shape.data.code === "TOO_MANY_REQUESTS" ? retryAtFromCause(error.cause) : undefined;
+    return { ...shape, message, data: { ...safeData, ...(retryAt ? { retryAt } : {}) } };
   },
 });
 

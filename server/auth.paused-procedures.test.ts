@@ -103,11 +103,11 @@ describe("paused email-verification authentication procedures", () => {
     await expect(appRouter.createCaller(context()).auth.resetPassword({ token: "h".repeat(24), password: "NewCampusPass123!" })).rejects.toMatchObject({ code: "BAD_REQUEST" });
   });
 
-  it("escalates a fifth failed password attempt into a persisted lockout", async () => {
+  it("escalates a fifth failed password attempt into a persisted lockout with a safe retry timestamp", async () => {
     const passwordHash = await hashPassword("CampusPass123!");
     const existing = { id: 45, openId: "lockout-test", name: "Locked Student", email: "locked@example.com", loginMethod: "password", passwordHash, role: "CUSTOMER", isActive: true, failedLoginCount: 4, lockedUntil: null, createdAt: new Date(), updatedAt: new Date(), lastSignedIn: null };
     mockState.selectResults = [[], [existing]];
-    await expect(appRouter.createCaller(context()).auth.login({ email: "locked@example.com", password: "wrong-password" })).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+    await expect(appRouter.createCaller(context()).auth.login({ email: "locked@example.com", password: "wrong-password" })).rejects.toMatchObject({ code: "TOO_MANY_REQUESTS", cause: { retryAt: expect.any(String) } });
     expect(mockState.updatedTables).toEqual([users]);
   });
 
@@ -115,7 +115,7 @@ describe("paused email-verification authentication procedures", () => {
     const passwordHash = await hashPassword("CampusPass123!");
     const existing = { id: 46, openId: "active-lock", name: "Locked Student", email: "still-locked@example.com", loginMethod: "password", passwordHash, role: "CUSTOMER", isActive: true, failedLoginCount: 5, lockedUntil: new Date(Date.now() + 15 * 60 * 1000), createdAt: new Date(), updatedAt: new Date(), lastSignedIn: null };
     mockState.selectResults = [[], [existing]];
-    await expect(appRouter.createCaller(context()).auth.login({ email: "still-locked@example.com", password: "CampusPass123!" })).rejects.toMatchObject({ code: "TOO_MANY_REQUESTS" });
+    await expect(appRouter.createCaller(context()).auth.login({ email: "still-locked@example.com", password: "CampusPass123!" })).rejects.toMatchObject({ code: "TOO_MANY_REQUESTS", cause: { retryAt: expect.any(String) } });
     expect(mockState.updatedTables).toEqual([]);
   });
 
