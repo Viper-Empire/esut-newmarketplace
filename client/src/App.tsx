@@ -7,31 +7,72 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import NotFound from "@/pages/NotFound";
 import Home from "@/pages/Home";
-import ProductPage from "@/pages/ProductPage";
-import CartPage from "@/pages/CartPage";
-import ExplorePage from "@/pages/ExplorePage";
-import CheckoutPage from "@/pages/CheckoutPage";
-import SellPage from "@/pages/SellPage";
-import SellerDashboardPage from "@/pages/SellerDashboardPage";
-import AdminPage from "@/pages/AdminPage";
-import AdminVerificationsPage from "@/pages/AdminVerificationsPage";
-import AdminReservationExpiryPage from "@/pages/AdminReservationExpiryPage";
-import AdminRecoveryPage from "@/pages/AdminRecoveryPage";
-import NotificationSettingsPage from "@/pages/NotificationSettingsPage";
-import AuthPage from "@/pages/AuthPage";
-import AccountPage from "@/pages/AccountPage";
-import { AdminOrderDetailPage, AdminOrdersPage, BuyerOrderDetailPage, BuyerOrdersPage, SellerOrderDetailPage, SellerOrdersPage } from "@/pages/OrderPages";
-import { SellerAnalyticsPage, SellerInventoryPage, SellerProductEvidencePage, SellerProductFormPage, SellerProductsPage, SellerStorePage } from "@/pages/SellerManagePages";
-import { AccountSettingsPage, AccountSupportPage, AccountVerificationPage, BuyerFavoritesPage, BuyerOffersPage, BuyerReminderDashboardPage, BuyerReviewsPage, MessagesPage, NotificationsPage, ProfilePage, SellerOffersPage, SellerReviewsPage, SellerSettingsPage, VerifiedSellerRouteGate } from "@/pages/AccountFeaturePages";
-import { AdminAnalyticsPage, AdminAuditLogsPage, AdminCategoriesPage, AdminDisputesPage, AdminListingsPage, AdminNotificationsPage, AdminOffersPage, AdminReportsPage, AdminReviewsPage, AdminSellersPage, AdminSettingsPage, AdminStoresPage, AdminUserDetailPage, AdminUsersPage } from "@/pages/AdminSuitePages";
-import { AdminOperationsPage, AdminStaffPage } from "@/pages/AdminControlPlanePages";
-import ModeratorPage from "@/pages/ModeratorPage";
-import StorePage from "@/pages/StorePage";
-import { ForgotPasswordPage, ResetPasswordPage, VerifyEmailPage } from "@/pages/PasswordRecoveryPage";
-import AccountSecurityPage from "@/pages/AccountSecurityPage";
-import AdminSecurityHealthPage from "@/pages/AdminSecurityHealthPage";
-import AccountProfileMediaPage from "@/pages/AccountProfileMediaPage";
 import { Link, Route, Switch } from "wouter";
+import { lazy, Suspense } from "react";
+
+const ProductPage = lazy(() => import("@/pages/ProductPage"));
+const CartPage = lazy(() => import("@/pages/CartPage"));
+const ExplorePage = lazy(() => import("@/pages/ExplorePage"));
+const CheckoutPage = lazy(() => import("@/pages/CheckoutPage"));
+const SellPage = lazy(() => import("@/pages/SellPage"));
+const SellerDashboardPage = lazy(() => import("@/pages/SellerDashboardPage"));
+const AdminPage = lazy(() => import("@/pages/AdminPage"));
+const AdminVerificationsPage = lazy(() => import("@/pages/AdminVerificationsPage"));
+const AdminReservationExpiryPage = lazy(() => import("@/pages/AdminReservationExpiryPage"));
+const AdminRecoveryPage = lazy(() => import("@/pages/AdminRecoveryPage"));
+const NotificationSettingsPage = lazy(() => import("@/pages/NotificationSettingsPage"));
+const AuthPage = lazy(() => import("@/pages/AuthPage"));
+const AccountPage = lazy(() => import("@/pages/AccountPage"));
+const ModeratorPage = lazy(() => import("@/pages/ModeratorPage"));
+const StorePage = lazy(() => import("@/pages/StorePage"));
+const ForgotPasswordPage = lazy(() => import("@/pages/PasswordRecoveryPage").then(module => ({ default: module.ForgotPasswordPage })));
+const ResetPasswordPage = lazy(() => import("@/pages/PasswordRecoveryPage").then(module => ({ default: module.ResetPasswordPage })));
+const VerifyEmailPage = lazy(() => import("@/pages/PasswordRecoveryPage").then(module => ({ default: module.VerifyEmailPage })));
+const AccountSecurityPage = lazy(() => import("@/pages/AccountSecurityPage"));
+const AdminSecurityHealthPage = lazy(() => import("@/pages/AdminSecurityHealthPage"));
+const AccountProfileMediaPage = lazy(() => import("@/pages/AccountProfileMediaPage"));
+const BuyerOrdersPage = lazy(() => import("@/pages/OrderPages").then(module => ({ default: module.BuyerOrdersPage })));
+const BuyerOrderDetailPage = lazy(() => import("@/pages/OrderPages").then(module => ({ default: module.BuyerOrderDetailPage })));
+const SellerOrdersPage = lazy(() => import("@/pages/OrderPages").then(module => ({ default: module.SellerOrdersPage })));
+const SellerOrderDetailPage = lazy(() => import("@/pages/OrderPages").then(module => ({ default: module.SellerOrderDetailPage })));
+const AdminOrdersPage = lazy(() => import("@/pages/OrderPages").then(module => ({ default: module.AdminOrdersPage })));
+const AdminOrderDetailPage = lazy(() => import("@/pages/OrderPages").then(module => ({ default: module.AdminOrderDetailPage })));
+const SellerAnalyticsPage = lazy(() => import("@/pages/SellerManagePages").then(module => ({ default: module.SellerAnalyticsPage })));
+const SellerInventoryPage = lazy(() => import("@/pages/SellerManagePages").then(module => ({ default: module.SellerInventoryPage })));
+const SellerProductEvidencePage = lazy(() => import("@/pages/SellerManagePages").then(module => ({ default: module.SellerProductEvidencePage })));
+const SellerProductFormPage = lazy(() => import("@/pages/SellerManagePages").then(module => ({ default: module.SellerProductFormPage })));
+const SellerProductsPage = lazy(() => import("@/pages/SellerManagePages").then(module => ({ default: module.SellerProductsPage })));
+const SellerStorePage = lazy(() => import("@/pages/SellerManagePages").then(module => ({ default: module.SellerStorePage })));
+const AccountSettingsPage = lazy(() => import("@/pages/AccountFeaturePages").then(module => ({ default: module.AccountSettingsPage })));
+const AccountSupportPage = lazy(() => import("@/pages/AccountFeaturePages").then(module => ({ default: module.AccountSupportPage })));
+const AccountVerificationPage = lazy(() => import("@/pages/AccountFeaturePages").then(module => ({ default: module.AccountVerificationPage })));
+const BuyerFavoritesPage = lazy(() => import("@/pages/AccountFeaturePages").then(module => ({ default: module.BuyerFavoritesPage })));
+const BuyerOffersPage = lazy(() => import("@/pages/AccountFeaturePages").then(module => ({ default: module.BuyerOffersPage })));
+const BuyerReminderDashboardPage = lazy(() => import("@/pages/AccountFeaturePages").then(module => ({ default: module.BuyerReminderDashboardPage })));
+const BuyerReviewsPage = lazy(() => import("@/pages/AccountFeaturePages").then(module => ({ default: module.BuyerReviewsPage })));
+const MessagesPage = lazy(() => import("@/pages/AccountFeaturePages").then(module => ({ default: module.MessagesPage })));
+const NotificationsPage = lazy(() => import("@/pages/AccountFeaturePages").then(module => ({ default: module.NotificationsPage })));
+const ProfilePage = lazy(() => import("@/pages/AccountFeaturePages").then(module => ({ default: module.ProfilePage })));
+const SellerOffersPage = lazy(() => import("@/pages/AccountFeaturePages").then(module => ({ default: module.SellerOffersPage })));
+const SellerReviewsPage = lazy(() => import("@/pages/AccountFeaturePages").then(module => ({ default: module.SellerReviewsPage })));
+const SellerSettingsPage = lazy(() => import("@/pages/AccountFeaturePages").then(module => ({ default: module.SellerSettingsPage })));
+const VerifiedSellerRouteGate = lazy(() => import("@/pages/AccountFeaturePages").then(module => ({ default: module.VerifiedSellerRouteGate })));
+const AdminAnalyticsPage = lazy(() => import("@/pages/AdminSuitePages").then(module => ({ default: module.AdminAnalyticsPage })));
+const AdminAuditLogsPage = lazy(() => import("@/pages/AdminSuitePages").then(module => ({ default: module.AdminAuditLogsPage })));
+const AdminCategoriesPage = lazy(() => import("@/pages/AdminSuitePages").then(module => ({ default: module.AdminCategoriesPage })));
+const AdminDisputesPage = lazy(() => import("@/pages/AdminSuitePages").then(module => ({ default: module.AdminDisputesPage })));
+const AdminListingsPage = lazy(() => import("@/pages/AdminSuitePages").then(module => ({ default: module.AdminListingsPage })));
+const AdminNotificationsPage = lazy(() => import("@/pages/AdminSuitePages").then(module => ({ default: module.AdminNotificationsPage })));
+const AdminOffersPage = lazy(() => import("@/pages/AdminSuitePages").then(module => ({ default: module.AdminOffersPage })));
+const AdminReportsPage = lazy(() => import("@/pages/AdminSuitePages").then(module => ({ default: module.AdminReportsPage })));
+const AdminReviewsPage = lazy(() => import("@/pages/AdminSuitePages").then(module => ({ default: module.AdminReviewsPage })));
+const AdminSellersPage = lazy(() => import("@/pages/AdminSuitePages").then(module => ({ default: module.AdminSellersPage })));
+const AdminSettingsPage = lazy(() => import("@/pages/AdminSuitePages").then(module => ({ default: module.AdminSettingsPage })));
+const AdminStoresPage = lazy(() => import("@/pages/AdminSuitePages").then(module => ({ default: module.AdminStoresPage })));
+const AdminUserDetailPage = lazy(() => import("@/pages/AdminSuitePages").then(module => ({ default: module.AdminUserDetailPage })));
+const AdminUsersPage = lazy(() => import("@/pages/AdminSuitePages").then(module => ({ default: module.AdminUsersPage })));
+const AdminOperationsPage = lazy(() => import("@/pages/AdminControlPlanePages").then(module => ({ default: module.AdminOperationsPage })));
+const AdminStaffPage = lazy(() => import("@/pages/AdminControlPlanePages").then(module => ({ default: module.AdminStaffPage })));
 
 function NoticePage({ title, copy }: { title: string; copy: string }) {
   return <main className="page-shell py-20"><p className="eyebrow text-[#00843d]">ESUT MARKETPLACE</p><h1 className="mt-3 text-4xl font-extrabold">{title}</h1><p className="mt-4 max-w-xl text-slate-600">{copy}</p><Link href="/"><Button className="mt-7 bg-[#e31b23]">Return to marketplace</Button></Link></main>;
@@ -44,7 +85,7 @@ function ActiveWorkspaceEventRefresh() {
 }
 
 function App() {
-  return <ErrorBoundary><ThemeProvider defaultTheme="system" switchable><a className="skip-link" href="#main-content">Skip to page content</a><Toaster/><ActiveWorkspaceEventRefresh/><PublicAccountActions/><div id="main-content" tabIndex={-1}><Switch>
+  return <ErrorBoundary><ThemeProvider defaultTheme="system" switchable><a className="skip-link" href="#main-content">Skip to page content</a><Toaster/><ActiveWorkspaceEventRefresh/><PublicAccountActions/><div id="main-content" tabIndex={-1}><Suspense fallback={<main className="page-shell py-16 text-center text-slate-500" role="status">Loading workspace…</main>}><Switch>
     <Route path="/" component={Home}/>
     <Route path="/login">{() => <AuthPage mode="login"/>}</Route>
     <Route path="/register">{() => <AuthPage mode="register"/>}</Route>
@@ -115,7 +156,7 @@ function App() {
     <Route path="/admin/audit-logs" component={AdminAuditLogsPage}/>
     <Route path="/category/:slug" component={ExplorePage}/>
     <Route component={NotFound}/>
-  </Switch></div></ThemeProvider></ErrorBoundary>;
+  </Switch></Suspense></div></ThemeProvider></ErrorBoundary>;
 }
 
 export default App;

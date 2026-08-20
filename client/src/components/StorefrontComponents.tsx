@@ -1,13 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { ESUT_MARKETPLACE_LOGO_PATH } from "@/lib/brandAssets";
 import { condition, naira } from "@/lib/marketplace";
 import { trpc } from "@/lib/trpc";
-import { BadgeCheck, Bell, Heart, MapPin, Menu, Package, Search, ShoppingCart, UsersRound, X } from "lucide-react";
+import { BadgeCheck, Bell, BookOpen, Heart, House, Laptop, MapPin, Menu, Package, Search, Shirt, ShoppingCart, Smartphone, UtensilsCrossed, UsersRound, Wrench, X } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
 
-export const marketplaceLogoPath = "/manus-storage/esut-marketplace-logo-256_3619a6d3.webp";
+export const marketplaceLogoPath = ESUT_MARKETPLACE_LOGO_PATH;
 const recentSearchesKey = "esut-marketplace-recent-searches";
 
 function readRecentSearches(): string[] {
@@ -23,6 +24,7 @@ function readRecentSearches(): string[] {
 export type StorefrontListingRow = {
   listing: { id: number; slug: string; title: string; priceKobo: number; compareAtPriceKobo?: number | null; condition: string; location: string };
   store: { name: string; isVerified?: boolean };
+  category?: { name: string; slug: string } | null;
   image?: { url: string; altText?: string | null } | null;
   availability?: { availableUnits: number; status: "IN_STOCK" | "LOW_STOCK" | "AWAITING_STOCK" | "UNAVAILABLE" };
 };
@@ -39,6 +41,17 @@ export function StorefrontEmptyState({ icon, children, className = "" }: { icon?
   return <div className={`empty-panel ${className}`}>{icon ?? <Package size={34}/>}<p>{children}</p></div>;
 }
 
+export function listingImageFallbackPresentation(category?: StorefrontListingRow["category"]) {
+  const identity = `${category?.name ?? ""} ${category?.slug ?? ""}`.toLowerCase();
+  return identity.includes("phone") || identity.includes("elect") ? { icon: Smartphone, label: "Campus tech", tone: "from-sky-50 via-cyan-50 to-slate-100 text-sky-800" } : identity.includes("comput") ? { icon: Laptop, label: "Campus computing", tone: "from-indigo-50 via-blue-50 to-slate-100 text-indigo-800" } : identity.includes("book") ? { icon: BookOpen, label: "Campus books", tone: "from-amber-50 via-yellow-50 to-slate-100 text-amber-900" } : identity.includes("fashion") ? { icon: Shirt, label: "Campus fashion", tone: "from-rose-50 via-pink-50 to-slate-100 text-rose-800" } : identity.includes("food") || identity.includes("grocery") ? { icon: UtensilsCrossed, label: "Campus food", tone: "from-orange-50 via-amber-50 to-slate-100 text-orange-900" } : identity.includes("hostel") || identity.includes("home") ? { icon: House, label: "Campus living", tone: "from-emerald-50 via-teal-50 to-slate-100 text-emerald-900" } : identity.includes("service") ? { icon: Wrench, label: "Campus service", tone: "from-violet-50 via-purple-50 to-slate-100 text-violet-900" } : { icon: Package, label: "Campus listing", tone: "from-[#eaf7ef] to-slate-100 text-[#006b32]" };
+}
+
+function ListingImageFallback({ category }: { category?: StorefrontListingRow["category"] }) {
+  const presentation = listingImageFallbackPresentation(category);
+  const Icon = presentation.icon;
+  return <div className={`flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br text-center ${presentation.tone}`}><Icon size={46} strokeWidth={1.35}/><span className="max-w-[11rem] px-3 text-[10px] font-black uppercase tracking-[.1em]">{presentation.label}</span><span className="px-3 text-[10px] font-semibold opacity-75">Seller photo unavailable</span></div>;
+}
+
 function MarketplaceLogo({ className = "" }: { className?: string }) {
   const [failed, setFailed] = useState(false);
   if (failed) return <span aria-label="ESUT Marketplace" className={`flex items-center justify-center rounded-xl bg-[#00843d] font-black text-white ${className}`}>E</span>;
@@ -46,12 +59,12 @@ function MarketplaceLogo({ className = "" }: { className?: string }) {
 }
 
 export function StorefrontProductCard({ row, showActions = true, compact = false }: { row: StorefrontListingRow; showActions?: boolean; compact?: boolean }) {
-  const { listing, store, image, availability } = row; const { isAuthenticated } = useAuth(); const [, go] = useLocation(); const availabilityText = availability?.status === "UNAVAILABLE" ? "Unavailable" : availability?.status === "AWAITING_STOCK" ? "Awaiting stock" : availability?.status === "LOW_STOCK" ? `${availability.availableUnits} left` : availability ? "In stock" : "Check availability"; const awaitingStock = availability?.status === "AWAITING_STOCK" || availability?.status === "UNAVAILABLE";
+  const { listing, store, category, image, availability } = row; const { isAuthenticated } = useAuth(); const [, go] = useLocation(); const availabilityText = availability?.status === "UNAVAILABLE" ? "Unavailable" : availability?.status === "AWAITING_STOCK" ? "Awaiting stock" : availability?.status === "LOW_STOCK" ? `${availability.availableUnits} left` : availability ? "In stock" : "Check availability"; const awaitingStock = availability?.status === "AWAITING_STOCK" || availability?.status === "UNAVAILABLE";
   const [imageFailed, setImageFailed] = useState(false);
   const add = trpc.cart.add.useMutation({ onSuccess: () => { toast.success("Added to cart"); go("/cart"); }, onError: error => toast.error(error.message) });
   const save = trpc.favorites.toggle.useMutation({ onSuccess: data => toast.success(data.favorited ? "Saved to favorites" : "Removed from favorites"), onError: () => toast.error("Sign in to save products") });
   const discount = listing.compareAtPriceKobo ? Math.round((1 - listing.priceKobo / listing.compareAtPriceKobo) * 100) : 0;
-  return <article className="product-card"><Link href={`/product/${listing.slug}`}><div className={`product-visual relative ${compact ? "aspect-[1/.75]" : "aspect-[1/.8]"}`}>{image?.url && !imageFailed ? <img src={image.url} alt={image.altText ?? listing.title} className="h-full w-full object-cover" onError={() => setImageFailed(true)}/> : <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-[#eaf7ef] to-slate-100 text-center text-[#006b32]"><Package size={compact ? 43 : 46} strokeWidth={1.3}/><span className="max-w-[11rem] px-3 text-[10px] font-black uppercase tracking-[.1em]">Seller photo unavailable</span></div>}<span className="absolute left-3 top-3 rounded-md bg-white/95 px-2 py-1 text-[10px] font-extrabold text-[#006b32]">{condition(listing.condition as Parameters<typeof condition>[0])}</span><span className={`absolute right-3 top-3 rounded-md px-2 py-1 text-[10px] font-extrabold ${awaitingStock ? "bg-slate-900/90 text-white" : availability?.status === "LOW_STOCK" ? "bg-[#fff3c4] text-[#7a5700]" : "bg-[#e8f7ee]/95 text-[#006b32]"}`}>{availabilityText}</span>{discount > 0 && <span className="absolute bottom-3 left-3 rounded-md bg-[#e31b23] px-2 py-1 text-[10px] font-extrabold text-white">-{discount}%</span>}</div></Link><div className="p-4"><div className="flex justify-between gap-2"><Link href={`/product/${listing.slug}`}><h3 className="line-clamp-2 font-bold leading-5 text-[#111827] hover:text-[#00843d]">{listing.title}</h3></Link>{showActions && <button type="button" aria-label="Save product" className="shrink-0 text-slate-400 hover:text-[#e31b23]" onClick={() => isAuthenticated ? save.mutate({ listingId: listing.id }) : toast.error("Sign in to save products")}><Heart size={18}/></button>}</div><div className="mt-3"><ProductPrice priceKobo={listing.priceKobo} compareAtPriceKobo={listing.compareAtPriceKobo}/></div><p className="mt-2"><TrustBadge verified={store.isVerified ?? true}/> <span className="ml-1 text-xs text-slate-500">{store.name}</span></p><p className="mt-1 flex items-center gap-1 text-xs text-slate-500"><MapPin size={13}/>{listing.location}</p>{showActions && <Button className="mt-4 w-full bg-[#e31b23] hover:bg-[#c9161d] disabled:bg-slate-300" size="sm" disabled={awaitingStock || add.isPending} onClick={() => isAuthenticated ? add.mutate({ listingId: listing.id, quantity: 1 }) : toast.error("Sign in to add products")}>{awaitingStock ? "Awaiting restock" : "Add to cart"}</Button>}</div></article>;
+  return <article className="product-card"><Link href={`/product/${listing.slug}`}><div className={`product-visual relative ${compact ? "aspect-[1/.75]" : "aspect-[1/.8]"}`}>{image?.url && !imageFailed ? <img src={image.url} alt={image.altText ?? listing.title} className="h-full w-full object-cover" onError={() => setImageFailed(true)}/> : <ListingImageFallback category={category}/>}<span className="absolute left-3 top-3 rounded-md bg-white/95 px-2 py-1 text-[10px] font-extrabold text-[#006b32]">{condition(listing.condition as Parameters<typeof condition>[0])}</span><span className={`absolute right-3 top-3 rounded-md px-2 py-1 text-[10px] font-extrabold ${awaitingStock ? "bg-slate-900/90 text-white" : availability?.status === "LOW_STOCK" ? "bg-[#fff3c4] text-[#7a5700]" : "bg-[#e8f7ee]/95 text-[#006b32]"}`}>{availabilityText}</span>{discount > 0 && <span className="absolute bottom-3 left-3 rounded-md bg-[#e31b23] px-2 py-1 text-[10px] font-extrabold text-white">-{discount}%</span>}</div></Link><div className="p-4"><div className="flex justify-between gap-2"><Link href={`/product/${listing.slug}`}><h3 className="line-clamp-2 font-bold leading-5 text-[#111827] hover:text-[#00843d]">{listing.title}</h3></Link>{showActions && <button type="button" aria-label="Save product" className="shrink-0 text-slate-400 hover:text-[#e31b23]" onClick={() => isAuthenticated ? save.mutate({ listingId: listing.id }) : toast.error("Sign in to save products")}><Heart size={18}/></button>}</div><div className="mt-3"><ProductPrice priceKobo={listing.priceKobo} compareAtPriceKobo={listing.compareAtPriceKobo}/></div><p className="mt-2"><TrustBadge verified={store.isVerified ?? true}/> <span className="ml-1 text-xs text-slate-500">{store.name}</span></p><p className="mt-1 flex items-center gap-1 text-xs text-slate-500"><MapPin size={13}/>{listing.location}</p>{showActions && <Button className="mt-4 w-full bg-[#e31b23] hover:bg-[#c9161d] disabled:bg-slate-300" size="sm" disabled={awaitingStock || add.isPending} onClick={() => isAuthenticated ? add.mutate({ listingId: listing.id, quantity: 1 }) : toast.error("Sign in to add products")}>{awaitingStock ? "Awaiting restock" : "Add to cart"}</Button>}</div></article>;
 }
 
 export function StorefrontHeader({ categories }: { categories: { id: number; name: string; slug: string }[] }) {

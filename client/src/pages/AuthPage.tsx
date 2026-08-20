@@ -2,6 +2,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ESUT_MARKETPLACE_LOGO_PATH } from "@/lib/brandAssets";
 import { formatRetryCountdown, retryAtFromError, secondsUntilRetry } from "@/lib/lockoutCountdown";
 import { trpc } from "@/lib/trpc";
 import { ArrowLeft, Building2, Eye, EyeOff, LockKeyhole, Mail, ShieldCheck, ShoppingBag, UserRound } from "lucide-react";
@@ -9,7 +10,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
 
-const logo = "/manus-storage/esut-main-logo_0f99c6ab.png";
+const logo = ESUT_MARKETPLACE_LOGO_PATH;
 type RegistrationIntent = "BUYER" | "INDIVIDUAL_SELLER" | "BUSINESS_VENDOR";
 
 const emailPattern = /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$/;

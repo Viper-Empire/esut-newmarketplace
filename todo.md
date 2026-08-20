@@ -338,11 +338,11 @@
 - [ ] Deploy ESUT Marketplace through a staged, reversible Vercel migration using a temporary vercel.app URL, without custom-domain cutover until post-deployment validation is complete.
 - [x] Conduct a focused pre-deployment audit of broken links, missing assets, UI/UX defects, runtime health, and performance bottlenecks; deliver a prioritized repair register before making fixes. (Completed in `PRE_DEPLOYMENT_AUDIT_2026-08-20.md`; confirmed repair work remains explicitly pending below.)
 - [ ] Resolve verified ESUT sending-domain readiness and validate ordinary-recipient account, recovery, order, and security email delivery before external hosting cutover.
-- [ ] Split large route bundles and defer heavy buyer, seller, moderator, and administrator modules to reduce the 1.70 MB initial JavaScript asset.
-- [ ] Replace remaining legacy 6.1 MB logo references in account-entry and password-recovery pages with the optimized managed ESUT Marketplace asset.
-- [ ] Require a real primary product photo for new listing publication, guide existing sellers to add images, and replace repeated generic missing-photo cards with category-aware honest fallbacks.
-- [ ] Add structured category-aware product attributes and improve product-detail specification scanability without replacing seller-authored descriptions.
-- [ ] Replace remaining administrator browser-prompt note flows with accessible structured audit-note dialogs.
+- [x] Split large route bundles and defer heavy buyer, seller, moderator, and administrator modules to reduce the 1.70 MB initial JavaScript asset. (Completed with route-level lazy loading and deterministic vendor chunks; the entry application asset is now 118.86 KB / 17.78 KB gzip, with shared runtime assets split below the 500 KB warning threshold.)
+- [x] Replace remaining legacy 6.1 MB logo references in account-entry and password-recovery pages with the optimized managed ESUT Marketplace asset. (Completed with shared brand asset constants across storefront, login, registration, and recovery pages; focused regression and TypeScript checks passed.)
+- [x] Require a real primary product photo for new listing publication, guide existing sellers to add images, and replace repeated generic missing-photo cards with category-aware honest fallbacks. (Publication already enforces a real image; seller guidance now explains the gate and public cards render category-aware, explicitly labelled fallbacks from server-projected category metadata.)
+- [x] Add structured category-aware product attributes and improve product-detail specification scanability without replacing seller-authored descriptions. (Recognised labelled details now render as accessible specification cards while unrecognised seller text remains intact.)
+- [x] Replace remaining administrator browser-prompt note flows with accessible structured audit-note dialogs. (Completed for user access, store, listing/evidence, report, dispute, and review actions; source regression confirms no browser-native prompts remain.)
 - [ ] Strengthen mobile marketplace identity and distinguish discovery shelves with restrained editorial visual treatment.
 - [ ] Add pre-cutover production monitoring for runtime errors, core web vitals, upload failure rate, asset failures, and security-relevant operational alerts.
 

@@ -162,10 +162,10 @@ export const appRouter = router({
       const active = and(eq(listings.status, "ACTIVE"), eq(stores.status, "ACTIVE"));
       const [categoryRows, listingRows, storeRows] = await Promise.all([
         db.select().from(categories).where(eq(categories.isActive, true)).orderBy(asc(categories.sortOrder)).limit(12),
-        db.select({ listing: listings, store: stores, image: listingImages, inventory }).from(listings).innerJoin(stores, eq(listings.storeId, stores.id)).leftJoin(listingImages, and(eq(listingImages.listingId, listings.id), eq(listingImages.isPrimary, true))).leftJoin(inventory, eq(inventory.listingId, listings.id)).where(active).orderBy(desc(listings.publishedAt)).limit(24),
+        db.select({ listing: listings, store: stores, category: categories, image: listingImages, inventory }).from(listings).innerJoin(stores, eq(listings.storeId, stores.id)).innerJoin(categories, eq(listings.categoryId, categories.id)).leftJoin(listingImages, and(eq(listingImages.listingId, listings.id), eq(listingImages.isPrimary, true))).leftJoin(inventory, eq(inventory.listingId, listings.id)).where(active).orderBy(desc(listings.publishedAt)).limit(24),
         db.select().from(stores).where(and(eq(stores.status, "ACTIVE"), eq(stores.isVerified, true))).limit(6),
       ]);
-      const catalogRow = () => db.select({ listing: listings, store: stores, image: listingImages, inventory }).from(listings).innerJoin(stores, eq(listings.storeId, stores.id)).leftJoin(listingImages, and(eq(listingImages.listingId, listings.id), eq(listingImages.isPrimary, true))).leftJoin(inventory, eq(inventory.listingId, listings.id));
+      const catalogRow = () => db.select({ listing: listings, store: stores, category: categories, image: listingImages, inventory }).from(listings).innerJoin(stores, eq(listings.storeId, stores.id)).innerJoin(categories, eq(listings.categoryId, categories.id)).leftJoin(listingImages, and(eq(listingImages.listingId, listings.id), eq(listingImages.isPrimary, true))).leftJoin(inventory, eq(inventory.listingId, listings.id));
       const campusCategoryIds = categoryRows.filter(category => /phone|book|comput|electronics/i.test(`${category.name} ${category.slug}`)).map(category => category.id);
       const serviceCategoryIds = categoryRows.filter(category => /service/i.test(`${category.name} ${category.slug}`)).map(category => category.id);
       const [todayDeals, trending, campusPicks, services, completedOrders] = await Promise.all([
@@ -193,7 +193,7 @@ export const appRouter = router({
       if (input.max !== undefined) where.push(lte(listings.priceKobo, input.max));
       if (input.condition) where.push(eq(listings.condition, input.condition));
       const ordering = input.sort === "price_asc" ? asc(listings.priceKobo) : input.sort === "price_desc" ? desc(listings.priceKobo) : input.sort === "popular" ? desc(listings.viewCount) : desc(listings.publishedAt);
-      const rows = await db.select({ listing: listings, store: stores, image: listingImages, inventory }).from(listings).innerJoin(stores, eq(listings.storeId, stores.id)).leftJoin(listingImages, and(eq(listingImages.listingId, listings.id), eq(listingImages.isPrimary, true))).leftJoin(inventory, eq(inventory.listingId, listings.id)).where(and(...where, input.verified ? eq(stores.isVerified, true) : undefined)).orderBy(ordering).limit(input.limit).offset((input.page - 1) * input.limit);
+      const rows = await db.select({ listing: listings, store: stores, category: categories, image: listingImages, inventory }).from(listings).innerJoin(stores, eq(listings.storeId, stores.id)).innerJoin(categories, eq(listings.categoryId, categories.id)).leftJoin(listingImages, and(eq(listingImages.listingId, listings.id), eq(listingImages.isPrimary, true))).leftJoin(inventory, eq(inventory.listingId, listings.id)).where(and(...where, input.verified ? eq(stores.isVerified, true) : undefined)).orderBy(ordering).limit(input.limit).offset((input.page - 1) * input.limit);
       return { items: rows.map(withListingAvailability), page: input.page, hasMore: rows.length === input.limit };
     }),
     suggestions: publicProcedure.input(z.object({ q: z.string().trim().min(2).max(120) })).query(async ({ input }) => {
