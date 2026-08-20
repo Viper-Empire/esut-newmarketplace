@@ -13,6 +13,7 @@ export type TransactionalEmail = {
 
 type NotificationChannelSettings = { provider: NotificationProvider; orderUpdates: boolean; sellerApplications: boolean; offerUpdates: boolean; reviews: boolean };
 export type TransactionalEmailEvent = "orderUpdates" | "sellerApplications" | "offerUpdates" | "reviews";
+export type SecurityAlertSettings = { enabled: boolean; recipientEmail: string | null; notifyLockedAccount: boolean };
 
 export type EmailTemplateKey = "seller_application_approved" | "seller_application_rejected" | "order_created" | "order_status_updated";
 export type ManagedEmailTemplate = { subject: string; body: string };
@@ -39,6 +40,14 @@ export async function renderManagedEmailTemplate(key: EmailTemplateKey, values: 
   const template = templates?.[key] ?? defaultTemplates[key];
   const interpolate = (value: string) => value.replace(/{{(name|storeName|dashboardUrl|orderId|total|orderStatus)}}/g, (_match, variable) => values[variable] ?? "");
   return { subject: interpolate(template.subject), body: interpolate(template.body) };
+}
+
+export async function getSecurityAlertSettings(): Promise<SecurityAlertSettings> {
+  const db = await getDb();
+  if (!db) return { enabled: false, recipientEmail: null, notifyLockedAccount: true };
+  const rows = await db.select({ value: marketplaceSettings.value }).from(marketplaceSettings).where(eq(marketplaceSettings.settingKey, "security_alert_settings")).limit(1);
+  const value = rows[0]?.value as Partial<SecurityAlertSettings> | undefined;
+  return { enabled: value?.enabled === true, recipientEmail: typeof value?.recipientEmail === "string" ? value.recipientEmail : null, notifyLockedAccount: value?.notifyLockedAccount !== false };
 }
 
 /**
@@ -72,6 +81,15 @@ export async function sendTransactionalEmail(email: TransactionalEmail, event?: 
     return { provider, delivered: false };
   }
   return { provider, delivered: true };
+}
+
+export async function sendAccountLockoutAlert({ accountEmail, accountName }: { accountEmail: string | null; accountName: string | null }) {
+  const settings = await getSecurityAlertSettings();
+  const safeTime = new Date().toLocaleString("en-NG");
+  const deliveries: Array<{ provider: NotificationProvider; delivered: boolean; suppressed?: boolean }> = [];
+  if (settings.notifyLockedAccount && accountEmail) deliveries.push(await sendTransactionalEmail({ to: accountEmail, subject: "Your ESUT Marketplace account is temporarily protected", text: `Hello ${accountName || "Marketplace member"},\n\nWe temporarily protected your account after repeated unsuccessful sign-in attempts on ${safeTime}. Please wait before trying again, then use your correct password or the password recovery page if needed.\n\nFor your safety, this message does not include device, IP address, password, or session information.` }));
+  if (settings.enabled && settings.recipientEmail && settings.recipientEmail !== accountEmail) deliveries.push(await sendTransactionalEmail({ to: settings.recipientEmail, subject: "ESUT Marketplace security alert", text: `A marketplace account was temporarily locked after repeated unsuccessful sign-in attempts at ${safeTime}. Review the protected audit trail for authorized follow-up. This message intentionally excludes account, device, IP, password, and token details.` }));
+  return deliveries;
 }
 
 const escapeHtml = (value: string) => value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");

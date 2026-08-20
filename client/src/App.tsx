@@ -26,6 +26,9 @@ import { AdminOperationsPage, AdminStaffPage } from "@/pages/AdminControlPlanePa
 import ModeratorPage from "@/pages/ModeratorPage";
 import StorePage from "@/pages/StorePage";
 import { ForgotPasswordPage, ResetPasswordPage, VerifyEmailPage } from "@/pages/PasswordRecoveryPage";
+import AccountSecurityPage from "@/pages/AccountSecurityPage";
+import AdminSecurityHealthPage from "@/pages/AdminSecurityHealthPage";
+import AccountProfileMediaPage from "@/pages/AccountProfileMediaPage";
 import { Link, Route, Switch } from "wouter";
 
 function NoticePage({ title, copy }: { title: string; copy: string }) {
@@ -53,6 +56,8 @@ function App() {
     <Route path="/account/support" component={AccountSupportPage}/>
     <Route path="/account/verification" component={AccountVerificationPage}/>
     <Route path="/account/profile" component={ProfilePage}/>
+    <Route path="/account/profile-photo" component={AccountProfileMediaPage}/>
+    <Route path="/account/security" component={AccountSecurityPage}/>
     <Route path="/account/settings" component={AccountSettingsPage}/>
     <Route path="/product/:slug" component={ProductPage}/>
     <Route path="/store/:slug" component={StorePage}/>
@@ -77,6 +82,7 @@ function App() {
     <Route path="/seller/settings">{() => <VerifiedSellerRouteGate><SellerSettingsPage/></VerifiedSellerRouteGate>}</Route>
     <Route path="/moderator" component={ModeratorPage}/>
     <Route path="/admin/operations" component={AdminOperationsPage}/>
+    <Route path="/admin/security" component={AdminSecurityHealthPage}/>
     <Route path="/admin/staff" component={AdminStaffPage}/>
     <Route path="/admin/settings/notifications" component={NotificationSettingsPage}/>
     <Route path="/admin/settings" component={AdminSettingsPage}/>

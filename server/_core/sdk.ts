@@ -6,6 +6,7 @@ import type { Request } from "express";
 import { SignJWT, jwtVerify } from "jose";
 import type { User } from "../../drizzle/schema";
 import * as db from "../db";
+import { createTrackedSession, getActiveTrackedSession } from "../sessionSecurity";
 import { ENV } from "./env";
 import type {
   ExchangeTokenRequest,
@@ -22,6 +23,7 @@ export type SessionPayload = {
   openId: string;
   appId: string;
   name: string;
+  sid?: string;
 };
 
 const EXCHANGE_TOKEN_PATH = `/webdev.v1.WebDevAuthPublicService/ExchangeToken`;
@@ -165,15 +167,20 @@ class SDKServer {
    */
   async createSessionToken(
     openId: string,
-    options: { expiresInMs?: number; name?: string } = {}
+    options: { expiresInMs?: number; name?: string; request?: Pick<Request, "headers" | "ip"> } = {}
   ): Promise<string> {
+    const expiresInMs = options.expiresInMs ?? ONE_YEAR_MS;
+    const user = await db.getUserByOpenId(openId);
+    const request = options.request ?? ({ headers: {}, ip: undefined } as Pick<Request, "headers" | "ip">);
+    const tracked = user ? await createTrackedSession({ userId: user.id, request, expiresInMs }) : null;
     return this.signSession(
       {
         openId,
         appId: ENV.appId,
         name: options.name || "",
+        sid: tracked?.sessionId,
       },
-      options
+      { expiresInMs }
     );
   }
 
@@ -190,6 +197,7 @@ class SDKServer {
       openId: payload.openId,
       appId: payload.appId,
       name: payload.name,
+      ...(payload.sid ? { sid: payload.sid } : {}),
     })
       .setProtectedHeader({ alg: "HS256", typ: "JWT" })
       .setExpirationTime(expirationSeconds)
@@ -198,7 +206,7 @@ class SDKServer {
 
   async verifySession(
     cookieValue: string | undefined | null
-  ): Promise<{ openId: string; appId: string; name: string } | null> {
+  ): Promise<{ openId: string; appId: string; name: string; sid?: string } | null> {
     if (!cookieValue) {
       console.warn("[Auth] Missing session cookie");
       return null;
@@ -209,7 +217,7 @@ class SDKServer {
       const { payload } = await jwtVerify(cookieValue, secretKey, {
         algorithms: ["HS256"],
       });
-      const { openId, appId, name } = payload as Record<string, unknown>;
+      const { openId, appId, name, sid } = payload as Record<string, unknown>;
 
       if (
         !isNonEmptyString(openId) ||
@@ -224,6 +232,7 @@ class SDKServer {
         openId,
         appId,
         name,
+        sid: isNonEmptyString(sid) ? sid : undefined,
       };
     } catch (error) {
       console.warn("[Auth] Session verification failed", String(error));
@@ -315,12 +324,20 @@ class SDKServer {
       throw ForbiddenError("Account is inactive");
     }
 
+    if (!session.sid) {
+      throw ForbiddenError("Session renewal is required");
+    }
+    const activeSession = await getActiveTrackedSession({ userId: user.id, sessionId: session.sid });
+    if (!activeSession) {
+      throw ForbiddenError("Session is no longer active");
+    }
+
     await db.upsertUser({
       openId: user.openId,
       lastSignedIn: signedInAt,
     });
 
-    return user;
+    return { ...user, sessionId: session.sid };
   }
 }
 
@@ -330,6 +347,7 @@ const CRON_OPEN_ID_PREFIX = "cron_";
 export type AuthenticatedUser = User & {
   taskUid?: string;
   isCron?: boolean;
+  sessionId?: string;
 };
 
 function buildCronUser(

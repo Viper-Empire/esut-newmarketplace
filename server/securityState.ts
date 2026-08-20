@@ -13,6 +13,7 @@ let connection: RespRedisClient | null = null;
 let unavailableUntil = 0;
 let lastDegradationLogAt = 0;
 let lastFailure = "";
+let lastSuccessfulHealthCheckAt: Date | null = null;
 
 const limitScript = `
   local lockTtl = redis.call('TTL', KEYS[2])
@@ -196,3 +197,21 @@ export async function clearSecurityLimit({ scope, identifier }: { scope: string;
 }
 
 export const securityStateStatus = () => ({ configured: Boolean(process.env.REDIS_URL), degraded: Boolean(process.env.REDIS_URL) && Date.now() < unavailableUntil, failureClass: lastFailure || null });
+
+export async function securityStateHealth() {
+  if (!process.env.REDIS_URL) return { configured: false, reachable: false, throttlingAvailable: false, latencyMs: null, lastSuccessfulAt: lastSuccessfulHealthCheckAt, failureClass: null };
+  const startedAt = Date.now();
+  const redis = await getClient();
+  if (!redis) return { configured: true, reachable: false, throttlingAvailable: false, latencyMs: null, lastSuccessfulAt: lastSuccessfulHealthCheckAt, failureClass: lastFailure || "CONNECTION_UNAVAILABLE" };
+  try {
+    const result = await redis.command(["PING"]);
+    if (result !== "PONG") throw new Error("Redis health result was malformed.");
+    const latencyMs = Math.min(2_500, Math.max(0, Date.now() - startedAt));
+    lastSuccessfulHealthCheckAt = new Date();
+    lastFailure = "";
+    return { configured: true, reachable: true, throttlingAvailable: true, latencyMs, lastSuccessfulAt: lastSuccessfulHealthCheckAt, failureClass: null };
+  } catch (error) {
+    connection?.close(); connection = null; unavailableUntil = Date.now() + 60_000; logDegradation(error);
+    return { configured: true, reachable: false, throttlingAvailable: false, latencyMs: null, lastSuccessfulAt: lastSuccessfulHealthCheckAt, failureClass: lastFailure || "CONNECTION_UNAVAILABLE" };
+  }
+}

@@ -24,6 +24,8 @@ export const reviewStatuses = ["PUBLISHED", "REPORTED", "REMOVED"] as const;
 export const productReminderTypes = ["TOMORROW", "THREE_DAYS", "ONE_WEEK", "CUSTOM"] as const;
 export const productReminderStatuses = ["ACTIVE", "TRIGGERED", "CANCELLED", "UNAVAILABLE"] as const;
 export const reversibleModerationActionTypes = ["USER_ACTIVE", "STORE_STATUS", "LISTING_STATUS", "REPORT_STATUS", "REVIEW_STATUS"] as const;
+export const authSessionStatuses = ["ACTIVE", "REVOKED", "EXPIRED"] as const;
+export const accountSecurityEventTypes = ["LOGIN_SUCCEEDED", "LOGIN_FAILED", "ACCOUNT_LOCKED", "SESSION_REVOKED", "SESSIONS_REVOKED", "PASSWORD_CHANGED", "SUSPICIOUS_ACTIVITY", "SECURITY_ALERT_SENT"] as const;
 
 export const users = mysqlTable("users", {
   id: int("id").autoincrement().primaryKey(),
@@ -61,12 +63,44 @@ export const authRateLimits = mysqlTable("authRateLimits", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
+export const authSessions = mysqlTable("authSessions", {
+  id: bigint("id", { mode: "number" }).autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  sessionHash: varchar("sessionHash", { length: 64 }).notNull().unique(),
+  deviceLabel: varchar("deviceLabel", { length: 160 }).notNull(),
+  browserFamily: varchar("browserFamily", { length: 80 }),
+  osFamily: varchar("osFamily", { length: 80 }),
+  ipFingerprint: varchar("ipFingerprint", { length: 64 }),
+  status: mysqlEnum("status", authSessionStatuses).default("ACTIVE").notNull(),
+  expiresAt: timestamp("expiresAt").notNull(),
+  lastActiveAt: timestamp("lastActiveAt").defaultNow().notNull(),
+  revokedAt: timestamp("revokedAt"),
+  revokeReason: varchar("revokeReason", { length: 120 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => [index("auth_sessions_user_status_idx").on(table.userId, table.status, table.lastActiveAt), index("auth_sessions_expiry_idx").on(table.status, table.expiresAt)]);
+
+export const accountSecurityEvents = mysqlTable("accountSecurityEvents", {
+  id: bigint("id", { mode: "number" }).autoincrement().primaryKey(),
+  userId: int("userId"),
+  authSessionId: bigint("authSessionId", { mode: "number" }),
+  eventType: mysqlEnum("eventType", accountSecurityEventTypes).notNull(),
+  deviceLabel: varchar("deviceLabel", { length: 160 }),
+  ipFingerprint: varchar("ipFingerprint", { length: 64 }),
+  metadata: json("metadata"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => [index("account_security_events_user_idx").on(table.userId, table.createdAt), index("account_security_events_type_idx").on(table.eventType, table.createdAt)]);
+
 export const profiles = mysqlTable("profiles", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull().unique(),
   phone: varchar("phone", { length: 32 }),
   location: varchar("location", { length: 180 }),
   avatarUrl: text("avatarUrl"),
+  avatarStorageKey: varchar("avatarStorageKey", { length: 600 }),
+  avatarMimeType: mysqlEnum("avatarMimeType", ["image/jpeg", "image/png", "image/webp"]),
+  avatarSizeBytes: int("avatarSizeBytes"),
+  isAvatarPublic: boolean("isAvatarPublic").default(false).notNull(),
   bio: text("bio"),
   accountType: mysqlEnum("accountType", ["INDIVIDUAL", "BUSINESS"]).default("INDIVIDUAL").notNull(),
   verificationStatus: mysqlEnum("verificationStatus", ["UNVERIFIED", "PENDING", "APPROVED", "REJECTED"]).default("UNVERIFIED").notNull(),
@@ -102,6 +136,7 @@ export const stores = mysqlTable("stores", {
   location: varchar("location", { length: 180 }).notNull(),
   contactPhone: varchar("contactPhone", { length: 32 }),
   socialLinks: json("socialLinks"),
+  storefrontConfig: json("storefrontConfig"),
   status: mysqlEnum("status", storeStatuses).default("PENDING").notNull(),
   isVerified: boolean("isVerified").default(false).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -415,6 +450,15 @@ export const notifications = mysqlTable("notifications", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 }, (table) => [index("notifications_user_idx").on(table.userId, table.isRead, table.createdAt)]);
 
+export const marketplaceEvents = mysqlTable("marketplaceEvents", {
+  id: bigint("id", { mode: "number" }).autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  eventType: varchar("eventType", { length: 80 }).notNull(),
+  aggregateKey: varchar("aggregateKey", { length: 160 }).notNull(),
+  targetRoute: varchar("targetRoute", { length: 400 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => [index("marketplace_events_user_idx").on(table.userId, table.createdAt), index("marketplace_events_aggregate_idx").on(table.userId, table.aggregateKey, table.createdAt)]);
+
 export const reviews = mysqlTable("reviews", {
   id: int("id").autoincrement().primaryKey(),
   orderId: int("orderId").notNull(),
@@ -429,6 +473,18 @@ export const reviews = mysqlTable("reviews", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 }, (table) => [uniqueIndex("review_order_listing_unique_idx").on(table.orderId, table.listingId), index("reviews_store_idx").on(table.storeId, table.status)]);
+
+export const reviewMedia = mysqlTable("reviewMedia", {
+  id: int("id").autoincrement().primaryKey(),
+  reviewId: int("reviewId").notNull(),
+  uploaderUserId: int("uploaderUserId").notNull(),
+  storageKey: varchar("storageKey", { length: 600 }).notNull(),
+  mimeType: mysqlEnum("mimeType", ["image/jpeg", "image/png", "image/webp"]).notNull(),
+  sizeBytes: int("sizeBytes").notNull(),
+  width: int("width"),
+  height: int("height"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => [index("review_media_review_idx").on(table.reviewId)]);
 
 export const reports = mysqlTable("reports", {
   id: int("id").autoincrement().primaryKey(),
@@ -456,6 +512,30 @@ export const disputes = mysqlTable("disputes", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
+
+export const caseEvidence = mysqlTable("caseEvidence", {
+  id: int("id").autoincrement().primaryKey(),
+  disputeId: int("disputeId"),
+  reportId: int("reportId"),
+  submittedByUserId: int("submittedByUserId").notNull(),
+  storageKey: varchar("storageKey", { length: 600 }).notNull(),
+  mimeType: mysqlEnum("mimeType", ["image/jpeg", "image/png", "image/webp", "video/mp4", "video/webm"]).notNull(),
+  sizeBytes: int("sizeBytes").notNull(),
+  width: int("width"),
+  height: int("height"),
+  visibility: mysqlEnum("visibility", ["CASE_PARTICIPANTS", "MODERATION_ONLY"]).default("MODERATION_ONLY").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => [index("case_evidence_dispute_idx").on(table.disputeId), index("case_evidence_report_idx").on(table.reportId), index("case_evidence_submitter_idx").on(table.submittedByUserId, table.createdAt)]);
+
+export const caseActivity = mysqlTable("caseActivity", {
+  id: bigint("id", { mode: "number" }).autoincrement().primaryKey(),
+  disputeId: int("disputeId"),
+  reportId: int("reportId"),
+  actorUserId: int("actorUserId"),
+  action: varchar("action", { length: 100 }).notNull(),
+  metadata: json("metadata"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => [index("case_activity_dispute_idx").on(table.disputeId, table.createdAt), index("case_activity_report_idx").on(table.reportId, table.createdAt)]);
 
 export const auditLogs = mysqlTable("auditLogs", {
   id: bigint("id", { mode: "number" }).autoincrement().primaryKey(),
