@@ -1,0 +1,253 @@
+{
+  "registeredRoutes": [
+    "/",
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/reset-password",
+    "/verify-email",
+    "/account",
+    "/account/orders",
+    "/account/orders/:id",
+    "/account/favorites",
+    "/account/reminders",
+    "/account/offers",
+    "/account/messages",
+    "/account/messages/:id",
+    "/account/notifications",
+    "/account/reviews",
+    "/account/support",
+    "/account/verification",
+    "/account/profile",
+    "/account/profile-photo",
+    "/account/security",
+    "/account/settings",
+    "/product/:slug",
+    "/store/:slug",
+    "/cart",
+    "/checkout",
+    "/explore",
+    "/sell",
+    "/seller",
+    "/seller/store",
+    "/seller/products",
+    "/seller/products/new",
+    "/seller/products/:id/evidence",
+    "/seller/products/:id/edit",
+    "/seller/inventory",
+    "/seller/orders",
+    "/seller/orders/:id",
+    "/seller/offers",
+    "/seller/messages",
+    "/seller/messages/:id",
+    "/seller/reviews",
+    "/seller/analytics",
+    "/seller/settings",
+    "/moderator",
+    "/admin/operations",
+    "/admin/security",
+    "/admin/staff",
+    "/admin/settings/notifications",
+    "/admin/settings",
+    "/admin",
+    "/admin/recovery",
+    "/admin/analytics",
+    "/admin/users",
+    "/admin/users/:id",
+    "/admin/sellers",
+    "/admin/stores",
+    "/admin/listings",
+    "/admin/categories",
+    "/admin/orders",
+    "/admin/orders/:id",
+    "/admin/offers",
+    "/admin/verifications",
+    "/admin/reservations",
+    "/admin/reports",
+    "/admin/disputes",
+    "/admin/reviews",
+    "/admin/notifications",
+    "/admin/audit-logs",
+    "/category/:slug"
+  ],
+  "literalLinks": [
+    {
+      "target": "/",
+      "file": "pages/ComponentShowcase.tsx"
+    },
+    {
+      "target": "/login",
+      "file": "pages/StorePage.tsx"
+    },
+    {
+      "target": "/register",
+      "file": "pages/SellPage.tsx"
+    },
+    {
+      "target": "/account/favorites",
+      "file": "pages/AccountPage.tsx"
+    },
+    {
+      "target": "/account/notifications",
+      "file": "pages/AccountPage.tsx"
+    },
+    {
+      "target": "/cart",
+      "file": "pages/CheckoutPage.tsx"
+    },
+    {
+      "target": "/sell",
+      "file": "pages/SellerManagePages.tsx"
+    },
+    {
+      "target": "/explore",
+      "file": "pages/StorePage.tsx"
+    },
+    {
+      "target": "/account/orders",
+      "file": "pages/OrderPages.tsx"
+    },
+    {
+      "target": "/account/verification",
+      "file": "components/StorefrontComponents.tsx"
+    },
+    {
+      "target": "/account",
+      "file": "pages/PasswordRecoveryPage.tsx"
+    },
+    {
+      "target": "/account/reminders",
+      "file": "pages/AccountFeaturePages.tsx"
+    },
+    {
+      "target": "/account/profile",
+      "file": "pages/AccountProfileMediaPage.tsx"
+    },
+    {
+      "target": "/account/support",
+      "file": "pages/AccountFeaturePages.tsx"
+    },
+    {
+      "target": "/seller/orders",
+      "file": "pages/SellerDashboardPage.tsx"
+    },
+    {
+      "target": "/seller/messages",
+      "file": "pages/SellerDashboardPage.tsx"
+    },
+    {
+      "target": "/seller/reviews",
+      "file": "pages/AccountFeaturePages.tsx"
+    },
+    {
+      "target": "/account/settings",
+      "file": "pages/AccountSecurityPage.tsx"
+    },
+    {
+      "target": "/account/messages",
+      "file": "pages/AccountPage.tsx"
+    },
+    {
+      "target": "/seller",
+      "file": "pages/OrderPages.tsx"
+    },
+    {
+      "target": "/admin/listings",
+      "file": "pages/AdminPage.tsx"
+    },
+    {
+      "target": "/admin/users",
+      "file": "pages/AdminSuitePages.tsx"
+    },
+    {
+      "target": "/admin/orders",
+      "file": "pages/OrderPages.tsx"
+    },
+    {
+      "target": "/admin/stores",
+      "file": "pages/AdminPage.tsx"
+    },
+    {
+      "target": "/admin/audit-logs",
+      "file": "pages/AdminPage.tsx"
+    },
+    {
+      "target": "/admin/reports",
+      "file": "pages/AdminSuitePages.tsx"
+    },
+    {
+      "target": "/admin/disputes",
+      "file": "pages/AdminSuitePages.tsx"
+    },
+    {
+      "target": "/admin",
+      "file": "pages/AdminVerificationsPage.tsx"
+    },
+    {
+      "target": "/admin/settings/notifications",
+      "file": "pages/AdminSuitePages.tsx"
+    },
+    {
+      "target": "/admin/categories",
+      "file": "pages/AdminSuitePages.tsx"
+    },
+    {
+      "target": "/admin/verifications",
+      "file": "pages/AdminSuitePages.tsx"
+    },
+    {
+      "target": "/forgot-password",
+      "file": "pages/AuthPage.tsx"
+    },
+    {
+      "target": "/checkout",
+      "file": "pages/CartPage.tsx"
+    },
+    {
+      "target": "/components",
+      "file": "pages/ComponentShowcase.tsx"
+    },
+    {
+      "target": "/account/reviews",
+      "file": "pages/OrderPages.tsx"
+    },
+    {
+      "target": "/seller/orders?status=READY_FOR_PICKUP",
+      "file": "pages/SellerDashboardPage.tsx"
+    },
+    {
+      "target": "/seller/inventory",
+      "file": "pages/SellerDashboardPage.tsx"
+    },
+    {
+      "target": "/seller/analytics",
+      "file": "pages/SellerDashboardPage.tsx"
+    },
+    {
+      "target": "/seller/products/new",
+      "file": "pages/SellerManagePages.tsx"
+    },
+    {
+      "target": "/seller/offers",
+      "file": "pages/SellerDashboardPage.tsx"
+    },
+    {
+      "target": "/seller/store",
+      "file": "pages/SellerDashboardPage.tsx"
+    },
+    {
+      "target": "/seller/products",
+      "file": "pages/SellerManagePages.tsx"
+    }
+  ],
+  "unresolvedLiteralLinks": [
+    {
+      "target": "/components",
+      "file": "pages/ComponentShowcase.tsx"
+    },
+    {
+      "target": "/seller/orders?status=READY_FOR_PICKUP",
+      "file": "pages/SellerDashboardPage.tsx"
+    }
+  ]
+}

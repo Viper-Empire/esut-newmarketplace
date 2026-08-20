@@ -335,6 +335,16 @@
 - [x] Write and deliver a comprehensive ESUT Marketplace website report covering product operations, architecture, implemented features, security, testing, deployment, operating boundaries, and recommendations. (Completed in `ESUT_MARKETPLACE_FULL_WEBSITE_REPORT_2026-08-20.md`.)
 - [x] Diagnose and fix unreliable public image and ESUT logo rendering, including broken asset delivery and resilient visual fallbacks. (Replaced the 6.1 MB header/footer PNG with a 24 KB managed WebP logo, added an inline branded fallback, added labelled listing-photo failure/absence states, and validated the fix.)
 - [x] Add automatic high-quality seller product-photo optimization that preserves aspect ratio and product detail while reducing delivery weight. (Implemented browser-side high-quality WebP optimization for oversized seller images, with 1920 px maximum edge, no cropping, 0.92 quality, preservation of already-efficient images, existing server validation, and focused regression coverage.)
+- [ ] Deploy ESUT Marketplace through a staged, reversible Vercel migration using a temporary vercel.app URL, without custom-domain cutover until post-deployment validation is complete.
+- [x] Conduct a focused pre-deployment audit of broken links, missing assets, UI/UX defects, runtime health, and performance bottlenecks; deliver a prioritized repair register before making fixes. (Completed in `PRE_DEPLOYMENT_AUDIT_2026-08-20.md`; confirmed repair work remains explicitly pending below.)
+- [ ] Resolve verified ESUT sending-domain readiness and validate ordinary-recipient account, recovery, order, and security email delivery before external hosting cutover.
+- [ ] Split large route bundles and defer heavy buyer, seller, moderator, and administrator modules to reduce the 1.70 MB initial JavaScript asset.
+- [ ] Replace remaining legacy 6.1 MB logo references in account-entry and password-recovery pages with the optimized managed ESUT Marketplace asset.
+- [ ] Require a real primary product photo for new listing publication, guide existing sellers to add images, and replace repeated generic missing-photo cards with category-aware honest fallbacks.
+- [ ] Add structured category-aware product attributes and improve product-detail specification scanability without replacing seller-authored descriptions.
+- [ ] Replace remaining administrator browser-prompt note flows with accessible structured audit-note dialogs.
+- [ ] Strengthen mobile marketplace identity and distinguish discovery shelves with restrained editorial visual treatment.
+- [ ] Add pre-cutover production monitoring for runtime errors, core web vitals, upload failure rate, asset failures, and security-relevant operational alerts.
 
 - [x] Additive milestone: created and applied migrations 0016/0017 for server-tracked sessions, privacy-minimized account security events, validated avatar/storefront metadata, private evidence/history, review media, and durable event records without modifying existing marketplace rows.
 - [x] Additive milestone: issued tracked opaque-session JWT claims, enforce active server-side session records, provide current/other-device security visibility and revocation endpoints, and verify privacy-safe device/IP fingerprint behavior.
