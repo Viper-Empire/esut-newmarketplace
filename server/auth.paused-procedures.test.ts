@@ -41,8 +41,9 @@ describe("paused email-verification authentication procedures", () => {
     const created = { id: 31, openId: "local_test", name: "Ada Student", email: "ada@example.com", loginMethod: "password", passwordHash: "hidden", role: "CUSTOMER", isActive: true, failedLoginCount: 0, lockedUntil: null, createdAt: new Date(), updatedAt: new Date(), lastSignedIn: null };
     mockState.selectResults = [[], [], [created]];
     mockState.insertResults = [[], [{ insertId: 31 }], []];
-    const result = await appRouter.createCaller(context()).auth.register({ firstName: "Ada", lastName: "Student", email: "ada@example.com", phone: "08012345678", accountType: "INDIVIDUAL", password: "CampusPass123!" });
+    const result = await appRouter.createCaller(context()).auth.register({ firstName: "Ada", lastName: "Student", email: "ada@example.com", phone: "0801 234 5678", accountType: "INDIVIDUAL", password: "CampusPass123!" });
     expect(result).toMatchObject({ requiresEmailVerification: false, verificationSent: false });
+    expect(mockState.insertValues.find(entry => entry.table === profiles)?.value).toMatchObject({ phone: "+2348012345678" });
   });
 
   it("exposes unavailable password-recovery email before a user starts a reset request", async () => {
@@ -151,8 +152,8 @@ describe("paused email-verification authentication procedures", () => {
 
   it("strips attempted role changes from a profile update", async () => {
     const user = { id: 88, openId: "profile-owner", name: "Profile Owner", email: "profile@example.com", loginMethod: "password", role: "CUSTOMER" as const, isActive: true, createdAt: new Date(), updatedAt: new Date(), lastSignedIn: null };
-    await appRouter.createCaller({ ...context(), user }).profile.update({ phone: "08000000000", location: "ESUT", role: "ADMIN" } as any);
-    expect(mockState.insertValues[0]).toMatchObject({ table: profiles, value: { userId: 88, phone: "08000000000", location: "ESUT" } });
+    await appRouter.createCaller({ ...context(), user }).profile.update({ phone: "0800 000 0000", location: "ESUT", role: "ADMIN" } as any);
+    expect(mockState.insertValues[0]).toMatchObject({ table: profiles, value: { userId: 88, phone: "+2348000000000", location: "ESUT" } });
     expect(mockState.insertValues[0]?.value).not.toHaveProperty("role");
   });
 

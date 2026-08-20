@@ -1,13 +1,17 @@
 import { NOT_ADMIN_ERR_MSG, UNAUTHED_ERR_MSG } from '@shared/const';
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
+import { ZodError } from "zod";
 import type { TrpcContext } from "./context";
 
 const t = initTRPC.context<TrpcContext>().create({
   transformer: superjson,
-  errorFormatter: ({ shape }) => {
+  errorFormatter: ({ shape, error }) => {
     const { stack: _stack, ...safeData } = shape.data;
-    return { ...shape, data: safeData };
+    const message = error.cause instanceof ZodError
+      ? "Please check the information you entered and try again."
+      : shape.message;
+    return { ...shape, message, data: safeData };
   },
 });
 

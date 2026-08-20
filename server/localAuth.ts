@@ -8,6 +8,24 @@ export function normalizeEmail(email: string) {
   return email.trim().toLowerCase();
 }
 
+/**
+ * Canonicalise Nigerian mobile numbers for storage while retaining server-side
+ * validation as the source of truth. Formatted values such as
+ * `0911 699 1082` and `+234 911 699 1082` become E.164 values.
+ */
+export function normalizeNigerianPhone(phone: string) {
+  const trimmed = phone.trim();
+  if (!/^[+\d\s()-]+$/.test(trimmed)) return trimmed;
+  const digits = trimmed.replace(/\D/g, "");
+  if (/^0[7-9]\d{9}$/.test(digits)) return `+234${digits.slice(1)}`;
+  if (/^234[7-9]\d{9}$/.test(digits)) return `+${digits}`;
+  return trimmed;
+}
+
+export function isValidNigerianPhone(phone: string) {
+  return /^\+234[7-9]\d{9}$/.test(normalizeNigerianPhone(phone));
+}
+
 export async function hashPassword(password: string) {
   const salt = randomBytes(16).toString("hex");
   const derived = await scrypt(password, salt, keyLength) as Buffer;
