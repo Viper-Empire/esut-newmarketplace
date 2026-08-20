@@ -459,6 +459,18 @@ export const marketplaceEvents = mysqlTable("marketplaceEvents", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 }, (table) => [index("marketplace_events_user_idx").on(table.userId, table.createdAt), index("marketplace_events_aggregate_idx").on(table.userId, table.aggregateKey, table.createdAt)]);
 
+export const operationalEvents = mysqlTable("operationalEvents", {
+  id: bigint("id", { mode: "number" }).autoincrement().primaryKey(),
+  eventType: mysqlEnum("eventType", ["CLIENT_ERROR", "API_ERROR", "ASSET_FAILURE", "UPLOAD_FAILURE", "WEB_VITAL"]).notNull(),
+  severity: mysqlEnum("severity", ["INFO", "WARNING", "ERROR"]).default("INFO").notNull(),
+  route: varchar("route", { length: 180 }).notNull(),
+  metricName: varchar("metricName", { length: 80 }),
+  metricValue: int("metricValue"),
+  statusCode: int("statusCode"),
+  metadata: json("metadata"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => [index("operational_events_type_idx").on(table.eventType, table.createdAt), index("operational_events_severity_idx").on(table.severity, table.createdAt)]);
+
 export const reviews = mysqlTable("reviews", {
   id: int("id").autoincrement().primaryKey(),
   orderId: int("orderId").notNull(),

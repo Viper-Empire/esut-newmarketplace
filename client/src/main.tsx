@@ -5,6 +5,7 @@ import { httpBatchLink, TRPCClientError } from "@trpc/client";
 import { createRoot } from "react-dom/client";
 import superjson from "superjson";
 import App from "./App";
+import { OperationalTelemetry } from "./components/OperationalTelemetry";
 import "./index.css";
 import { createMarketplaceApiFetch } from "./lib/trpcFetch";
 
@@ -26,6 +27,7 @@ queryClient.getQueryCache().subscribe(event => {
     const error = event.query.state.error;
     redirectToLoginIfUnauthorized(error);
     console.error("[API Query Error]", error);
+    window.dispatchEvent(new CustomEvent("esut-marketplace-api-error", { detail: { statusCode: error instanceof TRPCClientError ? error.data?.httpStatus : undefined } }));
   }
 });
 
@@ -34,6 +36,7 @@ queryClient.getMutationCache().subscribe(event => {
     const error = event.mutation.state.error;
     redirectToLoginIfUnauthorized(error);
     console.error("[API Mutation Error]", error);
+    window.dispatchEvent(new CustomEvent("esut-marketplace-api-error", { detail: { statusCode: error instanceof TRPCClientError ? error.data?.httpStatus : undefined } }));
   }
 });
 
@@ -50,6 +53,7 @@ const trpcClient = trpc.createClient({
 createRoot(document.getElementById("root")!).render(
   <trpc.Provider client={trpcClient} queryClient={queryClient}>
     <QueryClientProvider client={queryClient}>
+      <OperationalTelemetry />
       <App />
     </QueryClientProvider>
   </trpc.Provider>
