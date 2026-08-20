@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { and, eq, gte, sql } from "drizzle-orm";
-import { auditLogs, inventory, inventoryReservations, notifications, orders, orderStatusHistory, pickupCoordinations, stores } from "../drizzle/schema";
+import { auditLogs, inventory, inventoryReservations, marketplaceEvents, notifications, orders, orderStatusHistory, pickupCoordinations, stores } from "../drizzle/schema";
 import { assertAllowedOrderTransition, type OrderStatus } from "./orderLifecycle";
 import { encryptPickupCode, generatePickupCode } from "./pickupCode";
 
@@ -32,5 +32,7 @@ export async function applyOrderTransition(tx: any, order: any, nextStatus: Orde
   const storeRows = await tx.select().from(stores).where(eq(stores.id, order.storeId)).limit(1);
   const sellerId = storeRows[0]?.ownerUserId;
   await tx.insert(notifications).values({ userId: order.buyerUserId, type: "ORDER_STATUS", title: `Order ${nextStatus.toLowerCase().replaceAll("_", " ")}`, message: `Your order ${order.publicId} is now ${nextStatus.toLowerCase().replaceAll("_", " ")}.`, targetRoute: `/account/orders/${order.publicId}` });
+  await tx.insert(marketplaceEvents).values({ userId: order.buyerUserId, eventType: "ORDER_STATUS_UPDATED", aggregateKey: `order:${order.id}`, targetRoute: `/account/orders/${order.publicId}` });
   if (sellerId && sellerId !== actorUserId) await tx.insert(notifications).values({ userId: sellerId, type: "ORDER_STATUS", title: `Order ${nextStatus.toLowerCase().replaceAll("_", " ")}`, message: `Order ${order.publicId} is now ${nextStatus.toLowerCase().replaceAll("_", " ")}.`, targetRoute: `/seller/orders/${order.publicId}` });
+  if (sellerId && sellerId !== actorUserId) await tx.insert(marketplaceEvents).values({ userId: sellerId, eventType: "ORDER_STATUS_UPDATED", aggregateKey: `order:${order.id}`, targetRoute: `/seller/orders/${order.publicId}` });
 }
