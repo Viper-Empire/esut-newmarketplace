@@ -2,7 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { and, asc, desc, eq, gt, gte, inArray, isNull, like, lt, lte, ne, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import { COOKIE_NAME } from "@shared/const";
-import { adminReversibleActions, auditLogs, authRateLimits, authTokens, cartItems, carts, categories, conversationParticipants, conversations, conversationTypingStates, disputes, favorites, inventory, inventoryReservations, listingImages, listingVideoEvidence, listings, marketplaceEvents, marketplaceSettings, messages, notifications, offers, operationalEvents, orderBatches, orderItems, orders, orderStatusHistory, pickupCoordinations, productReminders, profiles, reports, reviewMedia, reviews, sellerApplications, sellerApplicationAttempts, sellerVerificationAttempts, stores, users, verificationRequests } from "../drizzle/schema";
+import { accountSecurityEvents, adminReversibleActions, auditLogs, authRateLimits, authSessions, authTokens, cartItems, carts, categories, conversationParticipants, conversations, conversationTypingStates, disputes, favorites, inventory, inventoryReservations, listingImages, listingVideoEvidence, listings, marketplaceEvents, marketplaceSettings, messages, notifications, offers, operationalEvents, orderBatches, orderItems, orders, orderStatusHistory, pickupCoordinations, productReminders, profiles, reports, reviewMedia, reviews, sellerApplications, sellerApplicationAttempts, sellerVerificationAttempts, stores, users, verificationRequests } from "../drizzle/schema";
 import { caseActivity, caseEvidence } from "../drizzle/schema";
 import { getDb } from "./db";
 import { adminProcedure, moderatorProcedure, operationsProcedure, protectedProcedure, publicProcedure, router, sellerProcedure, superAdminProcedure } from "./_core/trpc";
@@ -429,6 +429,32 @@ export const appRouter = router({
     moderateReview: moderatorProcedure.input(z.object({ id: z.number().int().positive(), status: z.enum(["PUBLISHED", "REMOVED"]), note: z.string().min(3).max(1_000) })).mutation(async ({ ctx, input }) => { const db = await ensureDb(); const review = (await db.select().from(reviews).where(eq(reviews.id, input.id)).limit(1))[0]; if (!review) throw new TRPCError({ code: "NOT_FOUND", message: "Review not found." }); await db.update(reviews).set({ status: input.status }).where(eq(reviews.id, input.id)); await db.insert(auditLogs).values({ actorUserId: ctx.user.id, action: "MODERATOR_REVIEW_STATUS", targetType: "REVIEW", targetId: String(input.id), metadata: { status: input.status, note: input.note } }); return { success: true }; }),
   }),
   admin: router({
+    resetUserPassword: superAdminProcedure.input(z.object({ targetUserId: z.number().int().positive(), adminCurrentPassword: z.string().min(1).max(128), newPassword: z.string().min(10).max(128), confirmPassword: z.string().min(10).max(128), note: z.string().trim().min(3).max(500) }).refine(input => input.newPassword === input.confirmPassword, { message: "New-password confirmation does not match.", path: ["confirmPassword"] })).mutation(async ({ ctx, input }) => {
+      if (input.targetUserId === ctx.user.id) throw new TRPCError({ code: "BAD_REQUEST", message: "Use the signed-in account security page to change your own password." });
+      const db = await ensureDb();
+      const newPasswordHash = await hashPassword(input.newPassword);
+      const result = await db.transaction(async tx => {
+        const [acting, target] = await Promise.all([
+          tx.select().from(users).where(eq(users.id, ctx.user.id)).limit(1),
+          tx.select().from(users).where(eq(users.id, input.targetUserId)).limit(1),
+        ]);
+        const actor = acting[0];
+        const account = target[0];
+        if (!actor?.passwordHash || !await verifyPassword(input.adminCurrentPassword, actor.passwordHash)) throw new TRPCError({ code: "UNAUTHORIZED", message: "Your current administrator password is required for this action." });
+        if (!account) throw new TRPCError({ code: "NOT_FOUND", message: "User not found." });
+        if (!account.isActive) throw new TRPCError({ code: "CONFLICT", message: "Reactivate this account before replacing its password." });
+        if (account.role === "SUPER_ADMIN") throw new TRPCError({ code: "FORBIDDEN", message: "Super-administrator passwords cannot be replaced through this workflow." });
+        await tx.update(users).set({ passwordHash: newPasswordHash, loginMethod: "password", failedLoginCount: 0, lockedUntil: null }).where(eq(users.id, account.id));
+        await tx.delete(authTokens).where(and(eq(authTokens.userId, account.id), eq(authTokens.purpose, "PASSWORD_RESET")));
+        const revoked = await tx.update(authSessions).set({ status: "REVOKED", revokedAt: new Date(), revokeReason: "SUPER_ADMIN_PASSWORD_RESET" }).where(and(eq(authSessions.userId, account.id), eq(authSessions.status, "ACTIVE")));
+        const revokedSessionCount = affectedRows(revoked);
+        await tx.insert(accountSecurityEvents).values({ userId: account.id, authSessionId: null, eventType: "PASSWORD_CHANGED", deviceLabel: null, ipFingerprint: null, metadata: { initiatedBySuperAdmin: true, activeSessionsRevoked: revokedSessionCount } });
+        await tx.insert(auditLogs).values({ actorUserId: ctx.user.id, action: "SUPER_ADMIN_PASSWORD_RESET", targetType: "USER", targetId: String(account.id), metadata: { note: input.note, activeSessionsRevoked: revokedSessionCount, previousLoginMethod: account.loginMethod ?? "unknown" } });
+        return { email: account.email, revokedSessionCount };
+      });
+      const redisLockoutCleared = result.email ? await clearSecurityLimit({ scope: "login:account", identifier: result.email }) : false;
+      return { success: true, revokedSessionCount: result.revokedSessionCount, redisLockoutCleared };
+    }),
     securityHealth: superAdminProcedure.query(async () => securityStateHealth()),
     securityAlertSettings: superAdminProcedure.query(async () => {
       const db = await ensureDb();

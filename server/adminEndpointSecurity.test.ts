@@ -22,6 +22,7 @@ describe("administrator endpoint security boundary", () => {
     await expect(caller.admin.reversibleActions({ page: 1, limit: 10 })).rejects.toMatchObject({ code: "FORBIDDEN" });
     await expect(caller.admin.undoReversibleAction({ id: 1, note: "Unauthorized recovery attempt" })).rejects.toMatchObject({ code: "FORBIDDEN" });
     await expect(caller.admin.redoReversibleAction({ id: 1, note: "Unauthorized recovery attempt" })).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(caller.admin.resetUserPassword({ targetUserId: 902, adminCurrentPassword: "CurrentAdminPass123!", newPassword: "ReplacementPass123!", confirmPassword: "ReplacementPass123!", note: "Unauthorized password reset" })).rejects.toMatchObject({ code: "UNAUTHORIZED" });
   });
 
   it.each(["CUSTOMER", "SELLER", "SUPPORT", "MODERATOR"] as const)("rejects %s callers from administrator endpoints", async role => {
@@ -34,6 +35,7 @@ describe("administrator endpoint security boundary", () => {
     await expect(caller.admin.reversibleActions({ page: 1, limit: 10 })).rejects.toMatchObject({ code: "FORBIDDEN" });
     await expect(caller.admin.undoReversibleAction({ id: 1, note: "Security boundary test" })).rejects.toMatchObject({ code: "FORBIDDEN" });
     await expect(caller.admin.redoReversibleAction({ id: 1, note: "Security boundary test" })).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(caller.admin.resetUserPassword({ targetUserId: 902, adminCurrentPassword: "CurrentAdminPass123!", newPassword: "ReplacementPass123!", confirmPassword: "ReplacementPass123!", note: "Unauthorized password reset" })).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
 
   it("does not treat client-supplied role-like inputs as authorization", async () => {
@@ -47,5 +49,10 @@ describe("administrator endpoint security boundary", () => {
     expect(caller.admin.dashboard).toBeDefined();
     const superAdminCaller = appRouter.createCaller(contextFor("SUPER_ADMIN"));
     expect(superAdminCaller.admin.auditLogs).toBeDefined();
+  });
+
+  it("reserves password replacement for SUPER_ADMIN rather than an ordinary administrator", async () => {
+    const caller = appRouter.createCaller(contextFor("ADMIN"));
+    await expect(caller.admin.resetUserPassword({ targetUserId: 902, adminCurrentPassword: "CurrentAdminPass123!", newPassword: "ReplacementPass123!", confirmPassword: "ReplacementPass123!", note: "Administrator boundary test" })).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
 });
