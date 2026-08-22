@@ -74,7 +74,6 @@ export function StorefrontHeader({ categories }: { categories: { id: number; nam
   const [recentSearches, setRecentSearches] = useState<string[]>(readRecentSearches);
   const [, go] = useLocation();
   const { isAuthenticated, user } = useAuth();
-  useEffect(() => { const root = document.documentElement; root.classList.remove("dark"); root.dataset.theme = "light"; }, []);
   const suggestions = trpc.marketplace.suggestions.useQuery({ q: debouncedQuery }, { enabled: debouncedQuery.length >= 2 });
   const unread = trpc.notifications.unreadCount.useQuery(undefined, { enabled: isAuthenticated });
   useEffect(() => { const timer = window.setTimeout(() => setDebouncedQuery(query.trim()), 220); return () => window.clearTimeout(timer); }, [query]);

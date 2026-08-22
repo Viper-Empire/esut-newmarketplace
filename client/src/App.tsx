@@ -4,11 +4,10 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { useMarketplaceEventRefresh } from "@/hooks/useMarketplaceEventRefresh";
 import PublicAccountActions from "@/components/PublicAccountActions";
 import ErrorBoundary from "@/components/ErrorBoundary";
-import { ThemeProvider } from "@/contexts/ThemeContext";
 import NotFound from "@/pages/NotFound";
 import Home from "@/pages/Home";
 import { Link, Route, Switch } from "wouter";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 
 const ProductPage = lazy(() => import("@/pages/ProductPage"));
 const CartPage = lazy(() => import("@/pages/CartPage"));
@@ -85,7 +84,14 @@ function ActiveWorkspaceEventRefresh() {
 }
 
 function App() {
-  return <ErrorBoundary><ThemeProvider defaultTheme="system" switchable><a className="skip-link" href="#main-content">Skip to page content</a><Toaster/><ActiveWorkspaceEventRefresh/><PublicAccountActions/><div id="main-content" tabIndex={-1}><Suspense fallback={<main className="page-shell py-16 text-center text-slate-500" role="status">Loading workspace…</main>}><Switch>
+  useEffect(() => {
+    try { window.localStorage.removeItem("esut-marketplace-theme"); } catch { /* Storage access is optional. */ }
+    const root = document.documentElement;
+    root.classList.remove("dark");
+    delete root.dataset.theme;
+  }, []);
+
+  return <ErrorBoundary><a className="skip-link" href="#main-content">Skip to page content</a><Toaster/><ActiveWorkspaceEventRefresh/><PublicAccountActions/><div id="main-content" tabIndex={-1}><Suspense fallback={<main className="page-shell py-16 text-center text-slate-500" role="status">Loading workspace…</main>}><Switch>
     <Route path="/" component={Home}/>
     <Route path="/login">{() => <AuthPage mode="login"/>}</Route>
     <Route path="/register">{() => <AuthPage mode="register"/>}</Route>
@@ -156,7 +162,7 @@ function App() {
     <Route path="/admin/audit-logs" component={AdminAuditLogsPage}/>
     <Route path="/category/:slug" component={ExplorePage}/>
     <Route component={NotFound}/>
-  </Switch></Suspense></div></ThemeProvider></ErrorBoundary>;
+  </Switch></Suspense></div></ErrorBoundary>;
 }
 
 export default App;
