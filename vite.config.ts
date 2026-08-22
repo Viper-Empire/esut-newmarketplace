@@ -169,12 +169,15 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       output: {
+        // Keep only explicit, one-way shared runtime groups. Unassigned
+        // dependencies remain in Rollup's default graph, preventing the
+        // React/vendor circular import that broke Cloudflare static staging.
+        onlyExplicitManualChunks: true,
         manualChunks(id) {
           if (!id.includes("node_modules")) return;
-          if (id.includes("@tanstack") || id.includes("@trpc") || id.includes("superjson")) return "data-runtime";
-          if (id.includes("@radix-ui") || id.includes("lucide-react") || id.includes("sonner") || id.includes("framer-motion")) return "interface-runtime";
           if (/node_modules[\\/](react|react-dom|scheduler)[\\/]/.test(id) || id.includes("wouter")) return "react-runtime";
-          return "vendor-runtime";
+          if (id.includes("@tanstack") || id.includes("@trpc") || id.includes("superjson")) return "data-runtime";
+          if (id.includes("framer-motion") || id.includes("lucide-react") || id.includes("sonner")) return "interface-runtime";
         },
       },
     },
