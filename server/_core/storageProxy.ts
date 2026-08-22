@@ -1,4 +1,5 @@
 import type { Express } from "express";
+import { Readable } from "node:stream";
 import { ENV } from "./env";
 import { sdk } from "./sdk";
 import { eq } from "drizzle-orm";
@@ -70,8 +71,21 @@ export function registerStorageProxy(app: Express) {
         return;
       }
 
-      res.set("Cache-Control", "no-store");
-      res.redirect(307, url);
+      const upstream = await fetch(url, { headers: { Accept: req.get("accept") ?? "*/*" } });
+      if (!upstream.ok || !upstream.body) {
+        console.error(`[StorageProxy] upstream media error: ${upstream.status}`);
+        res.status(upstream.status >= 400 ? upstream.status : 502).send("Storage media unavailable");
+        return;
+      }
+
+      const contentType = upstream.headers.get("content-type");
+      const contentLength = upstream.headers.get("content-length");
+      const cacheControl = upstream.headers.get("cache-control");
+      if (contentType) res.set("Content-Type", contentType);
+      if (contentLength) res.set("Content-Length", contentLength);
+      res.set("Cache-Control", cacheControl && cacheControl !== "no-store" ? cacheControl : "public, max-age=300, stale-while-revalidate=86400");
+      res.set("X-Content-Type-Options", "nosniff");
+      Readable.fromWeb(upstream.body as Parameters<typeof Readable.fromWeb>[0]).pipe(res);
     } catch (err) {
       console.error("[StorageProxy] failed:", err);
       res.status(502).send("Storage proxy error");

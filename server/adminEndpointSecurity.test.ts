@@ -55,4 +55,14 @@ describe("administrator endpoint security boundary", () => {
     const caller = appRouter.createCaller(contextFor("ADMIN"));
     await expect(caller.admin.resetUserPassword({ targetUserId: 902, adminCurrentPassword: "CurrentAdminPass123!", newPassword: "ReplacementPass123!", confirmPassword: "ReplacementPass123!", note: "Administrator boundary test" })).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
+
+  it("keeps media-integrity reporting administrator-only", async () => {
+    const caller = appRouter.createCaller(contextFor("CUSTOMER"));
+    await expect(caller.admin.mediaIntegrity()).rejects.toMatchObject({ code: "FORBIDDEN" });
+  });
+
+  it("keeps seller image replacement behind the verified seller ownership guard", async () => {
+    const caller = appRouter.createCaller(contextFor("CUSTOMER"));
+    await expect(caller.seller.replaceProductImage({ listingId: 1, imageId: 1, image: { filename: "replacement.jpg", mimeType: "image/jpeg", dataUrl: "data:image/jpeg;base64,aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", isPrimary: false } })).rejects.toMatchObject({ code: "FORBIDDEN" });
+  });
 });
