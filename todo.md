@@ -419,4 +419,14 @@
 - [x] Add an administrator read-only media-integrity report for active listings, including missing/unreachable public media and seller recovery guidance. (Administrator-gated report checks up to 100 active listings and never returns storage keys or signed URLs.)
 - [x] Add a seller-authorized re-upload path for broken public listing images without exposing storage keys or permitting cross-seller mutation. (In-place replacement mutation and accessible seller-editor Replace controls added.)
 - [ ] Verify the buyer, seller, and administrator dashboard presentation on authenticated routes after the media remediation release. (Pending owner-authenticated read-only review.)
-- [ ] Save and publish a verified checkpoint for the media remediation release.
+- [x] Save and publish a verified checkpoint for the media remediation release. (The approved Cloudinary migration and live browser verification are ready for checkpoint publication.)
+
+- [x] Inspect why some products are absent or image-less on the public managed homepage/catalogue, cross-checking listing status, pagination, query filters, and media reachability without modifying data. (Verified all 8 ACTIVE listings appear in homepage and Explore; 6 lack primary-image rows and 2 have browser-facing managed-media 404s despite upstream 200 responses.)
+- [x] Document the verified public product-visibility findings and safe remediation options. (Recorded in `PUBLIC_PRODUCT_VISIBILITY_AUDIT_2026-08-22.md`; no listing, media, account, or storage data was changed.)
+
+- [x] Audit the current Cloudinary public-media integration and define a reversible migration boundary for authentic active listing images. (Existing signed upload helper and public/private boundaries reviewed; migration limited to two authentic active primary images.)
+- [x] Migrate or re-home eligible public listing image references to Cloudinary without exposing private evidence or changing ownership/status data. (Two images migrated and verified; original Manus objects preserved; listing status, ownership, and primary flags unchanged.)
+- [x] Verify Cloudinary delivery in the live browser path and confirm protected Manus media remains private. (Live homepage decoded both Cloudinary assets at 810×1080 and 720×720; no private media was migrated.)
+- [x] Document Cloudinary rollout, fallback, and rollback behavior before publishing the migration checkpoint. (Recorded in `PUBLIC_PRODUCT_VISIBILITY_AUDIT_2026-08-22.md`; original objects remain available for rollback.)
+
+- [x] Migrate the two owner-approved authentic active listing primary images to Cloudinary, verify both public assets, and update only their public image references with an auditable rollback path. (Cloudinary HTTP 200 verification and live browser decode passed for both images.)
