@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { trpc } from "@/lib/trpc";
+import { isCloudflareStagingPreview } from "@/lib/stagingPreview";
 
 type TelemetryEvent = { eventType: "CLIENT_ERROR" | "API_ERROR" | "ASSET_FAILURE" | "UPLOAD_FAILURE" | "WEB_VITAL"; severity: "INFO" | "WARNING" | "ERROR"; metricName?: string; metricValue?: number; statusCode?: number };
 
@@ -11,6 +12,10 @@ export function OperationalTelemetry() {
   recordRef.current = record.mutate;
 
   useEffect(() => {
+    // The staging Pages frontend deliberately proxies to an older live backend.
+    // Telemetry is best-effort and must stay silent until that backend exposes the
+    // current observability procedure; otherwise a failed recorder could instrument itself.
+    if (isCloudflareStagingPreview()) return;
     const emit = (event: TelemetryEvent) => recordRef.current({ ...event, route: route() });
     const onError = (event: ErrorEvent | Event) => {
       const target = event.target;

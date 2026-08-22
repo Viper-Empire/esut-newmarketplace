@@ -151,11 +151,11 @@ describe("buyer experience procedures", () => {
       [{ body: "It is available.", createdAt: new Date("2026-08-15T12:00:00Z"), senderUserId: 44 }],
     ];
     await expect(appRouter.createCaller(context(81)).messaging.list()).resolves.toEqual([{
-      conversation: { id: 22 }, listing: { title: "Study Guide", slug: "study-guide" }, store: { name: "Campus Books", slug: "campus-books" }, counterparty: { name: "Seller Test" }, latestMessage: { body: "It is available.", createdAt: new Date("2026-08-15T12:00:00Z"), isMine: false },
+      conversation: { id: 22 }, listing: { title: "Study Guide", slug: "study-guide" }, store: { name: "Campus Books", slug: "campus-books" }, counterparty: { name: "Seller Test", avatarUrl: null }, latestMessage: { body: "It is available.", createdAt: new Date("2026-08-15T12:00:00Z"), isMine: false },
     }]);
     const baseFields = state.selectArgs[0] as { listing?: Record<string, unknown>; store?: Record<string, unknown> };
     expect(Object.keys(baseFields.listing ?? {})).toEqual(["title", "slug"]);
     expect(Object.keys(baseFields.store ?? {})).toEqual(["name", "slug"]);
-    expect(state.selectArgs[1]).toEqual({ name: expect.anything() });
+    expect(state.selectArgs[1]).toEqual({ name: expect.anything(), avatarUrl: expect.anything(), isAvatarPublic: expect.anything() });
   });
 });

@@ -69,3 +69,9 @@ The mood-control removal and current marketplace UX changes were deployed to the
 Browser verification of both the homepage and direct `/explore` route confirms that the current build mounts and loads public marketplace data without any Light/System/Dark selector or appearance-preference control in the rendered interface. The prior control reported by the owner was from the earlier Pages deployment, which predated checkpoint `9913ed60` and had not yet been uploaded to Cloudflare. This refresh also includes the newly added loading-skeleton components and authenticated seller “My listings” management interface. No custom domain, live managed marketplace deployment, DNS, database, Redis, storage, email, or production traffic route was changed.
 
 The rendered `/explore` staging DOM was also checked after deployment: it contains neither `Theme preference` nor `Light System Dark`. This confirms the preview is now serving the fixed-appearance frontend rather than the legacy mood-enabled build.
+
+## Adaptive Chat Preview — 2026-08-22
+
+The seller listing controls, marketplace category controls, and adaptive buyer/seller chat update were deployed to `https://dc45f5b7.esut-marketplace-staging.pages.dev`; the stable staging alias remains `https://staging.esut-marketplace-staging.pages.dev`.
+
+The deployment contains the lazy-loaded `MarketplaceMessagesPage` bundle, the system-preference-only chat palette, and the private typing-state API contract. Direct anonymous navigation to `/account/messages` was verified. It renders the intended private-message sign-in boundary and exposes no conversation list, thread, product context, or message content. Authenticated-thread visual verification remains subject to an authorised marketplace session; no mock conversation data was created for visual testing. No custom domain, live managed marketplace deployment, DNS, database, Redis, storage, email, or production traffic route was changed.

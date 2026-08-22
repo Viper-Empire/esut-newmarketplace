@@ -29,4 +29,16 @@ describe("Cloudflare staging API proxy", () => {
       proxyCloudflareStagingApi(new Request("https://preview.esut-marketplace-staging.pages.dev/not-api"))
     ).rejects.toThrow("Only /api/* requests may be proxied");
   });
+
+  it("preserves a tRPC mutation body for write requests", async () => {
+    const fetcher = vi.fn(async (_input: RequestInfo | URL, init?: RequestInit) => {
+      expect(init?.method).toBe("POST");
+      expect(new Headers(init?.headers).get("content-type")).toBe("application/json");
+      expect(await new Response(init?.body).text()).toContain("observability.record");
+      return new Response('{"result":{"data":{"json":{"accepted":true}}}}', { headers: { "content-type": "application/json" } });
+    });
+    const response = await proxyCloudflareStagingApi(new Request("https://preview.esut-marketplace-staging.pages.dev/api/trpc/observability.record?batch=1", { method: "POST", headers: { "content-type": "application/json" }, body: '{"path":"observability.record"}' }), fetcher as typeof fetch);
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({ result: { data: { json: { accepted: true } } } });
+  });
 });

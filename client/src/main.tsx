@@ -22,6 +22,8 @@ const redirectToLoginIfUnauthorized = (error: unknown) => {
   if (!window.location.pathname.startsWith("/login")) window.location.assign("/login");
 };
 
+const isTelemetryRequestFailure = (error: unknown) => error instanceof Error && error.message.includes("/api/trpc/observability.record");
+
 queryClient.getQueryCache().subscribe(event => {
   if (event.type === "updated" && event.action.type === "error") {
     const error = event.query.state.error;
@@ -36,6 +38,8 @@ queryClient.getMutationCache().subscribe(event => {
     const error = event.mutation.state.error;
     redirectToLoginIfUnauthorized(error);
     console.error("[API Mutation Error]", error);
+    // A best-effort observability mutation must never generate another observability event.
+    if (isTelemetryRequestFailure(error)) return;
     window.dispatchEvent(new CustomEvent("esut-marketplace-api-error", { detail: { statusCode: error instanceof TRPCClientError ? error.data?.httpStatus : undefined } }));
   }
 });

@@ -12,4 +12,11 @@ describe("Cloudflare staging build configuration", () => {
     expect(config).not.toContain('return "vendor-runtime"');
     expect(config).toContain('outDir: path.resolve(import.meta.dirname, "dist/public")');
   });
+
+  it("keeps the static Vite output separate from the root Pages Function source", () => {
+    const packageJson = readFileSync(resolve(process.cwd(), "package.json"), "utf8");
+
+    expect(packageJson).toContain('"build:frontend": "vite build"');
+    expect(packageJson).toContain("wrangler pages deploy dist/public");
+  });
 });

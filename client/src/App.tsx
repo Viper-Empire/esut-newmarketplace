@@ -49,7 +49,7 @@ const BuyerFavoritesPage = lazy(() => import("@/pages/AccountFeaturePages").then
 const BuyerOffersPage = lazy(() => import("@/pages/AccountFeaturePages").then(module => ({ default: module.BuyerOffersPage })));
 const BuyerReminderDashboardPage = lazy(() => import("@/pages/AccountFeaturePages").then(module => ({ default: module.BuyerReminderDashboardPage })));
 const BuyerReviewsPage = lazy(() => import("@/pages/AccountFeaturePages").then(module => ({ default: module.BuyerReviewsPage })));
-const MessagesPage = lazy(() => import("@/pages/AccountFeaturePages").then(module => ({ default: module.MessagesPage })));
+const MessagesPage = lazy(() => import("@/pages/MarketplaceMessagesPage").then(module => ({ default: module.MarketplaceMessagesPage })));
 const NotificationsPage = lazy(() => import("@/pages/AccountFeaturePages").then(module => ({ default: module.NotificationsPage })));
 const ProfilePage = lazy(() => import("@/pages/AccountFeaturePages").then(module => ({ default: module.ProfilePage })));
 const SellerOffersPage = lazy(() => import("@/pages/AccountFeaturePages").then(module => ({ default: module.SellerOffersPage })));

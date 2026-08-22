@@ -22,7 +22,7 @@ export function useMarketplaceEventRefresh(role: WorkspaceRole) {
     }
     if (lastEventId.current === event.id) return;
     lastEventId.current = event.id;
-    const common = [utils.notifications.list.invalidate(), utils.notifications.unreadCount.invalidate()];
+    const common = [utils.notifications.list.invalidate(), utils.notifications.unreadCount.invalidate(), utils.messaging.list.invalidate(), utils.messaging.detail.invalidate(), utils.messaging.peerTyping.invalidate()];
     const buyer = [utils.buyer.dashboard.invalidate(), utils.orders.mine.invalidate(), utils.reminders.listMine.invalidate(), utils.support.myDisputes.invalidate(), utils.support.myReports.invalidate()];
     const seller = [utils.seller.orders.invalidate(), utils.seller.analytics.invalidate(), utils.seller.actionQueue.invalidate(), utils.seller.store.invalidate(), utils.seller.products.invalidate()];
     const admin = [utils.admin.dashboard.invalidate(), utils.admin.analytics.invalidate(), utils.admin.orders.invalidate(), utils.admin.reports.invalidate(), utils.admin.disputes.invalidate(), utils.admin.listings.invalidate(), utils.admin.auditLogs.invalidate()];

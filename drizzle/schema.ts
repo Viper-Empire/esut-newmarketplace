@@ -431,6 +431,14 @@ export const conversationParticipants = mysqlTable("conversationParticipants", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 }, (table) => [uniqueIndex("conversation_participant_unique_idx").on(table.conversationId, table.userId), index("conversation_user_idx").on(table.userId)]);
 
+export const conversationTypingStates = mysqlTable("conversationTypingStates", {
+  id: int("id").autoincrement().primaryKey(),
+  conversationId: int("conversationId").notNull(),
+  userId: int("userId").notNull(),
+  expiresAt: timestamp("expiresAt").notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => [uniqueIndex("conversation_typing_user_idx").on(table.conversationId, table.userId), index("conversation_typing_expiry_idx").on(table.conversationId, table.expiresAt)]);
+
 export const messages = mysqlTable("messages", {
   id: int("id").autoincrement().primaryKey(),
   conversationId: int("conversationId").notNull(),
