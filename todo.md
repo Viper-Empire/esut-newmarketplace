@@ -400,3 +400,5 @@
 - [ ] Bind an owner-approved custom domain to the existing Manus-hosted ESUT Marketplace without changing its backend/data architecture, retain the current `manus.space` URL as a rollback path during validation, and document the verified production-domain outcome.
 
 - [x] Plan the production storage and media architecture using Manus-managed object storage, with public/private/temporary zones, secure upload validation, access controls, lifecycle, recovery, and future scaling boundaries. (Delivered in `STORAGE_MEDIA_ARCHITECTURE_PLAN_2026-08-22.md`; no storage objects, schema, provider, permissions, or deployment settings were changed.)
+
+- [x] Run the approved read-only media-integrity audit across active listings and media classes without uploading, deleting, migrating, or changing visibility. (Completed in `MEDIA_INTEGRITY_AUDIT_2026-08-22.md`: 8 active listings, 6 with no image rows, 3 active image rows across 2 listings, both checked primary objects returning managed-route Not found, 1 listing video, 4 verification-document references, and no review/case/avatar media rows. No data or visibility changed.)
