@@ -33,16 +33,16 @@ test.describe("ESUT Marketplace browser smoke coverage", () => {
 
   test("branded login and registration forms remain directly reachable", async ({ page }) => {
     await page.goto("/login");
-    await expect(page.getByRole("heading", { name: /Log into your account/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Sign in to your marketplace/i })).toBeVisible();
     await expect(page.getByLabel("Email address")).toBeVisible();
     await expect(page.getByRole("textbox", { name: "Password" })).toBeVisible();
 
     await page.goto("/register");
-    await expect(page.getByRole("heading", { name: /Create your account/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Join the ESUT marketplace/i })).toBeVisible();
     await expect(page.getByRole("group", { name: "I am registering as" })).toBeVisible();
-    await expect(page.getByRole("button", { name: /A Buyer/i })).toBeVisible();
-    await expect(page.getByRole("button", { name: /An Individual Seller/i })).toBeVisible();
-    await expect(page.getByRole("button", { name: /A Business Vendor/i })).toBeVisible();
+    await expect(page.getByRole("radio", { name: /A Buyer/i })).toBeVisible();
+    await expect(page.getByRole("radio", { name: /An Individual Seller/i })).toBeVisible();
+    await expect(page.getByRole("radio", { name: /A Business Vendor/i })).toBeVisible();
     await expect(page.getByLabel("Confirm password")).toBeVisible();
   });
 
@@ -106,7 +106,7 @@ test.describe("ESUT Marketplace browser smoke coverage", () => {
 
   test("password-recovery route exposes its real availability boundary", async ({ page }) => {
     await page.goto("/forgot-password");
-    await expect(page.getByRole("heading", { name: /Password reset/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Reset your password/i })).toBeVisible();
     await expect(page.getByText(/password-recovery|reset link/i).first()).toBeVisible();
   });
 
