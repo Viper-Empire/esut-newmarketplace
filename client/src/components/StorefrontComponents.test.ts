@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { listingImageFallbackPresentation, marketplaceLoadingSlots, marketplaceLogoPath } from "./StorefrontComponents";
 
@@ -18,5 +19,15 @@ describe("storefront managed visual assets", () => {
     expect(marketplaceLoadingSlots(8)).toHaveLength(8);
     expect(marketplaceLoadingSlots(0)).toHaveLength(1);
     expect(marketplaceLoadingSlots(99)).toHaveLength(12);
+  });
+
+  it("keeps product-card content on a stable vertical rhythm", () => {
+    const componentSource = readFileSync(new URL("./StorefrontComponents.tsx", import.meta.url), "utf8");
+    const stylesheetSource = readFileSync(new URL("../index.css", import.meta.url), "utf8");
+    expect(componentSource).toContain('min-h-7 items-end');
+    expect(componentSource).toContain('h-10 line-clamp-2');
+    expect(componentSource).toContain('min-h-5 items-center');
+    expect(componentSource).toContain('mt-auto w-full');
+    expect(stylesheetSource).toContain('.product-card{display:flex;min-width:0;height:100%;flex-direction:column;');
   });
 });
