@@ -76,5 +76,6 @@ During validation, two browser assertions still expected the retired headings an
 
 Ordinary-recipient password-reset and email-verification delivery remain deliberately unavailable because an authorized sender domain has not yet been configured. The redesigned recovery screen states this plainly and does not promise a reset email, resend action, or verification email. The underlying token procedures remain intact for a future approved sender-domain rollout.
 
-Managed-site publication and read-only public-route verification are still required for this release checkpoint. Cloudflare staging, Pages proxy, caching, and provider-migration work remain paused by the project owner and are outside this release.
+The managed release was read-only verified at `https://esutshop-59wzg8bs.manus.space/forgot-password` after publication propagation. The live route renders the ESUT-green brand panel, the redesigned `Reset your password` heading, and the truthful paused ordinary-recipient delivery notice. The browser session was not logged out and no customer, seller, order, listing, message, or account data was changed.
 
+Cloudflare staging, Pages proxy, caching, and provider-migration work remain paused by the project owner and are outside this release.
