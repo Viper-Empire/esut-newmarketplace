@@ -9,7 +9,7 @@ import { toast } from "sonner";
 
 const sellerNavigation: WorkspaceNavItem[] = [
   { label: "Overview", href: "/seller", icon: LayoutDashboard },
-  { label: "Products", href: "/seller/products", icon: ShoppingBag },
+  { label: "My listings", href: "/seller/products", icon: ShoppingBag },
   { label: "Orders", href: "/seller/orders", icon: Truck },
   { label: "Inventory", href: "/seller/inventory", icon: Boxes },
   { label: "Offers", href: "/seller/offers", icon: Tag },

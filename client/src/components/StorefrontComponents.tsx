@@ -3,6 +3,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { ESUT_MARKETPLACE_LOGO_PATH } from "@/lib/brandAssets";
 import { condition, naira } from "@/lib/marketplace";
 import { trpc } from "@/lib/trpc";
+import { Skeleton } from "@/components/ui/skeleton";
 import { BadgeCheck, Bell, BookOpen, Heart, House, Laptop, MapPin, Menu, Package, Search, Shirt, ShoppingCart, Smartphone, UtensilsCrossed, UsersRound, Wrench, X } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
@@ -39,6 +40,14 @@ export function TrustBadge({ verified = true }: { verified?: boolean }) {
 
 export function StorefrontEmptyState({ icon, children, className = "" }: { icon?: ReactNode; children: ReactNode; className?: string }) {
   return <div className={`empty-panel ${className}`}>{icon ?? <Package size={34}/>}<p>{children}</p></div>;
+}
+
+export function marketplaceLoadingSlots(count: number) {
+  return Array.from({ length: Math.max(1, Math.min(12, Math.floor(count))) }, (_, index) => index);
+}
+
+export function MarketplaceProductGridSkeleton({ count = 8, compact = false, className = "" }: { count?: number; compact?: boolean; className?: string }) {
+  return <div aria-busy="true" aria-label="Loading marketplace listings" className={`product-grid ${className}`}>{marketplaceLoadingSlots(count).map(index => <article key={index} className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200"><Skeleton className={`${compact ? "aspect-[1/.75]" : "aspect-[1/.8]"} w-full rounded-none bg-slate-200 motion-reduce:animate-none`} /><div className="space-y-3 p-4"><Skeleton className="h-5 w-4/5 bg-slate-200 motion-reduce:animate-none" /><Skeleton className="h-4 w-2/5 bg-slate-200 motion-reduce:animate-none" /><Skeleton className="h-3 w-3/5 bg-slate-200 motion-reduce:animate-none" /><Skeleton className="mt-4 h-8 w-full bg-slate-200 motion-reduce:animate-none" /></div></article>)}</div>;
 }
 
 export function listingImageFallbackPresentation(category?: StorefrontListingRow["category"]) {
