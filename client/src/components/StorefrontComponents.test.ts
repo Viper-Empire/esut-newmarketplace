@@ -2,8 +2,9 @@ import { describe, expect, it } from "vitest";
 import { listingImageFallbackPresentation, marketplaceLoadingSlots, marketplaceLogoPath } from "./StorefrontComponents";
 
 describe("storefront managed visual assets", () => {
-  it("uses the lightweight managed WebP logo rather than the oversized legacy PNG", () => {
-    expect(marketplaceLogoPath).toBe("/manus-storage/esut-marketplace-logo-256_3619a6d3.webp");
+  it("uses the verified Cloudinary public WebP logo rather than the oversized legacy PNG", () => {
+    expect(marketplaceLogoPath).toBe("https://res.cloudinary.com/duhbe5ilc/image/upload/v1787427596/esut-marketplace/public/brand/esut-marketplace-logo.webp");
+    expect(marketplaceLogoPath).toContain("res.cloudinary.com/");
     expect(marketplaceLogoPath).not.toContain("esut-main-logo_0f99c6ab.png");
   });
 

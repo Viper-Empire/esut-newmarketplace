@@ -14,6 +14,7 @@ import { createOpaqueToken, hashOpaqueToken, hashPassword, isValidMarketplaceEma
 import { clearSecurityLimit, consumeSecurityLimit, getSecurityLockout, securityStateHealth } from "./securityState";
 import { listAccountSecurity, recordAccountSecurityEvent, revokeOtherTrackedSessions } from "./sessionSecurity";
 import { storageGetSignedUrl, storagePut } from "./storage";
+import { cloudinaryUploadPublicImage } from "./cloudinary";
 import { EMAIL_VERIFICATION_ENABLED, PASSWORD_RESET_EMAIL_DELIVERY_ENABLED, emailVerificationLoginState, emailVerificationRegistrationState, passwordResetDeliveryState } from "./authFeatureFlags";
 import { sellerVerificationInput, verificationEvidenceSchema } from "./sellerVerification";
 import { assertAllowedOrderTransition, orderStatusValues, type OrderStatus } from "./orderLifecycle";
@@ -116,7 +117,7 @@ const storeReviewMedia = async (userId: number, reviewId: number, media: z.infer
   return { ...stored, sizeBytes: bytes.length };
 };
 const listingImageInput = z.object({ filename: z.string().min(1).max(180), mimeType: z.enum(["image/jpeg", "image/png", "image/webp"]), dataUrl: z.string().min(32).max(6_000_000), altText: z.string().max(280).optional(), isPrimary: z.boolean().default(false) });
-const storeListingImage = async (userId: number, listingId: number, image: z.infer<typeof listingImageInput>) => { const marker = `data:${image.mimeType};base64,`; if (!image.dataUrl.startsWith(marker)) throw new TRPCError({ code: "BAD_REQUEST", message: "Product image data is invalid." }); const bytes = Buffer.from(image.dataUrl.slice(marker.length), "base64"); if (!bytes.length || bytes.length > 4 * 1024 * 1024) throw new TRPCError({ code: "PAYLOAD_TOO_LARGE", message: "Product images must be 4 MB or smaller." }); const safeName = image.filename.replace(/[^a-zA-Z0-9._-]/g, "_"); const stored = await storagePut(`listing-images/${userId}/${listingId}/${crypto.randomUUID()}-${safeName}`, bytes, image.mimeType); return { ...stored, sizeBytes: bytes.length }; };
+const storeListingImage = async (userId: number, listingId: number, image: z.infer<typeof listingImageInput>) => { const marker = `data:${image.mimeType};base64,`; if (!image.dataUrl.startsWith(marker)) throw new TRPCError({ code: "BAD_REQUEST", message: "Product image data is invalid." }); const bytes = Buffer.from(image.dataUrl.slice(marker.length), "base64"); if (!bytes.length || bytes.length > 4 * 1024 * 1024) throw new TRPCError({ code: "PAYLOAD_TOO_LARGE", message: "Product images must be 4 MB or smaller." }); const safeName = image.filename.replace(/[^a-zA-Z0-9._-]/g, "_"); try { return await cloudinaryUploadPublicImage({ bytes, mimeType: image.mimeType, ownerId: userId, entityType: "listing", entityId: listingId, filename: safeName }); } catch { console.warn("Cloudinary public product-image upload unavailable; using managed storage fallback."); const stored = await storagePut(`listing-images/${userId}/${listingId}/${crypto.randomUUID()}-${safeName}`, bytes, image.mimeType); return { ...stored, sizeBytes: bytes.length, width: null, height: null, originalUrl: stored.url, format: image.mimeType.split("/")[1] ?? null }; } };
 const listingVideoEvidenceInput = z.object({ filename: z.string().min(1).max(180), mimeType: z.enum(["video/mp4", "video/webm"]), dataUrl: z.string().min(64).max(14_500_000) });
 const storeListingVideoEvidence = async (userId: number, listingId: number, video: z.infer<typeof listingVideoEvidenceInput>) => { const marker = `data:${video.mimeType};base64,`; if (!video.dataUrl.startsWith(marker)) throw new TRPCError({ code: "BAD_REQUEST", message: "Product video data is invalid." }); const bytes = Buffer.from(video.dataUrl.slice(marker.length), "base64"); if (!bytes.length || bytes.length > 10 * 1024 * 1024) throw new TRPCError({ code: "PAYLOAD_TOO_LARGE", message: "Product evidence videos must be 10 MB or smaller." }); const safeName = video.filename.replace(/[^a-zA-Z0-9._-]/g, "_"); const uploaded = await storagePut(`listing-video-evidence/${userId}/${listingId}/${crypto.randomUUID()}-${safeName}`, bytes, video.mimeType); return { ...uploaded, sizeBytes: bytes.length }; };
 const listingAvailability = (stock: { quantity: number; reservedQuantity: number } | null | undefined): { availableUnits: number; status: "AWAITING_STOCK" | "LOW_STOCK" | "IN_STOCK" | "UNAVAILABLE" } => { const availableUnits = Math.max(0, (stock?.quantity ?? 0) - (stock?.reservedQuantity ?? 0)); return { availableUnits, status: availableUnits === 0 ? "AWAITING_STOCK" : availableUnits <= 2 ? "LOW_STOCK" : "IN_STOCK" }; };
@@ -527,7 +528,19 @@ export const appRouter = router({
       const validSignature = input.mimeType === "image/jpeg" ? bytes.subarray(0, 3).equals(Buffer.from([0xff, 0xd8, 0xff])) : input.mimeType === "image/png" ? bytes.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])) : bytes.subarray(0, 4).toString("ascii") === "RIFF" && bytes.subarray(8, 12).toString("ascii") === "WEBP";
       if (!validSignature) throw new TRPCError({ code: "BAD_REQUEST", message: "The uploaded file does not match its declared image type." });
       const safeName = input.filename.replace(/[^a-zA-Z0-9._-]/g, "_");
-      const stored = await storagePut(`profile-avatars/${ctx.user.id}/${crypto.randomUUID()}-${safeName}`, bytes, input.mimeType);
+      let stored: { key: string; url: string; sizeBytes: number; width?: number | null; height?: number | null };
+      if (input.makePublic) {
+        try {
+          stored = await cloudinaryUploadPublicImage({ bytes, mimeType: input.mimeType, ownerId: ctx.user.id, entityType: "avatar", entityId: ctx.user.id, filename: safeName });
+        } catch {
+          console.warn("Cloudinary public avatar upload unavailable; using managed storage fallback.");
+          const fallback = await storagePut(`profile-avatars/${ctx.user.id}/${crypto.randomUUID()}-${safeName}`, bytes, input.mimeType);
+          stored = { ...fallback, sizeBytes: bytes.length };
+        }
+      } else {
+        const fallback = await storagePut(`profile-avatars/${ctx.user.id}/${crypto.randomUUID()}-${safeName}`, bytes, input.mimeType);
+        stored = { ...fallback, sizeBytes: bytes.length };
+      }
       const db = await ensureDb();
       await db.insert(profiles).values({ userId: ctx.user.id, avatarUrl: stored.url, avatarStorageKey: stored.key, avatarMimeType: input.mimeType, avatarSizeBytes: bytes.length, isAvatarPublic: input.makePublic }).onDuplicateKeyUpdate({ set: { avatarUrl: stored.url, avatarStorageKey: stored.key, avatarMimeType: input.mimeType, avatarSizeBytes: bytes.length, isAvatarPublic: input.makePublic } });
       await db.insert(auditLogs).values({ actorUserId: ctx.user.id, action: "PROFILE_AVATAR_UPDATED", targetType: "PROFILE", targetId: String(ctx.user.id), metadata: { mimeType: input.mimeType, sizeBytes: bytes.length, isPublic: input.makePublic } });

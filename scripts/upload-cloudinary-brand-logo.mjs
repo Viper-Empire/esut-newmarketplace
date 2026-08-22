@@ -1,0 +1,30 @@
+import { createHash } from "node:crypto";
+
+const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+const apiKey = process.env.CLOUDINARY_API_KEY;
+const apiSecret = process.env.CLOUDINARY_API_SECRET;
+if (!cloudName || !apiKey || !apiSecret) throw new Error("Cloudinary credentials are not configured.");
+
+const sourceUrl = "https://esutshop-59wzg8bs.manus.space/manus-storage/esut-marketplace-logo-256_3619a6d3.webp";
+const source = await fetch(sourceUrl);
+if (!source.ok) throw new Error(`Source logo fetch failed (${source.status}).`);
+const bytes = Buffer.from(await source.arrayBuffer());
+const timestamp = Math.floor(Date.now() / 1000).toString();
+const folder = "esut-marketplace/public/brand";
+const publicId = "esut-marketplace-logo";
+const context = "entity_type=brand|entity_id=esut-marketplace|owner_id=system";
+const serialized = Object.entries({ context, folder, public_id: publicId, timestamp }).sort(([a], [b]) => a.localeCompare(b)).map(([key, value]) => `${key}=${value}`).join("&");
+const signature = createHash("sha1").update(`${serialized}${apiSecret}`).digest("hex");
+const form = new FormData();
+form.set("file", new Blob([bytes], { type: "image/webp" }), "esut-marketplace-logo.webp");
+form.set("api_key", apiKey);
+form.set("signature", signature);
+form.set("folder", folder);
+form.set("public_id", publicId);
+form.set("timestamp", timestamp);
+form.set("context", context);
+const upload = await fetch(`https://api.cloudinary.com/v1_1/${encodeURIComponent(cloudName)}/image/upload`, { method: "POST", body: form });
+if (!upload.ok) throw new Error(`Cloudinary logo upload failed (${upload.status}).`);
+const payload = await upload.json();
+if (!payload.secure_url || !payload.public_id) throw new Error("Cloudinary returned an incomplete logo response.");
+console.log(JSON.stringify({ public_id: payload.public_id, secure_url: payload.secure_url, bytes: payload.bytes, width: payload.width, height: payload.height }));
