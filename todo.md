@@ -443,3 +443,7 @@
 - [x] Add a visible, motion-reduced marketplace loading animation while search results are fetching. (Explore shows an accessible live status indicator during background fetches with reduced-motion support.)
 - [x] Add a real authenticated “Notify me” action to the zero-results state using the existing reminder/notification backend, with a truthful signed-out boundary. (Dedicated `searchAlerts` persistence, ownership-protected create/list/cancel procedures, publication-time matching notifications, audit logging, and signed-out prompt added.)
 - [x] Add explicit marketplace sorting labels including “Price: Low to High” and “Newest First,” preserving server-supported sort values. (Existing server sort values retained; Explore labels are explicit.)
+
+- [x] Add a dedicated authenticated dashboard section for viewing active Notify me saved searches with truthful loading and empty states. (Added `/account/search-alerts` with active-count, loading skeletons, error retry, informative empty state, criteria, and last-match display.)
+- [x] Add secure user-owned saved-search cancellation from the dashboard with confirmation, pending feedback, and cache refresh. (Server scopes cancellation to the caller’s active alert, records `SEARCH_ALERT_CANCELLED`, and the UI confirms, disables, toasts, and invalidates.)
+- [x] Validate the saved-search dashboard route, ownership boundary, responsive UI, and deletion regressions before publishing. (Signed-out route shows no alert data; saved-search security tests, full suite, TypeScript, and production build passed.)

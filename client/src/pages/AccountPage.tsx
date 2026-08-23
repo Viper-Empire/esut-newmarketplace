@@ -3,7 +3,7 @@ import { MarketplaceWorkspaceShell, type WorkspaceNavItem } from "@/components/M
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
 import { naira } from "@/lib/marketplace";
-import { Bell, Heart, LayoutDashboard, LogOut, MessageCircle, PackageCheck, Settings, ShieldCheck, ShoppingCart, Star, Store, Tag, UserRound } from "lucide-react";
+import { Bell, BellRing, Heart, LayoutDashboard, LogOut, MessageCircle, PackageCheck, Settings, ShieldCheck, ShoppingCart, Star, Store, Tag, UserRound } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
 
@@ -12,6 +12,7 @@ const buyerNavigation: WorkspaceNavItem[] = [
   { label: "My orders", href: "/account/orders", icon: PackageCheck },
   { label: "Saved listings", href: "/account/favorites", icon: Heart },
   { label: "Product reminders", href: "/account/reminders", icon: Bell },
+  { label: "Saved search alerts", href: "/account/search-alerts", icon: BellRing },
   { label: "My offers", href: "/account/offers", icon: Tag },
   { label: "Messages", href: "/account/messages", icon: MessageCircle },
   { label: "Notifications", href: "/account/notifications", icon: Bell },

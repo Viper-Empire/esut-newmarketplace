@@ -47,7 +47,8 @@ const AccountSupportPage = lazy(() => import("@/pages/AccountFeaturePages").then
 const AccountVerificationPage = lazy(() => import("@/pages/AccountFeaturePages").then(module => ({ default: module.AccountVerificationPage })));
 const BuyerFavoritesPage = lazy(() => import("@/pages/AccountFeaturePages").then(module => ({ default: module.BuyerFavoritesPage })));
 const BuyerOffersPage = lazy(() => import("@/pages/AccountFeaturePages").then(module => ({ default: module.BuyerOffersPage })));
-const BuyerReminderDashboardPage = lazy(() => import("@/pages/AccountFeaturePages").then(module => ({ default: module.BuyerReminderDashboardPage })));
+  const BuyerReminderDashboardPage = lazy(() => import("@/pages/AccountFeaturePages").then(module => ({ default: module.BuyerReminderDashboardPage })));
+  const BuyerSearchAlertsPage = lazy(() => import("@/pages/AccountFeaturePages").then(module => ({ default: module.BuyerSearchAlertsPage })));
 const BuyerReviewsPage = lazy(() => import("@/pages/AccountFeaturePages").then(module => ({ default: module.BuyerReviewsPage })));
 const MessagesPage = lazy(() => import("@/pages/MarketplaceMessagesPage").then(module => ({ default: module.MarketplaceMessagesPage })));
 const NotificationsPage = lazy(() => import("@/pages/AccountFeaturePages").then(module => ({ default: module.NotificationsPage })));
@@ -103,6 +104,7 @@ function App() {
     <Route path="/account/orders/:id" component={BuyerOrderDetailPage}/>
     <Route path="/account/favorites" component={BuyerFavoritesPage}/>
     <Route path="/account/reminders" component={BuyerReminderDashboardPage}/>
+    <Route path="/account/search-alerts" component={BuyerSearchAlertsPage}/>
     <Route path="/account/offers" component={BuyerOffersPage}/>
     <Route path="/account/messages">{() => <MessagesPage/>}</Route>
     <Route path="/account/messages/:id">{() => <MessagesPage/>}</Route>

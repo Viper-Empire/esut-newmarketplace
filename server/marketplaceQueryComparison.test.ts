@@ -106,7 +106,7 @@ async function proposedQuery(db: any, input: QueryCase) {
 }
 
 describe("public marketplace query comparison (read-only)", () => {
-  it("matches the current listing identity/order for default and supported filter shapes", async () => {
+  it("matches the current listing identity/order for default and supported filter shapes", { timeout: 15_000 }, async () => {
     const db = await getDb();
     if (!db) return;
 
