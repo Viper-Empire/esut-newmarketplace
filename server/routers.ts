@@ -203,15 +203,20 @@ export const appRouter = router({
         const matchingCategories = await db.select({ id: categories.id }).from(categories).where(and(eq(categories.isActive, true), or(like(categories.name, phrase), like(categories.slug, phrase)))).limit(6);
         where.push(or(like(listings.title, phrase), like(stores.name, phrase), matchingCategories.length ? inArray(listings.categoryId, matchingCategories.map(category => category.id)) : undefined)!);
       }
-      if (input.categorySlug) { const category = (await db.select().from(categories).where(and(eq(categories.slug, input.categorySlug), eq(categories.isActive, true))).limit(1))[0]; if (!category) return { items: [], page: input.page, hasMore: false }; where.push(eq(listings.categoryId, category.id)); }
+      if (input.categorySlug) { const category = (await db.select({ id: categories.id }).from(categories).where(and(eq(categories.slug, input.categorySlug), eq(categories.isActive, true))).limit(1))[0]; if (!category) return { items: [], page: input.page, hasMore: false }; where.push(eq(listings.categoryId, category.id)); }
       if (input.min !== undefined) where.push(gte(listings.priceKobo, input.min));
       if (input.max !== undefined) where.push(lte(listings.priceKobo, input.max));
       if (input.condition) where.push(eq(listings.condition, input.condition));
       const ordering = input.sort === "price_asc" ? asc(listings.priceKobo) : input.sort === "price_desc" ? desc(listings.priceKobo) : input.sort === "popular" ? desc(listings.viewCount) : desc(listings.publishedAt);
-      const rows = await db.select({ listing: listings, store: stores, category: categories, image: listingImages, inventory }).from(listings).innerJoin(stores, eq(listings.storeId, stores.id)).innerJoin(categories, eq(listings.categoryId, categories.id)).leftJoin(listingImages, and(eq(listingImages.listingId, listings.id), eq(listingImages.isPrimary, true))).leftJoin(inventory, eq(inventory.listingId, listings.id)).where(and(...where, input.verified ? eq(stores.isVerified, true) : undefined)).orderBy(ordering).limit(input.limit).offset((input.page - 1) * input.limit);
-      return { items: rows.map(withListingAvailability), page: input.page, hasMore: rows.length === input.limit };
+      const rows = await db.select({ listing: listings, store: stores, category: categories, inventory }).from(listings).innerJoin(stores, eq(listings.storeId, stores.id)).innerJoin(categories, eq(listings.categoryId, categories.id)).leftJoin(inventory, eq(inventory.listingId, listings.id)).where(and(...where, input.verified ? eq(stores.isVerified, true) : undefined)).orderBy(ordering).limit(input.limit).offset((input.page - 1) * input.limit);
+      const listingIds = rows.map(row => row.listing.id);
+      const imageRows = listingIds.length ? await db.select({ listingId: listingImages.listingId, url: listingImages.url, altText: listingImages.altText, storageKey: listingImages.storageKey, sortOrder: listingImages.sortOrder }).from(listingImages).where(inArray(listingImages.listingId, listingIds)).orderBy(asc(listingImages.sortOrder), asc(listingImages.id)) : [];
+      const primaryImageByListing = new Map<number, (typeof imageRows)[number]>();
+      for (const image of imageRows) if (!primaryImageByListing.has(image.listingId)) primaryImageByListing.set(image.listingId, image);
+      return { items: rows.map(row => withListingAvailability({ ...row, image: primaryImageByListing.get(row.listing.id) ?? null })), page: input.page, hasMore: rows.length === input.limit };
     }),
-    suggestions: publicProcedure.input(z.object({ q: z.string().trim().min(2).max(120) })).query(async ({ input }) => {
+    
+suggestions: publicProcedure.input(z.object({ q: z.string().trim().min(2).max(120) })).query(async ({ input }) => {
       const db = await ensureDb();
       const phrase = `%${input.q}%`;
       const [products, storeMatches, categoryMatches] = await Promise.all([

@@ -435,3 +435,7 @@
 
 - [x] Audit the current public marketplace query, filters, joins, pagination, media projection, and frontend response contract without changing production behavior. (Recorded in `MARKETPLACE_QUERY_AUDIT_2026-08-23.md`; current tRPC contract and live query semantics documented.)
 - [x] Build and run read-only current-versus-proposed marketplace query comparison tests, record any mismatches, and keep the production query unchanged until review. (`server/marketplaceQueryComparison.test.ts` passed 2 tests across default, sorting, search, category, duplicate-detection, and media-coverage checks; TypeScript passed.)
+
+- [x] Apply the compared optimized marketplace query behind the existing public tRPC endpoint contracts without changing visibility, ownership, status, or media rules. (Search now selects the paginated listing set first and resolves ordered primary public images separately; existing inputs, response envelope, visibility filters, and mapper are preserved.)
+- [x] Add a truthful marketplace “No results found” empty state with accessible search suggestions and clear recovery actions. (Explore now shows a responsive SearchX state, real product/store/category suggestions, clear filters, and browse-all recovery; direct `?q=` URLs are synchronized correctly.)
+- [x] Validate optimized endpoints, no-results behavior, responsive UI, and regressions before publishing. (Real-database comparison passed, full Vitest and TypeScript passed, production build passed, and the live dev no-results route was browser-verified.)
