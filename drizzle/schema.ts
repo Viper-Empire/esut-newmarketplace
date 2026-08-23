@@ -320,6 +320,21 @@ export const productReminders = mysqlTable("productReminders", {
   index("product_reminder_listing_idx").on(table.listingId),
 ]);
 
+export const searchAlerts = mysqlTable("searchAlerts", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  query: varchar("query", { length: 120 }).notNull(),
+  categorySlug: varchar("categorySlug", { length: 180 }),
+  minKobo: int("minKobo"),
+  maxKobo: int("maxKobo"),
+  condition: varchar("condition", { length: 24 }),
+  verified: boolean("verified").default(false).notNull(),
+  status: mysqlEnum("status", ["ACTIVE", "CANCELLED"]).default("ACTIVE").notNull(),
+  lastNotifiedAt: timestamp("lastNotifiedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => [index("search_alerts_user_status_idx").on(table.userId, table.status, table.createdAt), index("search_alerts_active_idx").on(table.status, table.createdAt)]);
+
 export const carts = mysqlTable("carts", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull().unique(),

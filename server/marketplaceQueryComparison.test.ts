@@ -95,7 +95,7 @@ async function proposedQuery(db: any, input: QueryCase) {
     ? await db
         .select({ listingId: listingImages.listingId, url: listingImages.url, storageKey: listingImages.storageKey, sortOrder: listingImages.sortOrder })
         .from(listingImages)
-        .where(inArray(listingImages.listingId, ids))
+        .where(and(inArray(listingImages.listingId, ids), eq(listingImages.isPrimary, true)))
         .orderBy(asc(listingImages.sortOrder), asc(listingImages.id))
     : [];
   const primaryImageByListing = new Map<number, (typeof imageRows)[number]>();
