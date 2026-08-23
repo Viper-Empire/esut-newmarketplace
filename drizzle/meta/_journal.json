@@ -148,6 +148,13 @@
       "when": 1787489854979,
       "tag": "0020_chunky_silver_fox",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "5",
+      "when": 1787499991254,
+      "tag": "0021_skinny_nehzno",
+      "breakpoints": true
     }
   ]
 }

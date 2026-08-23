@@ -11,22 +11,23 @@ export type TransactionalEmail = {
   html?: string;
 };
 
-type NotificationChannelSettings = { provider: NotificationProvider; orderUpdates: boolean; sellerApplications: boolean; offerUpdates: boolean; reviews: boolean };
-export type TransactionalEmailEvent = "orderUpdates" | "sellerApplications" | "offerUpdates" | "reviews";
+type NotificationChannelSettings = { provider: NotificationProvider; orderUpdates: boolean; sellerApplications: boolean; offerUpdates: boolean; reviews: boolean; searchAlerts: boolean };
+export type TransactionalEmailEvent = "orderUpdates" | "sellerApplications" | "offerUpdates" | "reviews" | "searchAlerts";
 export type SecurityAlertSettings = { enabled: boolean; recipientEmail: string | null; notifyLockedAccount: boolean };
 
-export type EmailTemplateKey = "seller_application_approved" | "seller_application_rejected" | "order_created" | "order_status_updated";
+export type EmailTemplateKey = "seller_application_approved" | "seller_application_rejected" | "order_created" | "order_status_updated" | "search_alert_match";
 export type ManagedEmailTemplate = { subject: string; body: string };
 const defaultTemplates: Record<EmailTemplateKey, ManagedEmailTemplate> = {
   seller_application_approved: { subject: "Your ESUT Marketplace seller application was approved", body: "Hello {{name}},\n\nYour seller application has been approved. Your store, {{storeName}}, is now active on ESUT Marketplace.\n\nVisit {{dashboardUrl}} to begin managing your store." },
   seller_application_rejected: { subject: "An update on your ESUT Marketplace seller application", body: "Hello {{name}},\n\nYour seller application was not approved at this time. Please review the administrator note in your application." },
   order_created: { subject: "Your ESUT Marketplace order {{orderId}} was created", body: "Hello {{name}},\n\nYour order {{orderId}} has been created for campus pickup. Total: {{total}}." },
   order_status_updated: { subject: "Your ESUT Marketplace order {{orderId}} was updated", body: "Hello {{name}},\n\nYour order status is now {{orderStatus}}." },
+  search_alert_match: { subject: "A new ESUT Marketplace listing matches your saved search", body: "Hello {{name}},\n\nA new listing, {{listingTitle}}, matches your saved search. Visit {{dashboardUrl}} to review it." },
 };
 
 async function configuredNotificationSettings(): Promise<NotificationChannelSettings> {
   const db = await getDb();
-  const fallback: NotificationChannelSettings = { provider: ENV.resendApiKey && ENV.resendFromEmail ? "RESEND" : "DISABLED", orderUpdates: true, sellerApplications: true, offerUpdates: true, reviews: true };
+  const fallback: NotificationChannelSettings = { provider: ENV.resendApiKey && ENV.resendFromEmail ? "RESEND" : "DISABLED", orderUpdates: true, sellerApplications: true, offerUpdates: true, reviews: true, searchAlerts: true };
   if (!db) return fallback;
   const rows = await db.select({ value: marketplaceSettings.value }).from(marketplaceSettings).where(eq(marketplaceSettings.settingKey, "notification_channels")).limit(1);
   const settings = rows[0]?.value as Partial<NotificationChannelSettings> | undefined;
@@ -38,7 +39,7 @@ export async function renderManagedEmailTemplate(key: EmailTemplateKey, values: 
   const rows = db ? await db.select({ value: marketplaceSettings.value }).from(marketplaceSettings).where(eq(marketplaceSettings.settingKey, "email_templates")).limit(1) : [];
   const templates = rows[0]?.value as Partial<Record<EmailTemplateKey, ManagedEmailTemplate>> | undefined;
   const template = templates?.[key] ?? defaultTemplates[key];
-  const interpolate = (value: string) => value.replace(/{{(name|storeName|dashboardUrl|orderId|total|orderStatus)}}/g, (_match, variable) => values[variable] ?? "");
+  const interpolate = (value: string) => value.replace(/{{(name|storeName|dashboardUrl|orderId|total|orderStatus|listingTitle)}}/g, (_match, variable) => values[variable] ?? "");
   return { subject: interpolate(template.subject), body: interpolate(template.body) };
 }
 

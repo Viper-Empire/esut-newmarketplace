@@ -17,6 +17,13 @@ describe("saved marketplace search alerts", () => {
     const caller = appRouter.createCaller(contextFor(null));
     await expect(caller.searchAlerts.create({ query: "engineering book", verified: false })).rejects.toMatchObject({ code: "UNAUTHORIZED" });
     await expect(caller.searchAlerts.cancel({ id: 1 })).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+    await expect(caller.searchAlerts.update({ id: 1, query: "engineering book", verified: false, notifyInApp: true, notifyEmail: false })).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+  });
+
+  it("requires at least one notification channel", async () => {
+    const caller = appRouter.createCaller(contextFor("CUSTOMER"));
+    await expect(caller.searchAlerts.create({ query: "calculator", verified: false, notifyInApp: false, notifyEmail: false })).rejects.toMatchObject({ code: "BAD_REQUEST" });
+    await expect(caller.searchAlerts.update({ id: 1, query: "calculator", verified: false, notifyInApp: false, notifyEmail: false })).rejects.toMatchObject({ code: "BAD_REQUEST" });
   });
 
   it("rejects an invalid price range before database access", async () => {

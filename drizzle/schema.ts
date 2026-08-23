@@ -329,6 +329,8 @@ export const searchAlerts = mysqlTable("searchAlerts", {
   maxKobo: int("maxKobo"),
   condition: varchar("condition", { length: 24 }),
   verified: boolean("verified").default(false).notNull(),
+  notifyInApp: boolean("notifyInApp").default(true).notNull(),
+  notifyEmail: boolean("notifyEmail").default(false).notNull(),
   status: mysqlEnum("status", ["ACTIVE", "CANCELLED"]).default("ACTIVE").notNull(),
   lastNotifiedAt: timestamp("lastNotifiedAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
