@@ -27,5 +27,8 @@ describe("operational telemetry privacy boundary", () => {
     expect(mainSource).toContain("isTelemetryRequestFailure");
     expect(mainSource).toContain("if (isTelemetryRequestFailure(error)) return;");
     expect(source).toContain("isCloudflareStagingPreview");
+    expect(source).toContain("telemetryBlockedUntilRef");
+    expect(source).toContain("telemetryInFlightRef");
+    expect(source).toContain("5 * 60 * 1000");
   });
 });

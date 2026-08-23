@@ -9,6 +9,8 @@ const route = () => window.location.pathname.slice(0, 180) || "/";
 export function OperationalTelemetry() {
   const record = trpc.observability.record.useMutation();
   const recordRef = useRef(record.mutate);
+  const telemetryBlockedUntilRef = useRef(0);
+  const telemetryInFlightRef = useRef(false);
   recordRef.current = record.mutate;
 
   useEffect(() => {
@@ -16,7 +18,19 @@ export function OperationalTelemetry() {
     // Telemetry is best-effort and must stay silent until that backend exposes the
     // current observability procedure; otherwise a failed recorder could instrument itself.
     if (isCloudflareStagingPreview()) return;
-    const emit = (event: TelemetryEvent) => recordRef.current({ ...event, route: route() });
+    const emit = (event: TelemetryEvent) => {
+      if (Date.now() < telemetryBlockedUntilRef.current || telemetryInFlightRef.current) return;
+      telemetryInFlightRef.current = true;
+      recordRef.current({ ...event, route: route() }, {
+        onSuccess: () => { telemetryInFlightRef.current = false; },
+        onError: () => {
+          telemetryInFlightRef.current = false;
+          // Telemetry is intentionally non-critical. Contain unsupported, HTML, or
+          // rate-limited recorder responses for five minutes to prevent a feedback loop.
+          telemetryBlockedUntilRef.current = Date.now() + 5 * 60 * 1000;
+        },
+      });
+    };
     const onError = (event: ErrorEvent | Event) => {
       const target = event.target;
       if (target instanceof HTMLImageElement || target instanceof HTMLVideoElement || target instanceof HTMLSourceElement) {
