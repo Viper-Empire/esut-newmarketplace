@@ -9,6 +9,13 @@ import { toast } from "sonner";
 
 type Condition = "" | "NEW" | "LIKE_NEW" | "USED_GOOD" | "USED_FAIR" | "REFURBISHED";
 
+type CategoryLabel = { slug: string; name: string };
+export const formatCategoryTitle = (categorySlug: string | undefined, categories: ReadonlyArray<CategoryLabel> | undefined) => {
+  if (!categorySlug) return "Find your next campus essential";
+  const categoryName = categories?.find(category => category.slug === categorySlug)?.name;
+  return `${categoryName ?? categorySlug.replaceAll("-", " ")} listings`;
+};
+
 export default function ExplorePage() {
   const [location] = useLocation();
   const { isAuthenticated } = useAuth();
@@ -29,7 +36,7 @@ export default function ExplorePage() {
   const results = trpc.marketplace.search.useQuery({ q: q || undefined, categorySlug, min: minKobo, max: maxKobo, condition: conditionFilter || undefined, sort, verified, page, limit: 24 });
   const categories = trpc.marketplace.categories.useQuery();
   const suggestions = trpc.marketplace.suggestions.useQuery({ q: q.trim() }, { enabled: q.trim().length >= 2 && !results.isLoading && results.data?.items.length === 0 });
-  const title = categorySlug ? `${categorySlug.replaceAll("-", " ")} listings` : "Find your next campus essential";
+  const title = formatCategoryTitle(categorySlug, categories.data);
   const clearFilters = () => { setQ(""); setSort("newest"); setVerified(false); setConditionFilter(""); setMin(""); setMax(""); setPage(1); };
   const suggestionLinks = q.trim().length >= 2 && suggestions.data ? [
     ...suggestions.data.products.slice(0, 4).map(product => ({ href: `/product/${product.slug}`, label: product.title, detail: `Product · ${product.storeName}` })),
