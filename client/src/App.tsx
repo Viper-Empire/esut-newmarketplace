@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useMarketplaceEventRefresh } from "@/hooks/useMarketplaceEventRefresh";
 import PublicAccountActions from "@/components/PublicAccountActions";
+import ContextualNavigation from "@/components/ContextualNavigation";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import NotFound from "@/pages/NotFound";
 import Home from "@/pages/Home";
@@ -92,7 +93,7 @@ function App() {
     delete root.dataset.theme;
   }, []);
 
-  return <ErrorBoundary><a className="skip-link" href="#main-content">Skip to page content</a><Toaster/><ActiveWorkspaceEventRefresh/><PublicAccountActions/><div id="main-content" tabIndex={-1}><Suspense fallback={<main className="page-shell py-16 text-center text-slate-500" role="status">Loading workspace…</main>}><Switch>
+  return <ErrorBoundary><a className="skip-link" href="#main-content">Skip to page content</a><Toaster/><ActiveWorkspaceEventRefresh/><PublicAccountActions/><ContextualNavigation/><div id="main-content" tabIndex={-1}><Suspense fallback={<main className="page-shell py-16 text-center text-slate-500" role="status">Loading workspace…</main>}><Switch>
     <Route path="/" component={Home}/>
     <Route path="/login">{() => <AuthPage mode="login"/>}</Route>
     <Route path="/register">{() => <AuthPage mode="register"/>}</Route>
