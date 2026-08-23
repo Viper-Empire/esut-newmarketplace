@@ -432,3 +432,6 @@
 - [x] Migrate the two owner-approved authentic active listing primary images to Cloudinary, verify both public assets, and update only their public image references with an auditable rollback path. (Cloudinary HTTP 200 verification and live browser decode passed for both images.)
 
 - [x] Recover the persistent public maintenance page at `https://esutshop-59wzg8bs.manus.space/`, verify the live root and public routes, and document the deployment cause without changing marketplace data. (Rollback propagation completed; live root returned HTTP 200 with the ESUT Marketplace app and fresh browser verification passed. Incident recorded in `PUBLIC_DOMAIN_404_INCIDENT_2026-08-23.md`.)
+
+- [x] Audit the current public marketplace query, filters, joins, pagination, media projection, and frontend response contract without changing production behavior. (Recorded in `MARKETPLACE_QUERY_AUDIT_2026-08-23.md`; current tRPC contract and live query semantics documented.)
+- [x] Build and run read-only current-versus-proposed marketplace query comparison tests, record any mismatches, and keep the production query unchanged until review. (`server/marketplaceQueryComparison.test.ts` passed 2 tests across default, sorting, search, category, duplicate-detection, and media-coverage checks; TypeScript passed.)
