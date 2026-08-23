@@ -430,3 +430,5 @@
 - [x] Document Cloudinary rollout, fallback, and rollback behavior before publishing the migration checkpoint. (Recorded in `PUBLIC_PRODUCT_VISIBILITY_AUDIT_2026-08-22.md`; original objects remain available for rollback.)
 
 - [x] Migrate the two owner-approved authentic active listing primary images to Cloudinary, verify both public assets, and update only their public image references with an auditable rollback path. (Cloudinary HTTP 200 verification and live browser decode passed for both images.)
+
+- [ ] Diagnose and recover the public root-domain 404 at `https://esutshop-59wzg8bs.manus.space/` without changing marketplace data, then verify the homepage and document the deployment cause.
