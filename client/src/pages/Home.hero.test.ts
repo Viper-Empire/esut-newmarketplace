@@ -26,6 +26,12 @@ describe("homepage hero artwork interaction contract", () => {
     expect(homeSource).toContain('className="reference-caption"');
   });
 
+  it("keeps category links in the visual clockwise order", () => {
+    const order = ["reference-chip-fashion", "reference-chip-phones", "reference-chip-food", "reference-chip-beauty", "reference-chip-books", "reference-chip-accommodation"];
+    const positions = order.map(className => homeSource.indexOf(className));
+    expect(positions.every((position, index) => position >= 0 && (index === 0 || position > positions[index - 1]))).toBe(true);
+  });
+
   it("defines bounded hover, entrance, and reduced-motion safeguards", () => {
     expect(stylesheet).toContain(".reference-hero-surface");
     expect(stylesheet).toContain(".reference-logo-medallion");
@@ -48,6 +54,12 @@ describe("homepage hero artwork interaction contract", () => {
     expect(stylesheet).toContain("width:96px;min-width:96px;height:88px;min-height:88px");
     expect(stylesheet).toContain("flex-direction:column;justify-content:center");
     expect(stylesheet).toContain(".reference-chip-accommodation{top:46%;left:12%}");
+    expect(stylesheet).toContain("@keyframes reference-tile-enter");
+    expect(stylesheet).toContain(".reference-chip-fashion{animation-delay:0ms!important}");
+    expect(stylesheet).toContain(".reference-chip-accommodation{animation-delay:400ms!important}");
+    expect(stylesheet).toContain("@keyframes reference-orbit-turn");
+    expect(stylesheet).toContain(".reference-orbit-outer{animation:reference-orbit-turn 56s linear infinite!important}");
+    expect(stylesheet).toContain(".reference-orbit-inner{animation:reference-orbit-turn 44s linear infinite reverse!important}");
     expect(stylesheet).toContain("@media(prefers-reduced-motion:reduce){.reference-chip,.reference-chip:hover,.reference-chip:focus-visible{transform:translate(-50%,-50%)}}");
   });
 });

@@ -139,3 +139,13 @@
 
 .reference-chip-beauty{left:48%}
 @media(max-width:639px){.reference-chip-beauty{left:47%}}
+
+/* Calm organized entrance: cards reveal clockwise while remaining fixed in their designed positions. */
+@keyframes reference-tile-enter{0%{opacity:0;transform:translate(-50%,-50%) translateY(12px) scale(.9)}70%{opacity:1;transform:translate(-50%,-50%) translateY(-2px) scale(1.02)}100%{opacity:1;transform:translate(-50%,-50%) translateY(0) scale(1)}}
+.reference-chip{opacity:0;animation:reference-tile-enter 720ms cubic-bezier(.23,1,.32,1) both!important}
+.reference-chip-fashion{animation-delay:0ms!important}.reference-chip-phones{animation-delay:80ms!important}.reference-chip-food{animation-delay:160ms!important}.reference-chip-beauty{animation-delay:240ms!important}.reference-chip-books{animation-delay:320ms!important}.reference-chip-accommodation{animation-delay:400ms!important}
+/* Ring-only motion: the six category tiles stay anchored while the orbit frame turns slowly behind them. */
+@keyframes reference-orbit-turn{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+.reference-orbit-outer{animation:reference-orbit-turn 56s linear infinite!important}.reference-orbit-inner{animation:reference-orbit-turn 44s linear infinite reverse!important}.reference-orbit-core{animation:reference-orbit-turn 68s linear infinite!important}
+@media(prefers-reduced-motion:reduce){.reference-chip,.reference-chip:hover,.reference-chip:focus-visible{opacity:1;animation:none!important;transform:translate(-50%,-50%)}.reference-orbit-outer,.reference-orbit-inner,.reference-orbit-core{animation:none!important;transform:translate(-50%,-50%)}}
+@media(max-width:639px){.reference-chip{animation-duration:620ms}.reference-orbit-outer{animation-duration:64s}.reference-orbit-inner{animation-duration:50s}.reference-orbit-core{animation-duration:76s}}

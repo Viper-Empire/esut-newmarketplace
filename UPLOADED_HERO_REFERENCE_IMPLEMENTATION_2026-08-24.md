@@ -29,3 +29,6 @@ Replaced the five text-forward orbit cards with six polished icon-led links: Fas
 
 ## Reference-style vertical tile verification
 Reworked the six category links to match the supplied image more closely: compact rounded-square white tiles, centered colorful icon tile above a centered ESUT-green label, and increased white-space around each card. Fashion and Phones sit across the top, Accommodation and Food & Snacks at the middle sides, Books & Notes lower-left, and Beauty & Care lower-center. Continuous rotation remains removed; orbit rings are static. Desktop and 566px mobile checks confirm the cards are contained, readable, and separated from the medallion and Campus Deals caption.
+
+## Organized entrance and ring motion verification
+Reordered the hero links in the visual clockwise sequence: Fashion, Phones, Food & Snacks, Beauty & Care, Books & Notes, and Accommodation. Added a 720ms clockwise staggered first-load reveal with 80ms offsets, while keeping tile positions stationary. Reintroduced only slow ring-only rotation: outer 56s, inner 44s reverse, and core 68s; the category cards do not orbit or rotate. Desktop and 566px mobile checks confirm the cards remain readable, contained, and clear of the logo/caption. Reduced-motion users receive static tiles and static rings.
