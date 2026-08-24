@@ -160,3 +160,7 @@
 .reference-chip-fashion{top:14%;left:18%;animation-delay:0ms!important}.reference-chip-phones{top:14%;left:82%;animation-delay:80ms!important}.reference-chip-food{top:48%;left:90%;animation-delay:160ms!important}.reference-chip-beauty{top:72%;left:48%;animation-delay:240ms!important}.reference-chip-books{top:75%;left:18%;animation-delay:320ms!important}.reference-chip-accommodation{top:48%;left:10%;animation-delay:400ms!important}
 @media(max-width:639px){.reference-chip-fashion{top:15%;left:17%}.reference-chip-phones{top:15%;left:83%}.reference-chip-food{top:48%;left:88%}.reference-chip-beauty{top:73%;left:47%}.reference-chip-books{top:75%;left:18%}.reference-chip-accommodation{top:48%;left:12%}}
 @media(prefers-reduced-motion:reduce){.reference-chip,.reference-chip:hover,.reference-chip:focus-visible{opacity:1;animation:none!important;transform:translate(-50%,-50%)}}
+
+/* Requested category swap: Beauty takes the reference right-middle position; Food moves to the lower-center lane. */
+.reference-chip-beauty{top:48%;left:90%}.reference-chip-food{top:72%;left:48%}
+@media(max-width:639px){.reference-chip-beauty{top:48%;left:88%}.reference-chip-food{top:73%;left:47%}}

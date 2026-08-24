@@ -38,3 +38,6 @@ Readjusted the six hero tiles into a more open composition: Fashion and Phones a
 
 ## Reference-positioned calm motion verification
 Kept the supplied visual order and breathing room while adding motion: Fashion and Phones are high left/right, Food & Snacks is right-middle, Books & Notes lower-left, Beauty & Care lower-center, and Accommodation middle-left. Tiles use a one-time 780ms pop-in with 80ms clockwise stagger; the cards remain stationary after entrance. Orbit rings rotate slowly behind the tiles at 56s outer, 44s reverse inner, and 68s core. Desktop and 566px mobile checks confirm the tiles remain clear of the medallion and Campus Deals caption, with no edge clipping. Reduced-motion disables pop-in and ring rotation.
+
+## Beauty and Food position swap verification
+Moved Beauty & Care into the supplied reference right-middle position and moved Food & Snacks into a separate lower-center lane. Desktop verification shows both cards are clearly distinguishable, and mobile verification confirms the revised positions remain contained at the compact breakpoint. The medallion remains unobstructed and the lower caption zone is protected. Existing links, icon styling, calm ring rotation, pop-in entrance, and reduced-motion behavior remain unchanged.
