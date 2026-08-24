@@ -104,3 +104,9 @@
 /* Keep the orbit visually planetary while reserving a clean lower-right caption zone. */
 .reference-chip{--orbit-radius:clamp(118px,13vw,155px)}.reference-caption{right:5%;bottom:5%;z-index:12;font-size:clamp(2.4rem,5vw,3.6rem)}
 @media(max-width:639px){.reference-chip{--orbit-radius:clamp(105px,24vw,136px)}.reference-caption{right:5%;bottom:5%;font-size:clamp(2rem,10vw,3rem)}}
+
+/* Central brand emphasis: a quiet breathing halo behind the ESUT logo, never a distracting flash. */
+.reference-logo-medallion{position:absolute;isolation:isolate;animation:reference-medallion-in 720ms 80ms cubic-bezier(.23,1,.32,1) both}
+.reference-logo-medallion::after{position:absolute;inset:-12px;z-index:-1;border:2px solid rgba(245,183,0,.24);border-radius:50%;box-shadow:0 0 0 7px rgba(245,183,0,.08),0 0 28px 8px rgba(245,183,0,.18);content:"";opacity:.65;animation:reference-logo-glow 4.8s ease-in-out 900ms infinite;pointer-events:none}
+@keyframes reference-logo-glow{0%,100%{opacity:.42;transform:scale(.97)}50%{opacity:.9;transform:scale(1.04)}}
+@media(prefers-reduced-motion:reduce){.reference-logo-medallion::after{animation:none;opacity:.5;transform:none}}

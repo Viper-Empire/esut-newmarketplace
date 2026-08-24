@@ -10,6 +10,11 @@ describe("homepage hero artwork interaction contract", () => {
     expect(homeSource).toContain('className="reference-hero-surface"');
     expect(homeSource).toContain('className="reference-logo-medallion"');
     expect(homeSource).toContain('src={ESUT_MARKETPLACE_LOGO_PATH}');
+    expect(homeSource).toContain('href="/category/fashion"');
+    expect(homeSource).toContain('href="/category/phones-accessories"');
+    expect(homeSource).toContain('href="/esutchop"');
+    expect(homeSource).toContain('href="/category/digital-books-courses"');
+    expect(homeSource).toContain('href="/category/beauty-personal-care"');
     expect(homeSource).toContain('className="reference-chip reference-chip-fashion"');
     expect(homeSource).toContain('className="reference-chip reference-chip-phones"');
     expect(homeSource).toContain('className="reference-chip reference-chip-food"');
@@ -24,6 +29,9 @@ describe("homepage hero artwork interaction contract", () => {
     expect(stylesheet).toContain(".reference-logo-medallion");
     expect(stylesheet).toContain(".reference-chip:hover,.reference-chip:focus-visible");
     expect(stylesheet).toContain(".reference-caption");
+    expect(stylesheet).toContain(".reference-logo-medallion::after");
+    expect(stylesheet).toContain("animation:reference-logo-glow 4.8s ease-in-out 900ms infinite");
+    expect(stylesheet).toContain(".reference-logo-medallion::after{animation:none;opacity:.5;transform:none}");
     expect(stylesheet).toContain("@media(prefers-reduced-motion:reduce)");
     expect(stylesheet).toContain(".reference-chip:hover,.reference-chip:focus-visible{transform:none;filter:none}");
     expect(stylesheet).toContain("--orbit-radius:clamp(128px,15.6vw,190px)");
