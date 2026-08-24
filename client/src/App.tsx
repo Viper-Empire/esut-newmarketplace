@@ -8,7 +8,8 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import NotFound from "@/pages/NotFound";
 import Home from "@/pages/Home";
 import { Link, Route, Switch } from "wouter";
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense } from "react";
+import { DarkModeProvider } from "@/contexts/DarkModeContext";
 
 const ProductPage = lazy(() => import("@/pages/ProductPage"));
 const CartPage = lazy(() => import("@/pages/CartPage"));
@@ -86,14 +87,7 @@ function ActiveWorkspaceEventRefresh() {
 }
 
 function App() {
-  useEffect(() => {
-    try { window.localStorage.removeItem("esut-marketplace-theme"); } catch { /* Storage access is optional. */ }
-    const root = document.documentElement;
-    root.classList.remove("dark");
-    delete root.dataset.theme;
-  }, []);
-
-  return <ErrorBoundary><a className="skip-link" href="#main-content">Skip to page content</a><Toaster/><ActiveWorkspaceEventRefresh/><PublicAccountActions/><ContextualNavigation/><div id="main-content" tabIndex={-1}><Suspense fallback={<main className="page-shell py-16 text-center text-slate-500" role="status">Loading workspace…</main>}><Switch>
+  return <DarkModeProvider><ErrorBoundary><a className="skip-link" href="#main-content">Skip to page content</a><Toaster/><ActiveWorkspaceEventRefresh/><PublicAccountActions/><ContextualNavigation/><div id="main-content" tabIndex={-1}><Suspense fallback={<main className="page-shell py-16 text-center text-slate-500" role="status">Loading workspace…</main>}><Switch>
     <Route path="/" component={Home}/>
     <Route path="/login">{() => <AuthPage mode="login"/>}</Route>
     <Route path="/register">{() => <AuthPage mode="register"/>}</Route>
@@ -165,7 +159,7 @@ function App() {
     <Route path="/admin/audit-logs" component={AdminAuditLogsPage}/>
     <Route path="/category/:slug" component={ExplorePage}/>
     <Route component={NotFound}/>
-  </Switch></Suspense></div></ErrorBoundary>;
+  </Switch></Suspense></div></ErrorBoundary></DarkModeProvider>;
 }
 
 export default App;
