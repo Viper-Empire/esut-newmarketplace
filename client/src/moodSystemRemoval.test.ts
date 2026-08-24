@@ -21,10 +21,10 @@ describe("controlled dark-mode system", () => {
     expect(toggle).toContain("Switch to light mode");
     expect(context).toContain('"esut-marketplace-theme"');
     expect(styles).toContain("html.dark body");
-    expect(styles).toContain("--dark-bg:#21160f");
-    expect(styles).toContain("--dark-orange:#c45b29");
-    expect(styles).toContain("--dark-gold:#b89235");
-    expect(styles).toContain("html.dark .hero-art{background:linear-gradient(145deg,#a9471d 0%,#86461f 48%,#5f571f 100%)}");
+    expect(styles).toContain("--dark-bg:#0b1220");
+    expect(styles).toContain("--dark-teal:#2dd4bf");
+    expect(styles).toContain("--dark-mint:#c9f7eb");
+    expect(styles).toContain("html.dark .hero-art{background:linear-gradient(145deg,#075985 0%,#0f766e 52%,#166534 100%)}");
     expect(styles).toContain("dark-mode-toggle");
     expect(toaster).toContain('theme={isDark ? "dark" : "light"}');
     expect(existsSync(resolve(process.cwd(), "client/src/contexts/ThemeContext.tsx"))).toBe(false);
