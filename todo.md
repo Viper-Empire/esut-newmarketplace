@@ -482,3 +482,10 @@
 
 - [x] Verify the authorized Food/Accommodation production migration against live category, listing, saved-search, and foreign-key relationships before execution. (Confirmed ids 5 and 6, active status, sort order, preserved listing counts, zero legacy hostel saved-search references after migration, no stale legacy category rows, and no foreign-key reassignment.)
 - [x] Apply and verify the non-destructive category-row rename with preserved IDs, linked data, canonical slugs, and legacy compatibility. (Updated only approved rows in one guarded transaction, preserved ids 5/6 and linked data, normalized old `hostel-home` lookups to `accommodation`, and passed focused/full tests, TypeScript, build, and route screenshots.)
+
+- [ ] Complete the owner-authorized read-only authenticated buyer, seller, and administrator dashboard review across desktop and mobile, including navigation escapes, loading/error states, light-only branding, and role boundaries.
+
+- [ ] Investigate and recover the managed `manus.space` timeout without changing DNS, domains, database records, provider settings, or production data; verify public availability before resuming authenticated review.
+
+- [x] Audit every active listing against its real product title, description, specifications, category, and route to identify whether the Adjustable Study Lamp issue is isolated or part of a broader misclassification pattern. (Reviewed all eight active/out-of-stock/reserved real listings; the lamp was the only confirmed mismatch. Findings recorded in `CATEGORY_INTEGRITY_AUDIT_2026-08-24.md`.)
+- [x] Correct all confirmed category mismatches with guarded category-only updates and verify non-category fields remain unchanged. (Moved listing id 4 from Accommodation to Electronics with ID/category/title guards; verified owner, price, condition, location, status, counters, timestamps, and media boundary were preserved. Full Vitest, TypeScript, build, and category-route checks passed.)
