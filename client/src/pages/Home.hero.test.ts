@@ -20,6 +20,8 @@ describe("homepage hero artwork interaction contract", () => {
     expect(homeSource).toContain('className="reference-chip reference-chip-food"');
     expect(homeSource).toContain('className="reference-chip reference-chip-books"');
     expect(homeSource).toContain('className="reference-chip reference-chip-beauty"');
+    expect(homeSource).toContain('className="reference-chip reference-chip-accommodation"');
+    expect(homeSource).toContain('className="reference-chip-icon"');
     expect(homeSource).toContain('className="reference-tag"');
     expect(homeSource).toContain('className="reference-caption"');
   });
@@ -43,5 +45,9 @@ describe("homepage hero artwork interaction contract", () => {
     expect(stylesheet).toContain(".reference-chip-books{--orbit-start:145deg");
     expect(stylesheet).toContain("@keyframes reference-planet-orbit");
     expect(stylesheet).toContain(".reference-chip{animation:none!important");
+    expect(stylesheet).toContain("width:96px;min-width:96px;height:88px;min-height:88px");
+    expect(stylesheet).toContain("flex-direction:column;justify-content:center");
+    expect(stylesheet).toContain(".reference-chip-accommodation{top:46%;left:12%}");
+    expect(stylesheet).toContain("@media(prefers-reduced-motion:reduce){.reference-chip,.reference-chip:hover,.reference-chip:focus-visible{transform:translate(-50%,-50%)}}");
   });
 });
