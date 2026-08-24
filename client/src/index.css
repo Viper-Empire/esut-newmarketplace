@@ -23,3 +23,24 @@
 .dashboard-admin-surface [class*="text-[#08243b]"]{color:#004f26}
 .dashboard-admin-surface [class*="border-[#08243b]"]{border-color:rgba(0,107,50,.2)}
 @media(max-width:639px){.dashboard-surface .dashboard-main{padding-top:1.25rem}.dashboard-admin-surface{padding-top:1.25rem}}
+
+/* Hero artwork charm and interaction layer. Motion is decorative, bounded, and reduced-motion safe. */
+.hero-art{isolation:isolate;background:radial-gradient(circle at 50% 34%,rgba(245,183,0,.24) 0 12%,transparent 13%),radial-gradient(circle at 78% 78%,rgba(20,184,125,.2),transparent 34%),linear-gradient(145deg,#009447 0%,#007b3c 52%,#006b32 100%)}
+.hero-art::before{position:absolute;inset:0;z-index:0;background:linear-gradient(118deg,transparent 0 38%,rgba(255,255,255,.08) 38.2% 38.5%,transparent 38.7% 100%),radial-gradient(circle at 50% 50%,transparent 0 34%,rgba(255,255,255,.06) 34.2% 34.5%,transparent 34.7%);content:"";pointer-events:none}
+.hero-art::after{position:absolute;right:-12%;bottom:-18%;z-index:0;height:55%;width:55%;border:1px solid rgba(245,183,0,.24);border-radius:50%;box-shadow:0 0 0 24px rgba(245,183,0,.04),0 0 0 48px rgba(245,183,0,.025);content:"";pointer-events:none}
+.hero-glow{position:absolute;top:50%;left:50%;z-index:1;height:190px;width:190px;transform:translate(-50%,-50%);border-radius:50%;background:rgba(245,183,0,.18);filter:blur(34px);pointer-events:none}
+.hero-cart{animation:hero-cart-arrive 680ms cubic-bezier(.23,1,.32,1) both;transform-origin:center;will-change:transform,opacity}
+.hero-cart::after{position:absolute;inset:-16px;border:1px solid rgba(255,255,255,.34);border-radius:50%;content:"";animation:hero-cart-ring 1.8s 500ms cubic-bezier(.23,1,.32,1) both;pointer-events:none}
+.float-card{z-index:3;cursor:default;transition:transform 220ms cubic-bezier(.23,1,.32,1),box-shadow 220ms ease-out,filter 220ms ease-out;will-change:transform}
+.float-card::before{position:absolute;inset:1px;border-radius:inherit;background:linear-gradient(135deg,rgba(255,255,255,.9),transparent 46%);content:"";opacity:.7;pointer-events:none}
+.float-card:hover,.float-card:focus-visible{transform:translateY(-9px) rotate(0deg) scale(1.045);box-shadow:0 18px 32px rgba(0,59,33,.27),0 0 0 4px rgba(255,255,255,.14);filter:saturate(1.08)}
+.float-card:focus-visible{outline:3px solid #f5b700;outline-offset:4px}
+.float-phone{animation-delay:-1.3s;transform:rotate(3deg)}
+.float-books{animation-delay:-3.7s;transform:rotate(-4deg)}
+.float-fashion{animation-delay:-5.1s;transform:rotate(4deg)}
+.art-caption{z-index:2;text-shadow:0 5px 16px rgba(0,59,33,.24)}
+@keyframes hero-cart-arrive{0%{opacity:0;transform:translate(-50%,-44%) scale(.95)}70%{opacity:1;transform:translate(-50%,-50%) scale(1.025)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+@keyframes hero-cart-ring{0%{opacity:.55;transform:scale(.82)}100%{opacity:0;transform:scale(1.22)}}
+@keyframes hero-card-drift{0%,100%{margin-top:0}50%{margin-top:-5px}}
+@media(max-width:639px){.hero-glow{height:150px;width:150px}.hero-cart::after{inset:-11px}.float-card:hover,.float-card:focus-visible{transform:translateY(-6px) scale(1.035)}}
+@media(prefers-reduced-motion:reduce){.hero-cart,.hero-cart::after,.float-card{animation:none!important}.float-card{transition:none}.float-card:hover,.float-card:focus-visible{transform:none;filter:none}}
