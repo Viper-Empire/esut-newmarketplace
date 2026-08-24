@@ -1,11 +1,9 @@
 import { Toaster as Sonner, type ToasterProps } from "sonner";
-import { useDarkMode } from "@/contexts/DarkModeContext";
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { isDark } = useDarkMode();
   return (
     <Sonner
-      theme={isDark ? "dark" : "light"}
+      theme="light"
       className="toaster group"
       style={
         {

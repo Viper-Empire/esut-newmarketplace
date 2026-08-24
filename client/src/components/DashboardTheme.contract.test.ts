@@ -21,13 +21,13 @@ describe("ESUT dashboard visual system", () => {
     expect(adminSuiteSource).toContain('location === href ? "bg-[#00843d] text-white shadow-sm"');
   });
 
-  it("keeps dashboard styling scoped and uses the controlled dark-mode hook", () => {
+  it("keeps dashboard styling scoped and does not restore the removed mood selector", () => {
     expect(stylesheetSource).toContain(".dashboard-surface");
     expect(stylesheetSource).toContain(".dashboard-admin-surface");
-    expect(stylesheetSource).toContain("html.dark .dashboard-surface");
-    expect(stylesheetSource).toContain(".dark-mode-toggle");
-    expect(workspaceSource).toContain("DarkModeToggle");
-    expect(adminSuiteSource).toContain("DarkModeToggle");
+    expect(stylesheetSource).not.toContain("html.dark");
+    expect(stylesheetSource).not.toContain("dark-mode-toggle");
+    expect(workspaceSource).not.toContain("DarkModeToggle");
+    expect(adminSuiteSource).not.toContain("DarkModeToggle");
     expect(stylesheetSource).not.toContain("ThemePreferenceSelect");
   });
 });
