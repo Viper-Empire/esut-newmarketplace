@@ -35,3 +35,6 @@ Reordered the hero links in the visual clockwise sequence: Fashion, Phones, Food
 
 ## Professional spacing refinement verification
 Readjusted the six hero tiles into a more open composition: Fashion and Phones are balanced across the upper axis; Accommodation and Food & Snacks sit farther out on the middle side axis; Books & Notes and Beauty & Care occupy separate lower lanes. The logo medallion has a clearer breathing zone, and Beauty & Care no longer crowds the Campus Deals caption. The clockwise staggered entrance, slow ring-only rotation, real links, and reduced-motion behavior remain intact. Desktop and 566px mobile checks confirm the revised spacing is contained and readable.
+
+## Reference-positioned calm motion verification
+Kept the supplied visual order and breathing room while adding motion: Fashion and Phones are high left/right, Food & Snacks is right-middle, Books & Notes lower-left, Beauty & Care lower-center, and Accommodation middle-left. Tiles use a one-time 780ms pop-in with 80ms clockwise stagger; the cards remain stationary after entrance. Orbit rings rotate slowly behind the tiles at 56s outer, 44s reverse inner, and 68s core. Desktop and 566px mobile checks confirm the tiles remain clear of the medallion and Campus Deals caption, with no edge clipping. Reduced-motion disables pop-in and ring rotation.

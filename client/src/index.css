@@ -153,3 +153,10 @@
 /* Professional spacing pass: larger breathing zones around the medallion and caption. */
 .reference-chip-fashion{top:14%;left:18%}.reference-chip-phones{top:14%;left:82%}.reference-chip-accommodation{top:48%;left:10%}.reference-chip-food{top:48%;left:90%}.reference-chip-books{top:75%;left:18%}.reference-chip-beauty{top:72%;left:48%}
 @media(max-width:639px){.reference-chip-fashion{top:15%;left:17%}.reference-chip-phones{top:15%;left:83%}.reference-chip-accommodation{top:48%;left:12%}.reference-chip-food{top:48%;left:88%}.reference-chip-books{top:75%;left:18%}.reference-chip-beauty{top:73%;left:48%}}
+
+/* Reference-positioned calm motion: one-time pop-in, then stable readable tiles. */
+@keyframes reference-tile-pop{0%{opacity:0;transform:translate(-50%,-50%) translateY(10px) scale(.76)}62%{opacity:1;transform:translate(-50%,-50%) translateY(-2px) scale(1.045)}100%{opacity:1;transform:translate(-50%,-50%) translateY(0) scale(1)}}
+.reference-chip{animation:reference-tile-pop 780ms cubic-bezier(.23,1,.32,1) both!important}
+.reference-chip-fashion{top:14%;left:18%;animation-delay:0ms!important}.reference-chip-phones{top:14%;left:82%;animation-delay:80ms!important}.reference-chip-food{top:48%;left:90%;animation-delay:160ms!important}.reference-chip-beauty{top:72%;left:48%;animation-delay:240ms!important}.reference-chip-books{top:75%;left:18%;animation-delay:320ms!important}.reference-chip-accommodation{top:48%;left:10%;animation-delay:400ms!important}
+@media(max-width:639px){.reference-chip-fashion{top:15%;left:17%}.reference-chip-phones{top:15%;left:83%}.reference-chip-food{top:48%;left:88%}.reference-chip-beauty{top:73%;left:47%}.reference-chip-books{top:75%;left:18%}.reference-chip-accommodation{top:48%;left:12%}}
+@media(prefers-reduced-motion:reduce){.reference-chip,.reference-chip:hover,.reference-chip:focus-visible{opacity:1;animation:none!important;transform:translate(-50%,-50%)}}

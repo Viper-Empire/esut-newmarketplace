@@ -55,6 +55,10 @@ describe("homepage hero artwork interaction contract", () => {
     expect(stylesheet).toContain("flex-direction:column;justify-content:center");
     expect(stylesheet).toContain(".reference-chip-accommodation{top:46%;left:12%}");
     expect(stylesheet).toContain("@keyframes reference-tile-enter");
+    expect(stylesheet).toContain("@keyframes reference-tile-pop");
+    expect(stylesheet).toContain("animation:reference-tile-pop 780ms cubic-bezier(.23,1,.32,1) both!important");
+    expect(stylesheet).toContain(".reference-chip-food{top:48%;left:90%;animation-delay:160ms!important}");
+    expect(stylesheet).toContain(".reference-chip-beauty{top:72%;left:48%;animation-delay:240ms!important}");
     expect(stylesheet).toContain(".reference-chip-fashion{animation-delay:0ms!important}");
     expect(stylesheet).toContain(".reference-chip-accommodation{animation-delay:400ms!important}");
     expect(stylesheet).toContain("@keyframes reference-orbit-turn");
