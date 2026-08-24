@@ -88,3 +88,19 @@
 @keyframes reference-chip-float{0%,100%{translate:0 -3px}50%{translate:0 4px}}
 @keyframes reference-orbit-spin{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.reference-chip,.reference-orbit{animation:none!important;will-change:auto}.reference-chip:hover,.reference-chip:focus-visible{transform:none;translate:0 0}}
+
+/* Solar-orbit category system: each chip follows the same centered path with a deliberate phase offset. */
+.reference-hero-surface{isolation:isolate}
+.reference-chip{top:50%;left:50%;min-width:104px;min-height:52px;padding:12px 15px;z-index:8;--orbit-radius:clamp(128px,15.6vw,190px);--orbit-start:0deg;transform:translate(-50%,-50%) rotate(var(--orbit-start)) translateX(var(--orbit-radius)) rotate(calc(var(--orbit-start) * -1));animation:reference-planet-orbit 16s linear infinite;will-change:transform;transition:scale 220ms cubic-bezier(.23,1,.32,1),box-shadow 220ms ease-out,filter 220ms ease-out}
+.reference-chip-fashion{--orbit-start:-135deg;animation-delay:-0.1s}.reference-chip-phones{--orbit-start:-45deg;animation-delay:-3.3s}.reference-chip-food{--orbit-start:0deg;animation-delay:-6.5s}.reference-chip-beauty{--orbit-start:55deg;animation-delay:-9.7s}.reference-chip-books{--orbit-start:145deg;animation-delay:-12.9s}
+.reference-chip:hover,.reference-chip:focus-visible{scale:1.06;box-shadow:0 18px 32px rgba(0,0,0,.3),0 0 0 4px rgba(255,255,255,.15);filter:saturate(1.1)}
+@keyframes reference-planet-orbit{from{transform:translate(-50%,-50%) rotate(var(--orbit-start)) translateX(var(--orbit-radius)) rotate(calc(var(--orbit-start) * -1))}to{transform:translate(-50%,-50%) rotate(calc(var(--orbit-start) + 360deg)) translateX(var(--orbit-radius)) rotate(calc((var(--orbit-start) + 360deg) * -1))}}
+@media(max-width:639px){.reference-chip{min-width:88px;min-height:44px;padding:9px 10px}.reference-chip span{font-size:8px}.reference-chip svg{height:16px;width:16px}.reference-chip{--orbit-radius:clamp(128px,27vw,158px)}}
+@media(prefers-reduced-motion:reduce){.reference-chip{animation:none!important;scale:1;will-change:auto}.reference-chip-fashion{top:14%;left:8%;transform:none}.reference-chip-phones{top:14%;left:66%;transform:none}.reference-chip-food{top:43%;left:auto;right:8%;transform:none}.reference-chip-beauty{top:69%;left:52%;transform:none}.reference-chip-books{top:63%;left:4%;transform:none}.reference-chip:hover,.reference-chip:focus-visible{scale:1;filter:none}}
+
+/* Clear legacy static offsets before orbital positioning so cards never stretch between opposing insets. */
+.reference-chip{right:auto;bottom:auto}
+
+/* Keep the orbit visually planetary while reserving a clean lower-right caption zone. */
+.reference-chip{--orbit-radius:clamp(118px,13vw,155px)}.reference-caption{right:5%;bottom:5%;z-index:12;font-size:clamp(2.4rem,5vw,3.6rem)}
+@media(max-width:639px){.reference-chip{--orbit-radius:clamp(105px,24vw,136px)}.reference-caption{right:5%;bottom:5%;font-size:clamp(2rem,10vw,3rem)}}
