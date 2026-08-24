@@ -149,3 +149,7 @@
 .reference-orbit-outer{animation:reference-orbit-turn 56s linear infinite!important}.reference-orbit-inner{animation:reference-orbit-turn 44s linear infinite reverse!important}.reference-orbit-core{animation:reference-orbit-turn 68s linear infinite!important}
 @media(prefers-reduced-motion:reduce){.reference-chip,.reference-chip:hover,.reference-chip:focus-visible{opacity:1;animation:none!important;transform:translate(-50%,-50%)}.reference-orbit-outer,.reference-orbit-inner,.reference-orbit-core{animation:none!important;transform:translate(-50%,-50%)}}
 @media(max-width:639px){.reference-chip{animation-duration:620ms}.reference-orbit-outer{animation-duration:64s}.reference-orbit-inner{animation-duration:50s}.reference-orbit-core{animation-duration:76s}}
+
+/* Professional spacing pass: larger breathing zones around the medallion and caption. */
+.reference-chip-fashion{top:14%;left:18%}.reference-chip-phones{top:14%;left:82%}.reference-chip-accommodation{top:48%;left:10%}.reference-chip-food{top:48%;left:90%}.reference-chip-books{top:75%;left:18%}.reference-chip-beauty{top:72%;left:48%}
+@media(max-width:639px){.reference-chip-fashion{top:15%;left:17%}.reference-chip-phones{top:15%;left:83%}.reference-chip-accommodation{top:48%;left:12%}.reference-chip-food{top:48%;left:88%}.reference-chip-books{top:75%;left:18%}.reference-chip-beauty{top:73%;left:48%}}

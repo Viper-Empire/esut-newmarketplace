@@ -32,3 +32,6 @@ Reworked the six category links to match the supplied image more closely: compac
 
 ## Organized entrance and ring motion verification
 Reordered the hero links in the visual clockwise sequence: Fashion, Phones, Food & Snacks, Beauty & Care, Books & Notes, and Accommodation. Added a 720ms clockwise staggered first-load reveal with 80ms offsets, while keeping tile positions stationary. Reintroduced only slow ring-only rotation: outer 56s, inner 44s reverse, and core 68s; the category cards do not orbit or rotate. Desktop and 566px mobile checks confirm the cards remain readable, contained, and clear of the logo/caption. Reduced-motion users receive static tiles and static rings.
+
+## Professional spacing refinement verification
+Readjusted the six hero tiles into a more open composition: Fashion and Phones are balanced across the upper axis; Accommodation and Food & Snacks sit farther out on the middle side axis; Books & Notes and Beauty & Care occupy separate lower lanes. The logo medallion has a clearer breathing zone, and Beauty & Care no longer crowds the Campus Deals caption. The clockwise staggered entrance, slow ring-only rotation, real links, and reduced-motion behavior remain intact. Desktop and 566px mobile checks confirm the revised spacing is contained and readable.
