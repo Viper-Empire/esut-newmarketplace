@@ -485,7 +485,7 @@
 
 - [ ] Complete the owner-authorized read-only authenticated buyer, seller, and administrator dashboard review across desktop and mobile, including navigation escapes, loading/error states, light-only branding, and role boundaries.
 
-- [ ] Investigate and recover the managed `manus.space` timeout without changing DNS, domains, database records, provider settings, or production data; verify public availability before resuming authenticated review.
+- [x] Investigate and recover the managed `manus.space` timeout without changing DNS, domains, database records, provider settings, or production data; verify public availability before resuming authenticated review. (Restarted the managed service; public root returned real marketplace content and `/account` returned the expected signed-out privacy boundary. No DNS, domain, database, provider, or production-data change was made.)
 
 - [x] Audit every active listing against its real product title, description, specifications, category, and route to identify whether the Adjustable Study Lamp issue is isolated or part of a broader misclassification pattern. (Reviewed all eight active/out-of-stock/reserved real listings; the lamp was the only confirmed mismatch. Findings recorded in `CATEGORY_INTEGRITY_AUDIT_2026-08-24.md`.)
 - [x] Correct all confirmed category mismatches with guarded category-only updates and verify non-category fields remain unchanged. (Moved listing id 4 from Accommodation to Electronics with ID/category/title guards; verified owner, price, condition, location, status, counters, timestamps, and media boundary were preserved. Full Vitest, TypeScript, build, and category-route checks passed.)
