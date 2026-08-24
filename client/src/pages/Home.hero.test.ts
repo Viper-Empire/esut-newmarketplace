@@ -26,5 +26,10 @@ describe("homepage hero artwork interaction contract", () => {
     expect(stylesheet).toContain(".reference-caption");
     expect(stylesheet).toContain("@media(prefers-reduced-motion:reduce)");
     expect(stylesheet).toContain(".reference-chip:hover,.reference-chip:focus-visible{transform:none;filter:none}");
+    expect(stylesheet).toContain("animation:reference-chip-float 6.8s ease-in-out infinite");
+    expect(stylesheet).toContain("animation-delay:-1.2s");
+    expect(stylesheet).toContain("animation:reference-orbit-spin 42s linear infinite");
+    expect(stylesheet).toContain("transform:translate(-50%,-50%) rotate(360deg)");
+    expect(stylesheet).toContain(".reference-chip,.reference-orbit{animation:none!important");
   });
 });

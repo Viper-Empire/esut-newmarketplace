@@ -14,3 +14,6 @@ No marketplace data, authentication, routing, dashboard logic, database records,
 
 ## Mobile and tablet verification
 The narrow mobile full-page render keeps the square reference surface in flow and does not crop the artwork. The 768px tablet render keeps all five chips, the centered logo medallion, the BUY · SELL · CONNECT pill, and Campus Deals lockup inside the artwork surface. It also exposes an independent responsive concern: the existing two-column hero copy is too narrow at this breakpoint, causing the primary CTA to fall below the initial viewport. That is a surrounding hero-layout issue, not artwork clipping, and should be addressed separately if the owner wants tablet CTA visibility improved.
+
+## Motion verification — chip float and orbit rotation
+Added a slow 6.8-second staggered float to all five category chips using CSS `translate`, preserving the existing hover/focus `transform` interaction. Added centered orbit rotation at 42 seconds, with 34-second reverse inner rotation and 54-second core rotation to create restrained depth without spinning the chips or logo. The desktop and 566px mobile checks show the animation layers remain inside the artwork surface; the mobile hero surface stays in normal document flow below the copy. Reduced-motion disables both chip and orbit animations.

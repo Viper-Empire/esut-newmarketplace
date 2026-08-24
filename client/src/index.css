@@ -80,3 +80,11 @@
 
 /* Keep tablet hero copy and artwork spacious; the split layout begins only when both columns can breathe. */
 @media(min-width:640px) and (max-width:839px){.hero-grid{grid-template-columns:1fr}.reference-hero-art{min-height:clamp(360px,62vw,500px);aspect-ratio:1/1}.reference-hero-surface{width:min(100%,500px)}}
+
+/* Reference hero motion: gentle depth, never a distracting carousel. */
+.reference-chip{will-change:translate;animation:reference-chip-float 6.8s ease-in-out infinite}
+.reference-chip-fashion{animation-delay:-1.2s}.reference-chip-phones{animation-delay:-2.9s}.reference-chip-food{animation-delay:-4.1s}.reference-chip-books{animation-delay:-5.3s}.reference-chip-beauty{animation-delay:-6.1s}
+.reference-orbit{will-change:transform;transform:translate(-50%,-50%) rotate(0deg);animation:reference-orbit-spin 42s linear infinite}.reference-orbit-inner{animation-duration:34s;animation-direction:reverse}.reference-orbit-core{animation-duration:54s}
+@keyframes reference-chip-float{0%,100%{translate:0 -3px}50%{translate:0 4px}}
+@keyframes reference-orbit-spin{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.reference-chip,.reference-orbit{animation:none!important;will-change:auto}.reference-chip:hover,.reference-chip:focus-visible{transform:none;translate:0 0}}
