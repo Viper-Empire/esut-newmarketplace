@@ -41,3 +41,6 @@ Kept the supplied visual order and breathing room while adding motion: Fashion a
 
 ## Beauty and Food position swap verification
 Moved Beauty & Care into the supplied reference right-middle position and moved Food & Snacks into a separate lower-center lane. Desktop verification shows both cards are clearly distinguishable, and mobile verification confirms the revised positions remain contained at the compact breakpoint. The medallion remains unobstructed and the lower caption zone is protected. Existing links, icon styling, calm ring rotation, pop-in entrance, and reduced-motion behavior remain unchanged.
+
+## True orbital movement verification
+Replaced the collapsing direct-link transform animation with structural orbit nodes. Six equal-phase carriers now move around a 120px desktop orbit and a responsive compact orbit, while each nested card counter-rotates to keep icon and label upright. Hover and keyboard focus pause the orbit; reduced-motion disables travel and restores a static reference layout. Desktop capture confirms all six cards render around the medallion with clear separation; mobile capture confirms the compact orbit remains contained and readable.
