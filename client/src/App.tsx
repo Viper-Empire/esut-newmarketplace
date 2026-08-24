@@ -7,10 +7,11 @@ import ContextualNavigation from "@/components/ContextualNavigation";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import NotFound from "@/pages/NotFound";
 import Home from "@/pages/Home";
-import { Link, Route, Switch } from "wouter";
+import { Link, Redirect, Route, Switch } from "wouter";
 import { lazy, Suspense, useEffect } from "react";
 
 const ProductPage = lazy(() => import("@/pages/ProductPage"));
+const VerticalLandingPage = lazy(() => import("@/pages/VerticalLandingPage"));
 const CartPage = lazy(() => import("@/pages/CartPage"));
 const ExplorePage = lazy(() => import("@/pages/ExplorePage"));
 const CheckoutPage = lazy(() => import("@/pages/CheckoutPage"));
@@ -123,6 +124,8 @@ function App() {
     <Route path="/cart" component={CartPage}/>
     <Route path="/checkout" component={CheckoutPage}/>
     <Route path="/explore" component={ExplorePage}/>
+    <Route path="/esutchop">{() => <VerticalLandingPage kind="food"/>}</Route>
+    <Route path="/accommodation">{() => <VerticalLandingPage kind="accommodation"/>}</Route>
     <Route path="/sell" component={SellPage}/>
     <Route path="/seller" component={SellerDashboardPage}/>
     <Route path="/seller/store" component={SellerStorePage}/>
@@ -164,6 +167,8 @@ function App() {
     <Route path="/admin/reviews" component={AdminReviewsPage}/>
     <Route path="/admin/notifications" component={AdminNotificationsPage}/>
     <Route path="/admin/audit-logs" component={AdminAuditLogsPage}/>
+    <Route path="/category/food"><Redirect to="/esutchop"/></Route>
+    <Route path="/category/hostel-home"><Redirect to="/accommodation"/></Route>
     <Route path="/category/:slug" component={ExplorePage}/>
     <Route component={NotFound}/>
   </Switch></Suspense></div></ErrorBoundary>;

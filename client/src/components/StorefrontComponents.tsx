@@ -3,6 +3,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { ESUT_MARKETPLACE_LOGO_PATH } from "@/lib/brandAssets";
 import { condition, naira } from "@/lib/marketplace";
 import { trpc } from "@/lib/trpc";
+import { canonicalCategoryRoute, presentCategories } from "@/lib/verticalCatalog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BadgeCheck, Bell, BookOpen, Heart, House, Laptop, MapPin, Menu, Package, Search, Shirt, ShoppingCart, Smartphone, UtensilsCrossed, UsersRound, Wrench, X } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
@@ -108,7 +109,7 @@ export function StorefrontHeader({ categories }: { categories: { id: number; nam
         <div className="ml-auto flex items-center gap-2 lg:hidden"><Link href="/cart"><ShoppingCart size={22}/></Link><button type="button" aria-label="Open navigation" className="rounded-lg p-2" onClick={() => setMobileOpen(value => !value)}>{mobileOpen ? <X size={23}/> : <Menu size={23}/>}</button></div>
       </div>
       {mobileOpen && <div className="border-t bg-white lg:hidden"><div className="page-shell grid gap-2 py-4"><form onSubmit={event => { event.preventDefault(); submitSearch(); }} className="mb-2 flex overflow-hidden rounded-xl border border-slate-300"><label className="flex min-w-0 flex-1 items-center gap-2 px-3"><Search size={17} className="text-slate-400"/><input value={query} onChange={event => setQuery(event.target.value)} placeholder="Search marketplace" className="min-w-0 flex-1 py-2 text-sm outline-none" autoComplete="off"/></label><button type="submit" className="bg-[#e31b23] px-4 text-sm font-bold text-white">Search</button></form>{!query.trim() && recentSearches.length ? <div className="mb-2">{recentSearchPanel}</div> : null}{mobileLink("/explore", "Browse marketplace")}{isAuthenticated && <>{mobileLink("/account/favorites", "Favorites")}{mobileLink("/account/notifications", `Notifications${unread.data?.count ? ` (${unread.data.count})` : ""}`)}{mobileLink("/account/messages", "Messages")}</>}{mobileLink(isAuthenticated ? "/account" : "/login", isAuthenticated ? "My account" : "Login")}{mobileLink("/sell", "Buy / Sell", true)}</div></div>}
-      <div className="border-t border-slate-100 bg-white"><div className="page-shell flex h-12 items-center gap-6 overflow-x-auto whitespace-nowrap text-sm font-semibold text-slate-600">{categories.map(category => <Link key={category.id} href={`/category/${category.slug}`} className="hover:text-[#00843d]">{category.name}</Link>)}<Link href="/explore" className="text-[#00843d]">More</Link></div></div>
+      <div className="border-t border-slate-100 bg-white"><div className="page-shell flex h-12 items-center gap-6 overflow-x-auto whitespace-nowrap text-sm font-semibold text-slate-600">{presentCategories(categories).map(category => <Link key={category.id} href={canonicalCategoryRoute(category)} className="hover:text-[#00843d]">{category.name}</Link>)}<Link href="/explore" className="text-[#00843d]">More</Link></div></div>
     </header>
   </>;
 }
