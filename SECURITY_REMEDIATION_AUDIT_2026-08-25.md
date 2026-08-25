@@ -75,3 +75,9 @@ The existing server contracts and procedure tests provide a verified baseline fo
 This is a production regression baseline, not a substitute for an external penetration test or an exhaustive every-route fuzzing matrix. The remaining full authorization and defensive-input matrix TODOs should stay open until those cases are explicitly exercised.
 
 The latest exact validation passed **70 test files, 208 tests, and 1 intentional skip**, followed by TypeScript and production build checks.
+
+## SEO and runtime-policy baseline
+
+The public surface now has a public-only sitemap and robots policy, route-aware title/description/canonical metadata, and light-only recovery pages. The runtime has baseline security headers, host-scoped HttpOnly cookie policy, no wildcard credentialed CORS, same-origin credentialed tRPC transport, no-store API/OAuth/staging-proxy responses, and noindex staging API responses. Operational telemetry is bounded, suppresses staging failures, prevents recursive recorder errors, and limits in-flight/backoff behavior. Responsive route and production-build checks passed. This is a code/runtime baseline, not an external security scan or legal approval.
+
+The latest exact validation passed **70 test files, 208 tests, and 1 intentional skip**, followed by TypeScript and production build checks.
