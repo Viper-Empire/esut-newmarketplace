@@ -63,3 +63,7 @@ Password recovery is already structured around privacy-safe responses, server-si
 ## Final responsive route verification
 
 The current desktop visual pass checked `/register`, `/terms`, `/privacy`, `/support`, `/contact`, `/admin`, an unknown product route, and an unknown route. Registration remains within the supplied ESUT authentication design; the legal/support/contact pages are readable and explicitly owner-reviewable; the administrator page exposes only the protected-access message to the unauthenticated preview; unknown products provide a marketplace recovery action; and the 404 page remains light-only with safe navigation. The earlier mobile pass covered the same public/recovery surfaces at 375px without horizontal overflow. No user data, moderation action, or legal approval was performed.
+
+## Authentication response cache boundary
+
+OAuth route registration is now preceded by an explicit `Cache-Control: no-store` middleware, matching the tRPC response policy. This protects redirects and session-setting responses from browser/shared-proxy caching while leaving the existing OAuth cookie and redirect flow unchanged. A focused source regression guards the middleware placement and header policy. The latest exact validation passed **70 test files, 207 tests, and 1 intentional skip**, followed by TypeScript and production build checks.

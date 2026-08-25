@@ -7,6 +7,7 @@ describe("security headers", () => {
     const entrypoint = readFileSync(new URL("./_core/index.ts", import.meta.url), "utf8");
     expect(entrypoint).toContain('app.disable("x-powered-by")');
     expect(entrypoint).toContain('res.setHeader("Cache-Control", "no-store")');
+    expect(entrypoint).toContain('app.use("/api/oauth"');
   });
   it("sets safe baseline headers and HSTS behind forwarded HTTPS", () => {
     const headers = new Map<string, string>();
