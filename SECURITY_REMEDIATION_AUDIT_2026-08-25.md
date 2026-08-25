@@ -55,3 +55,7 @@ The Express entrypoint now disables the `X-Powered-By` fingerprint and applies `
 The server authorization regression now includes an anonymous-request case across administrator, moderator, operations, seller, and super-administrator boundaries. The test confirms that missing sessions cannot enter protected procedures, while the existing role matrix continues to enforce the intended staff boundaries. This is evidence for the shared middleware boundary, not a claim that every individual admin route has been manually exercised; that exhaustive route matrix remains pending.
 
 The latest validation passed **70 test files, 205 tests, and 1 intentional skip**, followed by TypeScript and the production build. The public legal and support pages, registration links, crawler controls, unknown-resource recovery, runtime headers, and light-only 404 were checked again at desktop and mobile widths.
+
+## Password-recovery disposition
+
+Password recovery is already structured around privacy-safe responses, server-side token validation, one-hour expiry messaging, missing-token recovery, and post-reset authentication refresh. Existing procedure tests cover valid, expired, malformed, and invalid token cases plus email-verification boundaries. Ordinary-recipient reset delivery is currently disabled by the configured feature flag, so the UI truthfully explains the provider boundary rather than claiming that a live email was sent.
