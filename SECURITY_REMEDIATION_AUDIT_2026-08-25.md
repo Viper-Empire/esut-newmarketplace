@@ -67,3 +67,11 @@ The current desktop visual pass checked `/register`, `/terms`, `/privacy`, `/sup
 ## Authentication response cache boundary
 
 OAuth route registration is now preceded by an explicit `Cache-Control: no-store` middleware, matching the tRPC response policy. This protects redirects and session-setting responses from browser/shared-proxy caching while leaving the existing OAuth cookie and redirect flow unchanged. A focused source regression guards the middleware placement and header policy. The latest exact validation passed **70 test files, 207 tests, and 1 intentional skip**, followed by TypeScript and production build checks.
+
+## Defensive-input and order-integrity baseline
+
+The existing server contracts and procedure tests provide a verified baseline for the high-risk marketplace writes. Checkout requires a UUID idempotency key, returns the prior order outcome for duplicate keys, rechecks active listing/store state, reserves inventory atomically, and encrypts the pickup code. Cart mutations are scoped to the authenticated cart and bounded quantities. Buyer order detail, cancellation, pickup-code, acknowledgement, and exception flows scope by the authenticated buyer or the verified seller store; seller order procedures also enforce seller ownership and status transitions. Existing marketplace, seller, cloud-media, pickup-code, search-query, and listing tests cover pagination/filter bounds, image/media constraints, and related write validation. A source contract now protects these invariants.
+
+This is a production regression baseline, not a substitute for an external penetration test or an exhaustive every-route fuzzing matrix. The remaining full authorization and defensive-input matrix TODOs should stay open until those cases are explicitly exercised.
+
+The latest exact validation passed **70 test files, 208 tests, and 1 intentional skip**, followed by TypeScript and production build checks.

@@ -31,6 +31,15 @@ describe("security remediation contracts", () => {
     expect(source("NotFound.tsx")).not.toContain("dark:");
   });
 
+  it("keeps checkout and buyer order writes scoped and idempotent", () => {
+    const router = rootSource("server/routers.ts");
+    expect(router).toContain('idempotencyKey: z.string().uuid()');
+    expect(router).toContain("eq(cartItems.cartId, cart.id)");
+    expect(router).toContain("eq(orders.buyerUserId, ctx.user.id)");
+    expect(router).toContain("affectedRows(reserved)");
+    expect(router).toContain("pickupCodeCiphertext: encryptPickupCode(pickupCode)");
+  });
+
   it("keeps crawler controls limited to public routes", () => {
     const robots = rootSource("client/public/robots.txt");
     const sitemap = rootSource("client/public/sitemap.xml");
