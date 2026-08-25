@@ -81,3 +81,9 @@ The latest exact validation passed **70 test files, 208 tests, and 1 intentional
 The public surface now has a public-only sitemap and robots policy, route-aware title/description/canonical metadata, and light-only recovery pages. The runtime has baseline security headers, host-scoped HttpOnly cookie policy, no wildcard credentialed CORS, same-origin credentialed tRPC transport, no-store API/OAuth/staging-proxy responses, and noindex staging API responses. Operational telemetry is bounded, suppresses staging failures, prevents recursive recorder errors, and limits in-flight/backoff behavior. Responsive route and production-build checks passed. This is a code/runtime baseline, not an external security scan or legal approval.
 
 The latest exact validation passed **70 test files, 208 tests, and 1 intentional skip**, followed by TypeScript and production build checks.
+
+## Administrator authorization matrix
+
+The known administrator router inventory is now protected by an explicit source contract: ordinary administrator surfaces use `adminProcedure`, and password replacement remains `superAdminProcedure`. Endpoint regressions reject signed-out, CUSTOMER, SELLER, SUPPORT, MODERATOR, malformed-role, and client-supplied role-like access; ADMIN and SUPER_ADMIN access is retained, and SUPER_ADMIN-only controls remain restricted. The SDK authentication contract rejects inactive users and sessions without an active tracked session before protected procedures run. This is a code-level regression baseline, not an external penetration test.
+
+The latest exact validation passed **70 test files, 211 tests, and 1 intentional skip**, followed by TypeScript and production build checks.

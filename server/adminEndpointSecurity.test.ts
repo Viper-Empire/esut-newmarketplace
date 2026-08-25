@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import type { TrpcContext } from "./_core/context";
 import { appRouter } from "./routers";
@@ -12,7 +13,20 @@ function contextFor(role: "CUSTOMER" | "SELLER" | "SUPPORT" | "MODERATOR" | "ADM
   };
 }
 
+const sdkSource = readFileSync(new URL("./_core/sdk.ts", import.meta.url), "utf8");
+
 describe("administrator endpoint security boundary", () => {
+  it("keeps every known admin router surface behind an administrator guard", () => {
+    const routerSource = readFileSync(new URL("./routers.ts", import.meta.url), "utf8");
+    expect(routerSource).toContain("admin: router({");
+    expect(routerSource).toContain("resetUserPassword: superAdminProcedure");
+    for (const procedure of [
+      "configureReservationExpirySchedule", "reservationExpiryHealth", "configureReminderSchedule", "reminderHealth", "operationalHealth",
+      "dashboard", "analytics", "orders", "orderDetail", "transitionOrder", "users", "userDetail", "setUserActive", "sellers", "stores",
+      "setStoreStatus", "listings", "mediaIntegrity", "listingVideoEvidenceUrl", "reviewListingVideoEvidence", "setListingStatus", "categories",
+    ]) expect(routerSource).toContain(`${procedure}: adminProcedure`);
+  });
+
   it("rejects signed-out callers before administrator data access", async () => {
     const caller = appRouter.createCaller(contextFor(null));
     await expect(caller.admin.dashboard()).rejects.toMatchObject({ code: "FORBIDDEN" });
@@ -42,6 +56,18 @@ describe("administrator endpoint security boundary", () => {
     const caller = appRouter.createCaller(contextFor("CUSTOMER"));
     await expect(caller.admin.auditLogs({ page: 1, limit: 10, actor: "ADMIN" })).rejects.toMatchObject({ code: "FORBIDDEN" });
     await expect(caller.admin.listings({ page: 1, limit: 12, status: "PENDING_REVIEW" })).rejects.toMatchObject({ code: "FORBIDDEN" });
+  });
+
+  it("rejects malformed role claims rather than accepting role-like prefixes", async () => {
+    const context = contextFor("CUSTOMER");
+    (context.user as { role: string }).role = "ADMIN ";
+    await expect(appRouter.createCaller(context).admin.dashboard()).rejects.toMatchObject({ code: "FORBIDDEN" });
+  });
+
+  it("rejects inactive or revoked tracked sessions before protected procedures", () => {
+    expect(sdkSource).toContain("if (!user.isActive)");
+    expect(sdkSource).toContain("getActiveTrackedSession");
+    expect(sdkSource).toContain("sessionId");
   });
 
   it("allows only administrator roles through the production guard", async () => {
