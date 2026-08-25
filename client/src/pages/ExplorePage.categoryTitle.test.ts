@@ -17,3 +17,21 @@ describe("category page titles", () => {
     expect(formatCategoryTitle(undefined, categories)).toBe("Find your next campus essential");
   });
 });
+
+
+describe("marketplace price filters", () => {
+  it("converts valid Naira input to integer kobo without accepting empty values", async () => {
+    const { parseNairaToKobo } = await import("./ExplorePage");
+    expect(parseNairaToKobo("1,200")).toBeUndefined();
+    expect(parseNairaToKobo("1200.50")).toBe(120050);
+    expect(parseNairaToKobo("0", true)).toBe(0);
+    expect(parseNairaToKobo("", true)).toBeUndefined();
+  });
+
+  it("rejects non-finite or negative price input", async () => {
+    const { parseNairaToKobo } = await import("./ExplorePage");
+    expect(parseNairaToKobo("abc", true)).toBeUndefined();
+    expect(parseNairaToKobo("-5", true)).toBeUndefined();
+    expect(parseNairaToKobo("0")).toBeUndefined();
+  });
+});
