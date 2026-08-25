@@ -127,7 +127,7 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
       <AuthPasswordInput label="Password" autoComplete={isRegister ? "new-password" : "current-password"} value={password} onChange={event => update("password", setPassword)(event.target.value)} placeholder={isRegister ? "At least 10 characters" : "Enter your password"} error={fieldErrors.password} disabled={isLocked} />
       {isRegister ? <PasswordStrength password={password} /> : null}
       {isRegister ? <AuthPasswordInput label="Confirm password" autoComplete="new-password" value={confirmPassword} onChange={event => update("confirmPassword", setConfirmPassword)(event.target.value)} placeholder="Re-enter your password" error={fieldErrors.confirmPassword} /> : null}
-      {!isRegister ? <div className="auth-form-row"><span /><Link href="/forgot-password">Forgot password?</Link></div> : <p className="auth-legal">By creating an account, you agree to the ESUT Marketplace Terms and Privacy Policy. Seller verification is required before selling tools unlock.</p>}
+      {!isRegister ? <div className="auth-form-row"><span /><Link href="/forgot-password">Forgot password?</Link></div> : <p className="auth-legal">By creating an account, you agree to the ESUT Marketplace <Link href="/terms" className="font-bold underline underline-offset-2">Terms</Link> and <Link href="/privacy" className="font-bold underline underline-offset-2">Privacy Policy</Link>. Seller verification is required before selling tools unlock.</p>}
       <AuthSubmitButton pending={pending} disabled={isLocked}>{isLocked ? `Try again in ${formatRetryCountdown(remainingSeconds)}` : isRegister ? "Create account" : "Log in"}</AuthSubmitButton>
     </form>
     <AuthFooter mode={mode} />

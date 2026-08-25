@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /account
+Disallow: /checkout
+Disallow: /admin
+Disallow: /moderator
+Disallow: /seller
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /verify-email
+
+Sitemap: https://esutshop-59wzg8bs.manus.space/sitemap.xml

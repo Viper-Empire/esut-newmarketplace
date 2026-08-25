@@ -7,7 +7,8 @@ import ContextualNavigation from "@/components/ContextualNavigation";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import NotFound from "@/pages/NotFound";
 import Home from "@/pages/Home";
-import { Link, Redirect, Route, Switch } from "wouter";
+import { ContactPage, PrivacyPage, SupportPage, TermsPage } from "@/pages/PublicUtilityPages";
+import { Link, Redirect, Route, Switch, useLocation } from "wouter";
 import { lazy, Suspense, useEffect } from "react";
 
 const ProductPage = lazy(() => import("@/pages/ProductPage"));
@@ -87,6 +88,28 @@ function ActiveWorkspaceEventRefresh() {
 }
 
 function App() {
+  const [location] = useLocation();
+
+  useEffect(() => {
+    const pathname = location.split("?")[0] || "/";
+    const metadata = pathname === "/" ? { title: "ESUT Marketplace | Buy. Sell. Connect.", description: "Shop products and services from verified ESUT sellers with convenient campus pickup." }
+      : pathname === "/explore" || pathname.startsWith("/category/") ? { title: "Browse listings — ESUT Marketplace", description: "Find products, services, food, accommodation, and digital learning resources from the ESUT community." }
+      : pathname === "/esutchop" ? { title: "ESUTChop Food — ESUT Marketplace", description: "Discover food listings and campus pickup options from ESUT Marketplace sellers." }
+      : pathname === "/accommodation" ? { title: "Accommodation — ESUT Marketplace", description: "Explore student accommodation and campus-living listings from ESUT Marketplace sellers." }
+      : pathname.startsWith("/product/") ? { title: "Product — ESUT Marketplace", description: "Review listing details, seller context, availability, and campus-pickup information." }
+      : pathname.startsWith("/store/") ? { title: "Store — ESUT Marketplace", description: "Browse a verified ESUT Marketplace seller store and its active listings." }
+      : pathname === "/terms" ? { title: "Terms — ESUT Marketplace", description: "Read the current ESUT Marketplace product-policy terms outline." }
+      : pathname === "/privacy" ? { title: "Privacy — ESUT Marketplace", description: "Read how ESUT Marketplace handles account, order, security, and public media information." }
+      : pathname === "/support" ? { title: "Support — ESUT Marketplace", description: "Find the safest support route for ESUT Marketplace account, order, and safety questions." }
+      : pathname === "/contact" ? { title: "Contact — ESUT Marketplace", description: "Choose a protected contact route for ESUT Marketplace questions and reports." }
+      : { title: "ESUT Marketplace", description: "Buy. Sell. Connect. Right from ESUT." };
+    document.title = metadata.title;
+    document.querySelector('meta[name="description"]')?.setAttribute("content", metadata.description);
+    let canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+    if (!canonical) { canonical = document.createElement("link"); canonical.rel = "canonical"; document.head.appendChild(canonical); }
+    canonical.href = `https://esutshop-59wzg8bs.manus.space${pathname}`;
+  }, [location]);
+
   useEffect(() => {
     try { window.localStorage.removeItem("esut-marketplace-theme"); } catch { /* Storage access is optional. */ }
     const root = document.documentElement;
@@ -102,6 +125,10 @@ function App() {
     <Route path="/forgot-password" component={ForgotPasswordPage}/>
     <Route path="/reset-password" component={ResetPasswordPage}/>
     <Route path="/verify-email" component={VerifyEmailPage}/>
+    <Route path="/terms" component={TermsPage}/>
+    <Route path="/privacy" component={PrivacyPage}/>
+    <Route path="/support" component={SupportPage}/>
+    <Route path="/contact" component={ContactPage}/>
     <Route path="/account" component={AccountPage}/>
     <Route path="/account/orders" component={BuyerOrdersPage}/>
     <Route path="/account/orders/:id" component={BuyerOrderDetailPage}/>
