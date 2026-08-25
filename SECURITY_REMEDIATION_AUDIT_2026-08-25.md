@@ -49,3 +49,9 @@ The remaining broad brief items still require deeper procedure-level verificatio
 ## Runtime cache hardening follow-up
 
 The Express entrypoint now disables the `X-Powered-By` fingerprint and applies `Cache-Control: no-store` to `/api/trpc` responses so authenticated RPC payloads are not stored by browsers or shared proxies. This does not alter public Cloudinary/media delivery caching and does not add wildcard credentialed CORS. Focused and full validation now passes **70 test files, 205 tests, and 1 intentional skip**, with TypeScript and production build passing.
+
+## Authorization follow-up
+
+The server authorization regression now includes an anonymous-request case across administrator, moderator, operations, seller, and super-administrator boundaries. The test confirms that missing sessions cannot enter protected procedures, while the existing role matrix continues to enforce the intended staff boundaries. This is evidence for the shared middleware boundary, not a claim that every individual admin route has been manually exercised; that exhaustive route matrix remains pending.
+
+The latest validation passed **70 test files, 205 tests, and 1 intentional skip**, followed by TypeScript and the production build. The public legal and support pages, registration links, crawler controls, unknown-resource recovery, runtime headers, and light-only 404 were checked again at desktop and mobile widths.

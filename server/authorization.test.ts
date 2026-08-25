@@ -18,7 +18,19 @@ function contextFor(role: "CUSTOMER" | "SELLER" | "SUPPORT" | "MODERATOR" | "ADM
   };
 }
 
+function anonymousContext(): TrpcContext {
+  return { user: null, req: { protocol: "https", headers: {} } as TrpcContext["req"], res: {} as TrpcContext["res"] };
+}
+
 describe("marketplace role authorization", () => {
+  it("rejects anonymous requests from every protected boundary", async () => {
+    const caller = protectedRoutes.createCaller(anonymousContext());
+    await expect(caller.adminOnly()).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(caller.moderatorOnly()).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+    await expect(caller.operationsOnly()).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+    await expect(caller.sellerOnly()).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+    await expect(caller.superAdminOnly()).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+  });
   it("rejects customers from administrator-only operations", async () => {
     await expect(protectedRoutes.createCaller(contextFor("CUSTOMER")).adminOnly()).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
