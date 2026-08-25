@@ -16,4 +16,9 @@ describe("product detail description parsing", () => {
   it("retains ordinary descriptions without inventing structure", () => {
     expect(descriptionDetails("A durable backpack for lectures and hostel life.")).toEqual({ intro: "A durable backpack for lectures and hostel life.", details: [] });
   });
+
+  it("keeps markup-looking seller text as plain description data", () => {
+    const payload = '<img src=x onerror=alert(1)> campus bag';
+    expect(descriptionDetails(payload)).toEqual({ intro: payload, details: [] });
+  });
 });
