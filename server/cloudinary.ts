@@ -2,6 +2,13 @@ import { createHash } from "node:crypto";
 import { ENV } from "./_core/env";
 
 const CLOUDINARY_PUBLIC_PREFIX = "cloudinary:";
+export const CLOUDINARY_TRANSFORMATION_PROFILES = {
+  listingCard: { width: 640 },
+  productDetail: { width: 1200 },
+  avatar: { width: 256 },
+  publicArtwork: { width: 1600 },
+} as const;
+export type CloudinaryTransformationProfile = keyof typeof CLOUDINARY_TRANSFORMATION_PROFILES;
 
 function getCloudinaryConfig() {
   if (!ENV.cloudinaryCloudName || !ENV.cloudinaryApiKey || !ENV.cloudinaryApiSecret) {
@@ -31,7 +38,16 @@ export function isCloudinaryPublicKey(storageKey: string | null | undefined) {
   return Boolean(storageKey?.startsWith(CLOUDINARY_PUBLIC_PREFIX));
 }
 
-export function cloudinaryOptimizedUrl(url: string, width = 1200) {
+export function cloudinaryPublicIdFromKey(storageKey: string | null | undefined) {
+  if (!isCloudinaryPublicKey(storageKey)) return null;
+  return storageKey!.slice(CLOUDINARY_PUBLIC_PREFIX.length) || null;
+}
+
+export function isApprovedCloudinaryPublicMedia(asset: { provider: string; storageZone: string; status: string; storageKey?: string | null }) {
+  return asset.provider === "CLOUDINARY" && asset.storageZone === "PUBLIC" && asset.status === "APPROVED" && isCloudinaryPublicKey(asset.storageKey);
+}
+
+export function cloudinaryOptimizedUrl(url: string, width: number = CLOUDINARY_TRANSFORMATION_PROFILES.productDetail.width) {
   if (!url.includes("res.cloudinary.com/") || !url.includes("/image/upload/")) return url;
   const boundedWidth = Math.min(1600, Math.max(240, Math.round(width)));
   return url.replace("/image/upload/", `/image/upload/f_auto/q_auto/c_limit,w_${boundedWidth}/`);
@@ -44,6 +60,7 @@ export async function cloudinaryUploadPublicImage({
   entityType,
   entityId,
   filename,
+  transformationProfile = "productDetail",
 }: {
   bytes: Buffer;
   mimeType: "image/jpeg" | "image/png" | "image/webp";
@@ -51,6 +68,7 @@ export async function cloudinaryUploadPublicImage({
   entityType: "listing" | "avatar" | "brand";
   entityId: number | string;
   filename: string;
+  transformationProfile?: CloudinaryTransformationProfile;
 }) {
   const { cloudName, apiKey, apiSecret } = getCloudinaryConfig();
   const timestamp = Math.floor(Date.now() / 1000).toString();
@@ -79,8 +97,10 @@ export async function cloudinaryUploadPublicImage({
   if (!payload.public_id || !payload.secure_url) throw new Error("Cloudinary returned an incomplete public-image response.");
   return {
     key: `${CLOUDINARY_PUBLIC_PREFIX}${payload.public_id}`,
-    url: cloudinaryOptimizedUrl(payload.secure_url),
+    publicId: payload.public_id,
+    url: cloudinaryOptimizedUrl(payload.secure_url, CLOUDINARY_TRANSFORMATION_PROFILES[transformationProfile].width),
     originalUrl: payload.secure_url,
+    transformationProfile,
     sizeBytes: payload.bytes ?? bytes.length,
     width: payload.width ?? null,
     height: payload.height ?? null,

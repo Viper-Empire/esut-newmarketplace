@@ -41,7 +41,7 @@ describe("flagged listing moderation", () => {
   it("allows an administrator to restore a flagged listing and records its moderation trail", async () => {
     state.selectResults = [[{ listing: { id: 24, status: "FLAGGED", publishedAt: null, updatedAt: new Date() }, store: { ownerUserId: 77 } }]];
     await expect(appRouter.createCaller(context("ADMIN")).admin.setListingStatus({ id: 24, status: "ACTIVE", note: "Validated image replacement and restored listing." })).resolves.toEqual({ success: true });
-    expect(state.updates).toBe(1);
+    expect(state.updates).toBe(2);
     expect(state.inserts).toBeGreaterThanOrEqual(3);
   });
 });

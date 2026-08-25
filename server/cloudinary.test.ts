@@ -1,8 +1,23 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { cloudinaryOptimizedUrl, cloudinaryUploadPublicImage, isCloudinaryPublicKey } from "./cloudinary";
+import { cloudinaryOptimizedUrl, cloudinaryUploadPublicImage, isApprovedCloudinaryPublicMedia, isCloudinaryPublicKey, cloudinaryPublicIdFromKey, CLOUDINARY_TRANSFORMATION_PROFILES } from "./cloudinary";
 
 describe("Cloudinary public media helper", () => {
   afterEach(() => vi.restoreAllMocks());
+
+  it("keeps named transformation profiles bounded and parses opaque public keys", () => {
+    expect(CLOUDINARY_TRANSFORMATION_PROFILES.listingCard.width).toBe(640);
+    expect(CLOUDINARY_TRANSFORMATION_PROFILES.avatar.width).toBe(256);
+    expect(cloudinaryPublicIdFromKey("cloudinary:esut-marketplace/public/listings/42/photo")).toBe("esut-marketplace/public/listings/42/photo");
+    expect(cloudinaryPublicIdFromKey("listing-images/42/photo.jpg")).toBeNull();
+  });
+
+  it("allows exposure only for approved Cloudinary public assets", () => {
+    const base = { provider: "CLOUDINARY", storageZone: "PUBLIC", status: "APPROVED", storageKey: "cloudinary:public/photo" };
+    expect(isApprovedCloudinaryPublicMedia(base)).toBe(true);
+    expect(isApprovedCloudinaryPublicMedia({ ...base, status: "PENDING" })).toBe(false);
+    expect(isApprovedCloudinaryPublicMedia({ ...base, provider: "MANUS_S3" })).toBe(false);
+    expect(isApprovedCloudinaryPublicMedia({ ...base, storageZone: "PRIVATE" })).toBe(false);
+  });
 
   it("creates an allowlisted optimized delivery URL", () => {
     const original = "https://res.cloudinary.com/esut/image/upload/sample.jpg";

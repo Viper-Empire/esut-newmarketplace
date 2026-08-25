@@ -26,6 +26,13 @@ export const productReminderStatuses = ["ACTIVE", "TRIGGERED", "CANCELLED", "UNA
 export const reversibleModerationActionTypes = ["USER_ACTIVE", "STORE_STATUS", "LISTING_STATUS", "REPORT_STATUS", "REVIEW_STATUS"] as const;
 export const authSessionStatuses = ["ACTIVE", "REVOKED", "EXPIRED"] as const;
 export const accountSecurityEventTypes = ["LOGIN_SUCCEEDED", "LOGIN_FAILED", "ACCOUNT_LOCKED", "SESSION_REVOKED", "SESSIONS_REVOKED", "PASSWORD_CHANGED", "SUSPICIOUS_ACTIVITY", "SECURITY_ALERT_SENT"] as const;
+export const mediaAssetEntityTypes = ["LISTING", "PROFILE", "STORE", "BRAND"] as const;
+export const mediaAssetPurposes = ["PRODUCT_IMAGE", "AVATAR", "STORE_ARTWORK", "BRAND_ARTWORK"] as const;
+export const mediaAssetProviders = ["CLOUDINARY", "MANUS_S3"] as const;
+export const mediaAssetZones = ["PUBLIC", "PRIVATE"] as const;
+export const mediaAssetStatuses = ["PENDING", "APPROVED", "REJECTED", "ARCHIVED", "DELETED"] as const;
+export const mediaAssetMimeTypes = ["image/jpeg", "image/png", "image/webp"] as const;
+
 
 export const users = mysqlTable("users", {
   id: int("id").autoincrement().primaryKey(),
@@ -248,6 +255,31 @@ export const listingImages = mysqlTable("listingImages", {
   isPrimary: boolean("isPrimary").default(false).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 }, (table) => [index("listing_images_idx").on(table.listingId, table.sortOrder)]);
+
+export const mediaAssets = mysqlTable("mediaAssets", {
+  id: bigint("id", { mode: "number" }).autoincrement().primaryKey(),
+  ownerUserId: int("ownerUserId"),
+  entityType: mysqlEnum("entityType", mediaAssetEntityTypes).notNull(),
+  entityId: varchar("entityId", { length: 80 }).notNull(),
+  purpose: mysqlEnum("purpose", mediaAssetPurposes).notNull(),
+  provider: mysqlEnum("provider", mediaAssetProviders).notNull(),
+  storageZone: mysqlEnum("storageZone", mediaAssetZones).notNull(),
+  storageKey: varchar("storageKey", { length: 600 }).notNull(),
+  publicId: varchar("publicId", { length: 512 }),
+  url: text("url"),
+  originalUrl: text("originalUrl"),
+  mimeType: mysqlEnum("mimeType", mediaAssetMimeTypes),
+  sizeBytes: int("sizeBytes"),
+  width: int("width"),
+  height: int("height"),
+  transformationProfile: varchar("transformationProfile", { length: 80 }),
+  status: mysqlEnum("status", mediaAssetStatuses).default("PENDING").notNull(),
+  approvedAt: timestamp("approvedAt"),
+  archivedAt: timestamp("archivedAt"),
+  deletedAt: timestamp("deletedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => [index("media_assets_entity_idx").on(table.entityType, table.entityId, table.purpose), index("media_assets_owner_status_idx").on(table.ownerUserId, table.status), index("media_assets_provider_key_idx").on(table.provider, table.storageKey)]);
 
 export const listingVideoEvidence = mysqlTable("listingVideoEvidence", {
   id: int("id").autoincrement().primaryKey(),
