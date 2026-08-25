@@ -35,3 +35,13 @@ describe("marketplace price filters", () => {
     expect(parseNairaToKobo("0")).toBeUndefined();
   });
 });
+
+
+describe("marketplace price-input safety", () => {
+  it("treats invalid non-empty values as invalid instead of silently omitting them", async () => {
+    const { parseNairaToKobo } = await import("./ExplorePage");
+    expect(parseNairaToKobo("not-a-price", true)).toBeUndefined();
+    expect(parseNairaToKobo("0")).toBeUndefined();
+    expect(parseNairaToKobo("2500", true)).toBe(250000);
+  });
+});

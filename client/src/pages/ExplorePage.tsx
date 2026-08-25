@@ -39,7 +39,8 @@ export default function ExplorePage() {
   const categorySlug = categoryParams?.slug;
   const minKobo = parseNairaToKobo(min, true);
   const maxKobo = parseNairaToKobo(max);
-  const priceRangeError = minKobo !== undefined && maxKobo !== undefined && maxKobo < minKobo ? "The maximum price must be greater than or equal to the minimum price." : null;
+  const hasInvalidPriceInput = (min.trim().length > 0 && minKobo === undefined) || (max.trim().length > 0 && maxKobo === undefined);
+  const priceRangeError = hasInvalidPriceInput ? "Enter a valid Naira amount greater than zero, or leave the price field empty." : minKobo !== undefined && maxKobo !== undefined && maxKobo < minKobo ? "The maximum price must be greater than or equal to the minimum price." : null;
   const reset = (update: () => void) => { update(); setPage(1); };
   const results = trpc.marketplace.search.useQuery({ q: q.trim() || undefined, categorySlug, min: minKobo, max: maxKobo, condition: conditionFilter || undefined, sort, verified, page, limit: 24 }, { enabled: !priceRangeError });
   const categories = trpc.marketplace.categories.useQuery();

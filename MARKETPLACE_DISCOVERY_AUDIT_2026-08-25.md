@@ -27,3 +27,7 @@ At 375px, Explore retained a readable two-column product grid, stacked filter co
 ## Tablet verification
 
 At 768px, Explore wrapped the filter controls into two rows, kept the category strip touch-scrollable, rendered the real listings in a three-column grid, and preserved pagination without horizontal page overflow. Product detail presented the gallery first, then trust cards, category breadcrumb, title/specifications, purchase controls, seller context, reviews, and related listings in a readable single-column flow. The tablet layouts passed visual inspection with the existing light-only ESUT palette.
+
+## Final safety correction
+
+A final review identified that non-empty non-numeric, negative, or zero price values could otherwise be omitted from the server input. The Explore page now disables the marketplace query for those values, displays a specific actionable correction state, and offers a one-click clear action. Focused coverage now includes five Explore tests, and the complete suite passes with 67 files, 193 tests passed, and one intentional skip.
