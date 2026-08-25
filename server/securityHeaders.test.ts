@@ -1,7 +1,13 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { applySecurityHeaders } from "./_core/securityHeaders";
 
 describe("security headers", () => {
+  it("keeps runtime fingerprinting disabled and RPC responses uncached", () => {
+    const entrypoint = readFileSync(new URL("./_core/index.ts", import.meta.url), "utf8");
+    expect(entrypoint).toContain('app.disable("x-powered-by")');
+    expect(entrypoint).toContain('res.setHeader("Cache-Control", "no-store")');
+  });
   it("sets safe baseline headers and HSTS behind forwarded HTTPS", () => {
     const headers = new Map<string, string>();
     applySecurityHeaders({ headers: { "x-forwarded-proto": "https" } }, { setHeader: (name, value) => headers.set(name, value) });

@@ -36,6 +36,7 @@ async function startServer() {
   const app = express();
   const server = createServer(app);
   app.set("trust proxy", 1);
+  app.disable("x-powered-by");
   app.use((req, res, next) => {
     applySecurityHeaders(req, res);
     next();
@@ -45,6 +46,11 @@ async function startServer() {
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   registerStorageProxy(app);
   registerOAuthRoutes(app);
+  // Authenticated RPC responses must not be cached by browsers or shared proxies.
+  app.use("/api/trpc", (_req, res, next) => {
+    res.setHeader("Cache-Control", "no-store");
+    next();
+  });
   // tRPC API
   app.use(
     "/api/trpc",

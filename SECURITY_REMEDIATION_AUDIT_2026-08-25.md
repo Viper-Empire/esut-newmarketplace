@@ -45,3 +45,7 @@ The exact validation run passed **70 test files, 204 tests, and 1 intentional sk
 ## Deferred after first batch
 
 The remaining broad brief items still require deeper procedure-level verification or owner/external decisions: full auth/session lifecycle proof, exhaustive admin anonymous/customer/seller/stale-session cases, formal CSRF/origin policy, dynamic public-resource HTTP status semantics, complete guest-cart and order-tampering matrix, public location disclosure policy, final legal approval, and production sender-domain, hosting, custom-domain, database-provider, RPO/RTO, and migration decisions. These are not claimed as complete.
+
+## Runtime cache hardening follow-up
+
+The Express entrypoint now disables the `X-Powered-By` fingerprint and applies `Cache-Control: no-store` to `/api/trpc` responses so authenticated RPC payloads are not stored by browsers or shared proxies. This does not alter public Cloudinary/media delivery caching and does not add wildcard credentialed CORS. Focused and full validation now passes **70 test files, 205 tests, and 1 intentional skip**, with TypeScript and production build passing.
