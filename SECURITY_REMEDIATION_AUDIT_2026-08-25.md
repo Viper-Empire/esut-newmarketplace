@@ -59,3 +59,7 @@ The latest validation passed **70 test files, 205 tests, and 1 intentional skip*
 ## Password-recovery disposition
 
 Password recovery is already structured around privacy-safe responses, server-side token validation, one-hour expiry messaging, missing-token recovery, and post-reset authentication refresh. Existing procedure tests cover valid, expired, malformed, and invalid token cases plus email-verification boundaries. Ordinary-recipient reset delivery is currently disabled by the configured feature flag, so the UI truthfully explains the provider boundary rather than claiming that a live email was sent.
+
+## Final responsive route verification
+
+The current desktop visual pass checked `/register`, `/terms`, `/privacy`, `/support`, `/contact`, `/admin`, an unknown product route, and an unknown route. Registration remains within the supplied ESUT authentication design; the legal/support/contact pages are readable and explicitly owner-reviewable; the administrator page exposes only the protected-access message to the unauthenticated preview; unknown products provide a marketplace recovery action; and the 404 page remains light-only with safe navigation. The earlier mobile pass covered the same public/recovery surfaces at 375px without horizontal overflow. No user data, moderation action, or legal approval was performed.
