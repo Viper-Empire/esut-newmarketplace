@@ -19,7 +19,10 @@ describe("coming soon category enforcement contract", () => {
   });
 
   it("applies the public active-category invariant to discovery, product, storefront, alerts, offers, and carts", () => {
-    expect(routerSource.match(/publicListingCategoryCondition\(\)/g)?.length).toBeGreaterThanOrEqual(9);
+    expect(routerSource.match(/publicListingCategoryCondition\(\)/g)?.length).toBeGreaterThanOrEqual(8);
+    expect(routerSource).toContain("const publicListingCategoryCondition = (withCategoryJoin = true)");
+    expect(routerSource).toContain("publicListingCategoryCondition(false), eq(listings.categoryId, rows[0].listing.categoryId)");
+    expect(routerSource).toContain("innerJoin(categories, eq(listings.categoryId, categories.id)).where(and(eq(listings.status, \"ACTIVE\"), eq(stores.status, \"ACTIVE\"), publicListingCategoryCondition(), or(like(listings.title, phrase)");
     expect(routerSource).toContain("!isPubliclyDiscoverableCategory(row.category)");
     expect(routerSource).toContain("This category is coming soon and is not currently available for marketplace listings.");
   });
