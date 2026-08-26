@@ -23,6 +23,33 @@ describe("security remediation contracts", () => {
     expect(rootSource("client/src/components/StorefrontComponents.tsx")).toContain('href="/contact"');
   });
 
+  it("removes the stale admin moderation banner while retaining protected admin routing", () => {
+    const adminPage = source("AdminPage.tsx");
+    const app = rootSource("client/src/App.tsx");
+    expect(adminPage).not.toContain("retained legacy evidence queue");
+    expect(adminPage).not.toContain("PRODUCT MODERATION");
+    expect(app).toContain('path="/admin/listings"');
+  });
+
+  it("renders unavailable product and store states without retry loops", () => {
+    const product = source("ProductPage.tsx");
+    const store = source("StorePage.tsx");
+    expect(product).toContain("retry: false");
+    expect(product).toContain('product.error?.data?.code === "NOT_FOUND"');
+    expect(product).toContain("This listing is unavailable");
+    expect(store).toContain("retry: false");
+    expect(store).toContain('storeQuery.error?.data?.code === "NOT_FOUND"');
+    expect(store).toContain("Store unavailable");
+  });
+
+  it("hydrates URL price filters and surfaces contradictory ranges", () => {
+    const explore = source("ExplorePage.tsx");
+    expect(explore).toContain('params.get("min") ?? ""');
+    expect(explore).toContain('params.get("max") ?? ""');
+    expect(explore).toContain("maxKobo < minKobo");
+    expect(explore).toContain("Clear price range");
+  });
+
   it("keeps marketplace user content on React text-rendering paths", () => {
     for (const page of ["ExplorePage.tsx", "ProductPage.tsx", "StorePage.tsx", "AccountFeaturePages.tsx", "MarketplaceMessagesPage.tsx"]) {
       expect(source(page)).not.toContain("dangerouslySetInnerHTML");

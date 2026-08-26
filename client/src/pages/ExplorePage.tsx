@@ -27,9 +27,9 @@ export default function ExplorePage() {
   const [location] = useLocation();
   const { isAuthenticated } = useAuth();
   const [, categoryParams] = useRoute("/category/:slug");
-  const start = useMemo(() => { const queryString = typeof window !== "undefined" ? window.location.search : location.split("?")[1] ?? ""; return new URLSearchParams(queryString).get("q") ?? ""; }, [location]);
-  const [q, setQ] = useState(start);
-  useEffect(() => { setQ(start); setPage(1); }, [start]);
+  const startFilters = useMemo(() => { const queryString = typeof window !== "undefined" ? window.location.search : location.split("?")[1] ?? ""; const params = new URLSearchParams(queryString); return { q: params.get("q") ?? "", min: params.get("min") ?? "", max: params.get("max") ?? "" }; }, [location]);
+  const [q, setQ] = useState(startFilters.q);
+  useEffect(() => { setQ(startFilters.q); setMin(startFilters.min); setMax(startFilters.max); setPage(1); }, [startFilters]);
   const [sort, setSort] = useState<"newest" | "price_asc" | "price_desc" | "popular">("newest");
   const [verified, setVerified] = useState(false);
   const [conditionFilter, setConditionFilter] = useState<Condition>("");

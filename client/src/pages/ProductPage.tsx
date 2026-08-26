@@ -37,7 +37,7 @@ export default function ProductPage() {
   const [reminderType, setReminderType] = useState<"TOMORROW" | "THREE_DAYS" | "ONE_WEEK" | "CUSTOM">("TOMORROW");
   const [reminderAt, setReminderAt] = useState("");
   const [reminderNote, setReminderNote] = useState("");
-  const product = trpc.marketplace.product.useQuery({ slug: params?.slug ?? "" }, { enabled: Boolean(params?.slug) });
+  const product = trpc.marketplace.product.useQuery({ slug: params?.slug ?? "" }, { enabled: Boolean(params?.slug), retry: false });
   const reminderStatus = trpc.reminders.forListing.useQuery({ listingId: product.data?.listing.id ?? 0 }, { enabled: Boolean(isAuthenticated && product.data?.listing.id) });
   const utils = trpc.useUtils();
   const add = trpc.cart.add.useMutation({ onSuccess: () => { toast.success("Added to your cart"); navigate("/cart"); }, onError: err => toast.error(err.message) });
@@ -49,8 +49,9 @@ export default function ProductPage() {
   const createReminder = trpc.reminders.create.useMutation({ onSuccess: () => { toast.success("Reminder set. We will notify you in your account when it is due."); setReminderOpen(false); setReminderNote(""); setReminderAt(""); void utils.reminders.forListing.invalidate(); void utils.reminders.listMine.invalidate(); }, onError: error => toast.error(error.message) });
 
   if (product.isLoading) return <main className="page-shell py-16"><div className="h-8 w-48 animate-pulse rounded bg-slate-200" /><div className="mt-6 grid gap-7 lg:grid-cols-2"><div className="aspect-square animate-pulse rounded-[1.75rem] bg-slate-200" /><div className="space-y-4"><div className="h-10 animate-pulse rounded bg-slate-200" /><div className="h-24 animate-pulse rounded bg-slate-200" /><div className="h-48 animate-pulse rounded bg-slate-200" /></div></div></main>;
-  if (product.isError) return <main className="page-shell py-16"><div role="alert" className="rounded-[1.75rem] bg-[#fff3f3] p-8 text-center text-[#b91c1c] ring-1 ring-[#fecaca]"><h1 className="text-xl font-extrabold">We could not load this listing</h1><p className="mt-2 text-sm">Try again to retrieve the latest product, seller, and review details.</p><Button variant="outline" className="mt-4" onClick={() => product.refetch()}>Try again</Button></div></main>;
-  if (!product.data) return <main className="page-shell py-16 text-center"><Package className="mx-auto text-slate-300" size={64} strokeWidth={1.2} /><h1 className="mt-5 text-2xl font-extrabold">This listing is unavailable</h1><p className="mt-2 text-slate-600">It may have been removed, sold, or is no longer published.</p><Link href="/explore"><Button className="mt-6 bg-[#e31b23]">Explore more listings</Button></Link></main>;
+  const productNotFound = product.error?.data?.code === "NOT_FOUND";
+  if (product.isError && !productNotFound) return <main className="page-shell py-16"><div role="alert" className="rounded-[1.75rem] bg-[#fff3f3] p-8 text-center text-[#b91c1c] ring-1 ring-[#fecaca]"><h1 className="text-xl font-extrabold">We could not load this listing</h1><p className="mt-2 text-sm">Try again to retrieve the latest product, seller, and review details.</p><Button variant="outline" className="mt-4" onClick={() => product.refetch()}>Try again</Button></div></main>;
+  if (productNotFound || !product.data) return <main className="page-shell py-16 text-center"><Package className="mx-auto text-slate-300" size={64} strokeWidth={1.2} /><h1 className="mt-5 text-2xl font-extrabold">This listing is unavailable</h1><p className="mt-2 text-slate-600">It may have been removed, sold, or is no longer published.</p><Link href="/explore"><Button className="mt-6 bg-[#e31b23]">Explore more listings</Button></Link></main>;
 
   const { listing, store, category, images, productReviews, reviewSummary, availability, evidenceVideo } = product.data;
   const activeImage = images[activeImageIndex] ?? images[0];

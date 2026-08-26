@@ -582,3 +582,13 @@
 - [x] If a code defect is confirmed, fix unknown-store recovery so missing stores return a truthful not-found state rather than 502, with focused regression coverage and production verification; otherwise document the non-reproducible transient without changing marketplace data.
 
 - [x] Reconcile the reported production unknown-store HTTP 502 against the already-resolved legal, SEO, duplicate-store, and account-recovery remediation record; keep the probe read-only until reproducibility and cause are confirmed.
+
+# Reported security and recovery follow-up
+
+- [x] Remove or protect the publicly visible admin-only moderation content and `/admin/listings` link on the public landing experience without weakening actual admin route guards. (Removed the stale product-moderation banner and legacy evidence-queue wording from `AdminPage`; protected admin metrics and route guards remain.)
+- [ ] Restore a truthful public password-recovery path while email delivery remains intentionally paused, without exposing account existence or inventing an unverified contact channel; document the provider-dependent completion boundary.
+- [x] Make unavailable product slugs resolve to a clear not-found/recovery state instead of an HTTP 200 empty content area. (ProductPage now disables retries for typed NOT_FOUND responses and renders the unavailable-listing recovery state.)
+- [x] Make unavailable store slugs resolve to a clear not-found/recovery state without an indefinite loading presentation. (StorePage now disables retries for typed NOT_FOUND responses and renders Store unavailable with a browse action.)
+- [x] Ensure contradictory marketplace price filters are rejected or surfaced with an actionable validation state instead of silently returning unfiltered results. (ExplorePage now hydrates min/max URL parameters and surfaces the existing correction state before querying.)
+- [x] Verify search-query rendering in a real browser and preserve script-like input as escaped plain text, with regression coverage for the rendered-content contract. (React rendered the script-like query as visible text; source contracts retain the no-raw-HTML marketplace-content boundary.)
+- [x] Run focused and full regression tests, TypeScript, production build, responsive verification, and checkpoint the completed remediation without changing paused infrastructure or email-provider settings. (Focused contracts, full Vitest suite, TypeScript, production build, and desktop verification passed; paused email/infrastructure settings were unchanged.)

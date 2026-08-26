@@ -29,14 +29,15 @@ export default function StorePage() {
   const [, params] = useRoute("/store/:slug");
   const { isAuthenticated } = useAuth();
   const [reviewSort, setReviewSort] = useState<ReviewSort>("RECENT");
-  const storeQuery = trpc.marketplace.store.useQuery({ slug: params?.slug ?? "", reviewSort }, { enabled: Boolean(params?.slug) });
+  const storeQuery = trpc.marketplace.store.useQuery({ slug: params?.slug ?? "", reviewSort }, { enabled: Boolean(params?.slug), retry: false });
   const reviewIds = useMemo(() => storeQuery.data?.reviews.map(entry => entry.review.id) ?? [], [storeQuery.data]);
   const reviewMedia = trpc.marketplace.reviewMedia.useQuery({ reviewIds }, { enabled: reviewIds.length > 0 });
   const reminder = trpc.reminders.create.useMutation({ onSuccess: () => toast.success("Reminder set for tomorrow. It does not reserve this product."), onError: error => toast.error(error.message) });
 
   if (storeQuery.isLoading) return <main className="page-shell py-16">Loading store…</main>;
-  if (storeQuery.isError) return <main className="page-shell py-20 text-center" role="alert"><Store className="mx-auto text-slate-400" size={42}/><h1 className="mt-4 text-3xl font-extrabold">We could not load this store</h1><p className="mx-auto mt-2 max-w-md text-slate-600">The seller page could not be retrieved right now. Try again or browse the marketplace.</p><div className="mt-6 flex justify-center gap-3"><Button variant="outline" onClick={() => storeQuery.refetch()}>Try again</Button><Link href="/explore"><Button className="bg-[#e31b23]">Browse marketplace</Button></Link></div></main>;
-  if (!storeQuery.data) return <main className="page-shell py-20 text-center"><Store className="mx-auto text-slate-400" size={42}/><h1 className="mt-4 text-3xl font-extrabold">Store unavailable</h1><Link href="/explore"><Button className="mt-6 bg-[#e31b23]">Browse marketplace</Button></Link></main>;
+  const storeNotFound = storeQuery.error?.data?.code === "NOT_FOUND";
+  if (storeQuery.isError && !storeNotFound) return <main className="page-shell py-20 text-center" role="alert"><Store className="mx-auto text-slate-400" size={42}/><h1 className="mt-4 text-3xl font-extrabold">We could not load this store</h1><p className="mx-auto mt-2 max-w-md text-slate-600">The seller page could not be retrieved right now. Try again or browse the marketplace.</p><div className="mt-6 flex justify-center gap-3"><Button variant="outline" onClick={() => storeQuery.refetch()}>Try again</Button><Link href="/explore"><Button className="bg-[#e31b23]">Browse marketplace</Button></Link></div></main>;
+  if (storeNotFound || !storeQuery.data) return <main className="page-shell py-20 text-center"><Store className="mx-auto text-slate-400" size={42}/><h1 className="mt-4 text-3xl font-extrabold">Store unavailable</h1><p className="mx-auto mt-2 max-w-md text-slate-600">This seller page may have been removed or is no longer published.</p><Link href="/explore"><Button className="mt-6 bg-[#e31b23]">Browse marketplace</Button></Link></main>;
 
   const { store, products, reviews } = storeQuery.data;
   const reviewCount = reviews.length;
