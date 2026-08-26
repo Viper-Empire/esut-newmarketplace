@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 const workspaceSource = fs.readFileSync(path.join(process.cwd(), "client/src/components/MarketplaceWorkspaceShell.tsx"), "utf8");
 const adminSuiteSource = fs.readFileSync(path.join(process.cwd(), "client/src/pages/AdminSuitePages.tsx"), "utf8");
 const adminOverviewSource = fs.readFileSync(path.join(process.cwd(), "client/src/pages/AdminPage.tsx"), "utf8");
+const adminNavigationSource = fs.readFileSync(path.join(process.cwd(), "client/src/components/AdminControlCenterNav.tsx"), "utf8");
 const stylesheetSource = fs.readFileSync(path.join(process.cwd(), "client/src/index.css"), "utf8");
 
 describe("ESUT dashboard visual system", () => {
@@ -18,7 +19,8 @@ describe("ESUT dashboard visual system", () => {
   it("applies the same scoped surface to administrator overview and subpages", () => {
     expect(adminOverviewSource).toContain("dashboard-admin-surface");
     expect(adminSuiteSource).toContain("dashboard-admin-surface");
-    expect(adminSuiteSource).toContain('location === href ? "bg-[#00843d] text-white shadow-sm"');
+    expect(adminNavigationSource).toContain('active ? "bg-[#00843d] text-white shadow-sm"');
+    expect(adminNavigationSource).toContain("Administration control center");
   });
 
   it("keeps dashboard styling scoped and does not restore the removed mood selector", () => {
