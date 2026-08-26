@@ -616,3 +616,10 @@
 - [x] Reproduce the script-like query in the real browser and inspect the rendered DOM/source behavior. (Browser verification confirmed the query was previously visible as raw angle-bracket text in the chip.)
 - [x] Harden the active search-filter chip so script-like input is inert plain text and visibly escaped without changing query semantics. (Added entity escaping for ampersand, angle brackets, quotes, and apostrophes in visible query summaries; underlying search input remains normalized and unchanged.)
 - [x] Add focused regression coverage, run the full validation suite, verify desktop/mobile behavior, and checkpoint the remediation. (Focused contract, full Vitest suite, TypeScript, production build, and browser verification passed.)
+
+# Control-only administrator role
+
+- [x] Audit administrator routes, navigation, and buyer/seller procedures to identify every capability that must be control-plane-only. (Audited buyer, favorites, reminders, search alerts, offers, messaging, reviews, cart, checkout, orders, seller self-service, account, and storefront navigation.)
+- [x] Enforce server-side restrictions so ADMIN and SUPER_ADMIN accounts cannot buy, sell, create listings, use carts, checkout, or operate seller tools. (Added `marketplaceUserProcedure`, applied it to commerce routes, restricted `sellerProcedure` to SELLER, and preserved rate limiting.)
+- [x] Remove buyer and seller actions from the administrator interface while preserving monitoring, moderation, management, audit, notification, settings, and security operations. (Admins receive control-center states on account/seller routes; storefront Cart and Buy / Sell actions become Control center for administrators.)
+- [x] Add authorization and UI regression coverage, run the full validation suite, and checkpoint the control-only administrator release. (71 test files passed, 224 tests passed, 1 skipped; TypeScript and production build passed.)

@@ -42,7 +42,7 @@ describe("production-trust procedure boundaries", () => {
   });
 
   it("rejects seller storefront markup before persistence, including administrator-role callers", async () => {
-    await expect(appRouter.createCaller(context("ADMIN")).seller.updateStorefrontConfig({ announcement: "<script>alert(1)</script>", accentColor: "ESUT_GREEN", featuredProductIds: [] })).rejects.toMatchObject({ code: "BAD_REQUEST" });
+    await expect(appRouter.createCaller(context("ADMIN")).seller.updateStorefrontConfig({ announcement: "<script>alert(1)</script>", accentColor: "ESUT_GREEN", featuredProductIds: [] })).rejects.toMatchObject({ code: "FORBIDDEN" });
     expect(state.updates).toBe(0);
   });
 

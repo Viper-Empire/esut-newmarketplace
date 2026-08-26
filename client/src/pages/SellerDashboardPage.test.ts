@@ -9,4 +9,12 @@ describe("seller workspace messaging continuity", () => {
     expect(source).toContain('title="Open messages"');
     expect(source).toContain('detail="Reply to buyer questions"');
   });
+
+  it("keeps administrators out of seller self-service", () => {
+    expect(source).toContain('const isAdmin = user?.role === "ADMIN" || user?.role === "SUPER_ADMIN";');
+    expect(source).toContain('const isSeller = user?.role === "SELLER";');
+    expect(source).toContain('Administrator control center only');
+    expect(source).toContain('href="/admin"');
+    expect(source).toContain('href="/admin/operations"');
+  });
 });

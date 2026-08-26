@@ -42,6 +42,20 @@ const requireUser = t.middleware(async opts => {
 
 export const protectedProcedure = t.procedure.use(requireUser);
 
+/**
+ * Authenticated marketplace participants may browse buyer/seller self-service
+ * features. Control-plane administrators must use the admin workspace instead
+ * of creating commerce records or acting as buyers.
+ */
+export const marketplaceUserProcedure = protectedProcedure.use(
+  t.middleware(async opts => {
+    if (!opts.ctx.user || ["ADMIN", "SUPER_ADMIN"].includes(opts.ctx.user.role)) {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Administrators use the control center and cannot buy or sell." });
+    }
+    return opts.next({ ctx: { ...opts.ctx, user: opts.ctx.user } });
+  }),
+);
+
 export const operationsProcedure = protectedProcedure.use(
   t.middleware(async opts => {
     if (!opts.ctx.user || !["SUPPORT", "MODERATOR", "ADMIN", "SUPER_ADMIN"].includes(opts.ctx.user.role)) {
@@ -62,7 +76,7 @@ export const moderatorProcedure = protectedProcedure.use(
 
 export const sellerProcedure = protectedProcedure.use(
   t.middleware(async opts => {
-    if (!opts.ctx.user || !["SELLER", "ADMIN", "SUPER_ADMIN"].includes(opts.ctx.user.role)) {
+    if (!opts.ctx.user || opts.ctx.user.role !== "SELLER") {
       throw new TRPCError({ code: "FORBIDDEN", message: "Seller access is required." });
     }
     return opts.next({ ctx: { ...opts.ctx, user: opts.ctx.user } });

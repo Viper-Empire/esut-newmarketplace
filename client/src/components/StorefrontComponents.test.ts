@@ -21,6 +21,15 @@ describe("storefront managed visual assets", () => {
     expect(marketplaceLoadingSlots(99)).toHaveLength(12);
   });
 
+  it("keeps administrator storefront navigation control-only", () => {
+    const componentSource = readFileSync(new URL("./StorefrontComponents.tsx", import.meta.url), "utf8");
+    expect(componentSource).toContain('const isControlPlane = user?.role === "ADMIN" || user?.role === "SUPER_ADMIN";');
+    expect(componentSource).toContain('Control center');
+    expect(componentSource).toContain('{!isControlPlane && <Link href="/cart"');
+    expect(componentSource).toContain('{!isControlPlane && <Link href="/sell"');
+    expect(componentSource).toContain('{!isControlPlane && mobileLink("/sell", "Buy / Sell", true)}');
+  });
+
   it("keeps product-card content on a stable vertical rhythm", () => {
     const componentSource = readFileSync(new URL("./StorefrontComponents.tsx", import.meta.url), "utf8");
     const stylesheetSource = readFileSync(new URL("../index.css", import.meta.url), "utf8");

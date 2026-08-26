@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { router, adminProcedure, moderatorProcedure, operationsProcedure, sellerProcedure, superAdminProcedure } from "./_core/trpc";
+import { router, adminProcedure, marketplaceUserProcedure, moderatorProcedure, operationsProcedure, sellerProcedure, superAdminProcedure } from "./_core/trpc";
 import type { TrpcContext } from "./_core/context";
 
 const protectedRoutes = router({
@@ -7,6 +7,7 @@ const protectedRoutes = router({
   moderatorOnly: moderatorProcedure.query(() => ({ ok: true })),
   operationsOnly: operationsProcedure.query(() => ({ ok: true })),
   sellerOnly: sellerProcedure.query(() => ({ ok: true })),
+  marketplaceUserOnly: marketplaceUserProcedure.query(() => ({ ok: true })),
   superAdminOnly: superAdminProcedure.query(() => ({ ok: true })),
 });
 
@@ -31,6 +32,12 @@ describe("marketplace role authorization", () => {
     await expect(caller.sellerOnly()).rejects.toMatchObject({ code: "UNAUTHORIZED" });
     await expect(caller.superAdminOnly()).rejects.toMatchObject({ code: "UNAUTHORIZED" });
   });
+  it("rejects administrators from marketplace self-service while allowing ordinary marketplace users", async () => {
+    await expect(protectedRoutes.createCaller(contextFor("ADMIN")).marketplaceUserOnly()).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(protectedRoutes.createCaller(contextFor("SUPER_ADMIN")).marketplaceUserOnly()).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(protectedRoutes.createCaller(contextFor("CUSTOMER")).marketplaceUserOnly()).resolves.toEqual({ ok: true });
+    await expect(protectedRoutes.createCaller(contextFor("SELLER")).marketplaceUserOnly()).resolves.toEqual({ ok: true });
+  });
   it("rejects customers from administrator-only operations", async () => {
     await expect(protectedRoutes.createCaller(contextFor("CUSTOMER")).adminOnly()).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
@@ -41,8 +48,8 @@ describe("marketplace role authorization", () => {
   it("rejects customers but permits sellers for seller-only operations", async () => {
     await expect(protectedRoutes.createCaller(contextFor("CUSTOMER")).sellerOnly()).rejects.toMatchObject({ code: "FORBIDDEN" });
     await expect(protectedRoutes.createCaller(contextFor("SELLER")).sellerOnly()).resolves.toEqual({ ok: true });
-    await expect(protectedRoutes.createCaller(contextFor("ADMIN")).sellerOnly()).resolves.toEqual({ ok: true });
-    await expect(protectedRoutes.createCaller(contextFor("SUPER_ADMIN")).sellerOnly()).resolves.toEqual({ ok: true });
+    await expect(protectedRoutes.createCaller(contextFor("ADMIN")).sellerOnly()).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(protectedRoutes.createCaller(contextFor("SUPER_ADMIN")).sellerOnly()).rejects.toMatchObject({ code: "FORBIDDEN" });
     await expect(protectedRoutes.createCaller(contextFor("MODERATOR")).sellerOnly()).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
   it("permits moderators only for scoped moderation operations", async () => {
