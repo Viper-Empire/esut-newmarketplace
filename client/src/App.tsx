@@ -12,7 +12,6 @@ import { Link, Redirect, Route, Switch, useLocation } from "wouter";
 import { lazy, Suspense, useEffect } from "react";
 
 const ProductPage = lazy(() => import("@/pages/ProductPage"));
-const VerticalLandingPage = lazy(() => import("@/pages/VerticalLandingPage"));
 const CartPage = lazy(() => import("@/pages/CartPage"));
 const ExplorePage = lazy(() => import("@/pages/ExplorePage"));
 const CheckoutPage = lazy(() => import("@/pages/CheckoutPage"));
@@ -93,9 +92,9 @@ function App() {
   useEffect(() => {
     const pathname = location.split("?")[0] || "/";
     const metadata = pathname === "/" ? { title: "ESUT Marketplace | Buy. Sell. Connect.", description: "Shop products and services from verified ESUT sellers with convenient campus pickup." }
-      : pathname === "/explore" || pathname.startsWith("/category/") ? { title: "Browse listings — ESUT Marketplace", description: "Find products, services, food, accommodation, and digital learning resources from the ESUT community." }
-      : pathname === "/esutchop" ? { title: "ESUTChop Food — ESUT Marketplace", description: "Discover food listings and campus pickup options from ESUT Marketplace sellers." }
-      : pathname === "/accommodation" ? { title: "Accommodation — ESUT Marketplace", description: "Explore student accommodation and campus-living listings from ESUT Marketplace sellers." }
+      : pathname === "/explore" || pathname.startsWith("/category/") ? { title: "Browse listings — ESUT Marketplace", description: "Find available products and services from the ESUT community." }
+      : pathname === "/esutchop" ? { title: "ESUT Chop — Coming Soon | ESUT Marketplace", description: "ESUT Chop is being prepared for the ESUT community." }
+      : pathname === "/accommodation" ? { title: "Accommodation — Coming Soon | ESUT Marketplace", description: "ESUT Accommodation is being prepared for the ESUT community." }
       : pathname.startsWith("/product/") ? { title: "Product — ESUT Marketplace", description: "Review listing details, seller context, availability, and campus-pickup information." }
       : pathname.startsWith("/store/") ? { title: "Store — ESUT Marketplace", description: "Browse a verified ESUT Marketplace seller store and its active listings." }
       : pathname === "/terms" ? { title: "Terms — ESUT Marketplace", description: "Read the current ESUT Marketplace product-policy terms outline." }
@@ -151,8 +150,8 @@ function App() {
     <Route path="/cart" component={CartPage}/>
     <Route path="/checkout" component={CheckoutPage}/>
     <Route path="/explore" component={ExplorePage}/>
-    <Route path="/esutchop">{() => <VerticalLandingPage kind="food"/>}</Route>
-    <Route path="/accommodation">{() => <VerticalLandingPage kind="accommodation"/>}</Route>
+    <Route path="/esutchop"><Redirect to="/category/food"/></Route>
+    <Route path="/accommodation"><Redirect to="/category/accommodation"/></Route>
     <Route path="/sell" component={SellPage}/>
     <Route path="/seller" component={SellerDashboardPage}/>
     <Route path="/seller/store" component={SellerStorePage}/>
@@ -194,8 +193,7 @@ function App() {
     <Route path="/admin/reviews" component={AdminReviewsPage}/>
     <Route path="/admin/notifications" component={AdminNotificationsPage}/>
     <Route path="/admin/audit-logs" component={AdminAuditLogsPage}/>
-    <Route path="/category/food"><Redirect to="/esutchop"/></Route>
-    <Route path="/category/hostel-home"><Redirect to="/accommodation"/></Route>
+    <Route path="/category/hostel-home"><Redirect to="/category/accommodation"/></Route>
     <Route path="/category/:slug" component={ExplorePage}/>
     <Route component={NotFound}/>
   </Switch></Suspense></div></ErrorBoundary>;

@@ -84,7 +84,7 @@ describe("buyer experience procedures", () => {
     await expect(appRouter.createCaller(publicContext()).marketplace.suggestions({ q: "book" })).resolves.toEqual({
       products: [{ slug: "esut-textbook", title: "ESUT Textbook", storeName: "Campus Books" }],
       stores: [{ slug: "campus-books", name: "Campus Books" }],
-      categories: [{ slug: "books", name: "Books" }],
+      categories: [{ slug: "books", name: "Books", availability: "COMING_SOON" }],
     });
   });
 
