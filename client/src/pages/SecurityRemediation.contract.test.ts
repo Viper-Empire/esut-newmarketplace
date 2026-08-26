@@ -78,6 +78,10 @@ describe("security remediation contracts", () => {
   it("sanitizes and bounds URL and typed search queries", () => {
     const explore = source("ExplorePage.tsx");
     expect(explore).toContain("sanitizeSearchQuery");
+    expect(explore).toContain("escapeSearchQueryForDisplay");
+    expect(explore).toContain('Search: “{escapeSearchQueryForDisplay(q.trim())}” ×');
+    expect(explore).toContain("replace(/</g, \"&lt;\")");
+    expect(explore).toContain("replace(/>/g, \"&gt;\")");
     expect(explore).toContain("slice(0, 100)");
     expect(explore).toContain("maxLength={100}");
     expect(explore).toContain("\\u0000-\\u001F\\u007F");

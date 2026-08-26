@@ -610,3 +610,9 @@
 - [x] Replace product soft-fail behavior with a proper accessible 404-style state, helpful not-found message, and marketplace recovery navigation. (Implemented explicit 404 Listing not found state with explanation, Browse all listings, and Return home actions.)
 - [x] Replace store soft-fail behavior with a proper accessible 404-style state, helpful not-found message, and marketplace recovery navigation. (Implemented explicit 404 Store not found state with explanation, Browse the marketplace, and Return home actions.)
 - [x] Add focused product/store regression coverage and verify unknown slugs at desktop and mobile widths before checkpointing. (Focused contracts and ProductPage tests passed; full suite, TypeScript, build, and desktop/mobile screenshots passed.)
+
+# Search-chip reflection remediation
+
+- [x] Reproduce the script-like query in the real browser and inspect the rendered DOM/source behavior. (Browser verification confirmed the query was previously visible as raw angle-bracket text in the chip.)
+- [x] Harden the active search-filter chip so script-like input is inert plain text and visibly escaped without changing query semantics. (Added entity escaping for ampersand, angle brackets, quotes, and apostrophes in visible query summaries; underlying search input remains normalized and unchanged.)
+- [x] Add focused regression coverage, run the full validation suite, verify desktop/mobile behavior, and checkpoint the remediation. (Focused contract, full Vitest suite, TypeScript, production build, and browser verification passed.)
