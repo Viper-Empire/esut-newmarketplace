@@ -10,4 +10,17 @@ describe("administrator audit-note controls", () => {
     expect(source).toContain("<ActionReasonButton");
     expect(source).not.toContain("window.prompt");
   });
+
+  it("keeps the requested admin control-center surfaces wired to audited procedures", () => {
+    expect(source).toContain("trpc.admin.deleteUser.useMutation");
+    expect(source).toContain("Delete marketplace account");
+    expect(source).toContain("PENDING_VALIDATION");
+    expect(source).toContain("trpc.admin.reviewNewListing.useMutation");
+    expect(source).toContain("Approve new seller listing");
+    expect(source).toContain("Reject new seller listing");
+    expect(source).toContain('"Active users"');
+    expect(source).toContain('"New listings"');
+    expect(source).toContain("activeUserCount");
+    expect(source).toContain("newListingCount");
+  });
 });

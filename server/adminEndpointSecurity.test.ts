@@ -23,7 +23,7 @@ describe("administrator endpoint security boundary", () => {
     for (const procedure of [
       "configureReservationExpirySchedule", "reservationExpiryHealth", "configureReminderSchedule", "reminderHealth", "operationalHealth",
       "dashboard", "analytics", "orders", "orderDetail", "transitionOrder", "users", "userDetail", "setUserActive", "sellers", "stores",
-      "setStoreStatus", "listings", "mediaIntegrity", "listingVideoEvidenceUrl", "reviewListingVideoEvidence", "setListingStatus", "categories",
+      "setStoreStatus", "listings", "mediaIntegrity", "listingVideoEvidenceUrl", "reviewListingVideoEvidence", "setListingStatus", "reviewNewListing", "deleteUser", "categories",
     ]) expect(routerSource).toContain(`${procedure}: adminProcedure`);
   });
 
@@ -46,6 +46,8 @@ describe("administrator endpoint security boundary", () => {
     await expect(caller.admin.listingVideoEvidenceUrl({ listingId: 1 })).rejects.toMatchObject({ code: "FORBIDDEN" });
     await expect(caller.admin.reviewListingVideoEvidence({ listingId: 1, approve: false, note: "Unauthorized evidence review" })).rejects.toMatchObject({ code: "FORBIDDEN" });
     await expect(caller.admin.setUserActive({ id: 902, isActive: false, note: "Security boundary test" })).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(caller.admin.deleteUser({ id: 902, note: "Security boundary test" })).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(caller.admin.reviewNewListing({ id: 902, approve: true, note: "Security boundary test" })).rejects.toMatchObject({ code: "FORBIDDEN" });
     await expect(caller.admin.reversibleActions({ page: 1, limit: 10 })).rejects.toMatchObject({ code: "FORBIDDEN" });
     await expect(caller.admin.undoReversibleAction({ id: 1, note: "Security boundary test" })).rejects.toMatchObject({ code: "FORBIDDEN" });
     await expect(caller.admin.redoReversibleAction({ id: 1, note: "Security boundary test" })).rejects.toMatchObject({ code: "FORBIDDEN" });
