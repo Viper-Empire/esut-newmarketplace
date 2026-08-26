@@ -575,3 +575,10 @@
 - [x] Improve responsive behavior so the conversation list and active thread work cleanly on desktop, tablet, and narrow mobile screens with explicit navigation back to the seller/account workspace. (Responsive styles were refined and entry boundaries were visually checked at 1280px and 375px; no horizontal overflow was observed. A real authenticated thread was unavailable in the current session, so thread-level browser behavior remains procedure/test covered.)
 - [x] Polish seller-workspace messaging entry points and conversation context without weakening conversation membership or seller authorization checks. (Added an `Open messages` seller quick action to the existing protected `/seller/messages` route; seller approval boundary and membership checks are unchanged.)
 - [x] Add focused messaging and seller-workspace regression tests; run full Vitest, TypeScript, production build, and desktop/tablet/mobile visual verification before checkpointing. (Added messaging hierarchy and seller quick-action contracts; complete suite: 71 files, 213 passed, 1 intentional skip; TypeScript/build pass; desktop and mobile visual checks pass, with the authenticated-thread limitation documented.)
+
+# Unknown-store production probe
+
+- [x] Reproduce the production `/store/elon-16350002` response, inspect runtime/proxy evidence, and confirm whether the 502 is transient or code-reproducible.
+- [x] If a code defect is confirmed, fix unknown-store recovery so missing stores return a truthful not-found state rather than 502, with focused regression coverage and production verification; otherwise document the non-reproducible transient without changing marketplace data.
+
+- [x] Reconcile the reported production unknown-store HTTP 502 against the already-resolved legal, SEO, duplicate-store, and account-recovery remediation record; keep the probe read-only until reproducibility and cause are confirmed.

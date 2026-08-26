@@ -112,6 +112,12 @@ describe("buyer experience procedures", () => {
     expect(result.productReviews[0]).toMatchObject({ review: { rating: 4 }, buyer: { name: "Buyer T." } });
   });
 
+  it("returns a typed not-found error for an unknown public store slug", async () => {
+    state.selectResults = [[]];
+    await expect(appRouter.createCaller(publicContext()).marketplace.store({ slug: "elon-16350002", reviewSort: "RECENT" })).rejects.toMatchObject({ code: "NOT_FOUND", message: "This store is unavailable." });
+    expect(state.selectArgs).toHaveLength(1);
+  });
+
   it("uses a display-safe buyer projection for public store reviews", async () => {
     state.selectResults = [[{ id: 1, slug: "campus-books", status: "ACTIVE" }], [], []];
     await appRouter.createCaller(publicContext()).marketplace.store({ slug: "campus-books", reviewSort: "RATING" });
