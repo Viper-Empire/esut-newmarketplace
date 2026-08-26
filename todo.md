@@ -630,3 +630,16 @@
 - [x] Add a protected real-data product moderation queue to review new seller listings and approve or reject them with server-side state transitions and audit logging. (Added PENDING_VALIDATION queue filter and audited approve/reject mutation with media approval, search-alert notification, and seller notification.)
 - [x] Add a protected real-data analytics overview page showing total sales, active users, and new listings with truthful empty/loading/error states. (Extended the existing date-filtered analytics procedure and overview cards with completed sales, active users, and new listings.)
 - [x] Add admin navigation, focused procedure/UI regressions, responsive verification, full validation, and checkpoint the admin control-center expansion. (Admin navigation already included Users, Moderation, and Analytics; focused tests passed, full suite passed with 71 files / 225 tests / 1 skipped, TypeScript and build passed, and desktop/mobile protected-route checks passed.)
+
+# Aiven service architecture comparison
+
+- [ ] Analyze `pasted_content_4.txt` and compare PostgreSQL, Kafka, OpenSearch, ClickHouse, and Valkey with ESUT Marketplace’s current MySQL/TiDB, Redis, Cloudinary, private storage, and managed-host architecture; make no infrastructure changes without explicit authorization.
+
+# Redis health verification
+
+- [x] Verify whether the configured Redis service is reachable and actively used by ESUT Marketplace for lockouts, rate limits, telemetry limits, or other short-lived security state, without changing data or credentials. (Endpoint TCP/TLS reachability confirmed, but application-native PING reports `CONNECTION_FAILED`; the configured scheme is malformed as `redis-cli--tls-uredis:` and the backend is using its conservative database fallback.)
+- [x] Correct the server-side `REDIS_URL` secret to a valid TLS Redis URI (for example, `rediss://...`) and rerun the application-native PING/health check; do not expose or commit the credential. (Updated through the managed secret input; exact credential remained private; restart loaded the value and health returned reachable with throttling available.)
+
+# Upstash Redis replacement
+
+- [x] Replace the malformed current Redis configuration with an authorized Upstash Redis connection for server-side security state, preserving TLS, key namespaces, TTLs, rate-limit behavior, fallback handling, and secret privacy; validate before checkpointing. (Upstash `rediss://` URI supplied through managed secrets; server-only PING passed; application health reports configured/reachable/throttlingAvailable; atomic EVAL lockout sequence passed with unique cleanup keys.)
