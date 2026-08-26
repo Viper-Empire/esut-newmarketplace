@@ -604,3 +604,9 @@
 - [x] Sanitize marketplace search input at the URL/UI boundary by trimming, removing control characters, and capping `q` at 100 characters while preserving escaped React rendering. (Implemented for URL hydration and live input, with a 100-character max length and focused regression coverage.)
 - [x] Remove `/forgot-password`, `/reset-password`, and `/verify-email` from robots.txt while retaining protected-route disallows and the sitemap reference. (Implemented and covered by regression assertions.)
 - [x] Add focused regression coverage and run full validation for the four authorized fixes; leave password-reset delivery disabled and documented as deferred. (12 focused contracts passed; full suite passed with 71 files, 220 passed, 1 skipped; TypeScript, production build, header probe, and browser checks passed.)
+
+# Product and store not-found recovery
+
+- [x] Replace product soft-fail behavior with a proper accessible 404-style state, helpful not-found message, and marketplace recovery navigation. (Implemented explicit 404 Listing not found state with explanation, Browse all listings, and Return home actions.)
+- [x] Replace store soft-fail behavior with a proper accessible 404-style state, helpful not-found message, and marketplace recovery navigation. (Implemented explicit 404 Store not found state with explanation, Browse the marketplace, and Return home actions.)
+- [x] Add focused product/store regression coverage and verify unknown slugs at desktop and mobile widths before checkpointing. (Focused contracts and ProductPage tests passed; full suite, TypeScript, build, and desktop/mobile screenshots passed.)

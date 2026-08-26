@@ -58,15 +58,21 @@ describe("security remediation contracts", () => {
     expect(app).toContain('path="/admin/listings"');
   });
 
-  it("renders unavailable product and store states without retry loops", () => {
+  it("renders explicit accessible 404-style product and store recovery states", () => {
     const product = source("ProductPage.tsx");
     const store = source("StorePage.tsx");
     expect(product).toContain("retry: false");
     expect(product).toContain('product.error?.data?.code === "NOT_FOUND"');
-    expect(product).toContain("This listing is unavailable");
+    expect(product).toContain("404 · Listing not found");
+    expect(product).toContain("This listing is no longer available");
+    expect(product).toContain('role="status"');
+    expect(product).toContain('href="/explore"');
     expect(store).toContain("retry: false");
     expect(store).toContain('storeQuery.error?.data?.code === "NOT_FOUND"');
-    expect(store).toContain("Store unavailable");
+    expect(store).toContain("404 · Store not found");
+    expect(store).toContain("This seller page is no longer available");
+    expect(store).toContain('role="status"');
+    expect(store).toContain('href="/explore"');
   });
 
   it("sanitizes and bounds URL and typed search queries", () => {
