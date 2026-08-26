@@ -592,3 +592,7 @@
 - [x] Ensure contradictory marketplace price filters are rejected or surfaced with an actionable validation state instead of silently returning unfiltered results. (ExplorePage now hydrates min/max URL parameters and surfaces the existing correction state before querying.)
 - [x] Verify search-query rendering in a real browser and preserve script-like input as escaped plain text, with regression coverage for the rendered-content contract. (React rendered the script-like query as visible text; source contracts retain the no-raw-HTML marketplace-content boundary.)
 - [x] Run focused and full regression tests, TypeScript, production build, responsive verification, and checkpoint the completed remediation without changing paused infrastructure or email-provider settings. (Focused contracts, full Vitest suite, TypeScript, production build, and desktop verification passed; paused email/infrastructure settings were unchanged.)
+
+# Preview connectivity follow-up
+
+- [x] Restore the managed development preview connection refused by `3000-isyid2piwrgzy5lu4skpl-ba902a1a.us4.manus.computer`, verify the Preview panel can load the homepage, and preserve published-site behavior. (Restarted the managed dev service, confirmed localhost:3000 returns HTTP 200, refreshed the preview proxy, and verified the homepage renders.)
