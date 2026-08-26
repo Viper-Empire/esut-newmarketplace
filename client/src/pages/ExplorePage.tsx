@@ -23,11 +23,13 @@ export const formatCategoryTitle = (categorySlug: string | undefined, categories
   return `${categoryName ?? categorySlug.replaceAll("-", " ")} listings`;
 };
 
+const sanitizeSearchQuery = (value: string) => value.replace(/[\u0000-\u001F\u007F]/g, "").trim().slice(0, 100);
+
 export default function ExplorePage() {
   const [location] = useLocation();
   const { isAuthenticated } = useAuth();
   const [, categoryParams] = useRoute("/category/:slug");
-  const startFilters = useMemo(() => { const queryString = typeof window !== "undefined" ? window.location.search : location.split("?")[1] ?? ""; const params = new URLSearchParams(queryString); return { q: params.get("q") ?? "", min: params.get("min") ?? "", max: params.get("max") ?? "" }; }, [location]);
+  const startFilters = useMemo(() => { const queryString = typeof window !== "undefined" ? window.location.search : location.split("?")[1] ?? ""; const params = new URLSearchParams(queryString); return { q: sanitizeSearchQuery(params.get("q") ?? ""), min: params.get("min") ?? "", max: params.get("max") ?? "" }; }, [location]);
   const [q, setQ] = useState(startFilters.q);
   useEffect(() => { setQ(startFilters.q); setMin(startFilters.min); setMax(startFilters.max); setPage(1); }, [startFilters]);
   const [sort, setSort] = useState<"newest" | "price_asc" | "price_desc" | "popular">("newest");
@@ -61,7 +63,7 @@ export default function ExplorePage() {
     <p className="eyebrow text-[#00843d]">{categorySlug ? "CATEGORY BROWSE" : "MARKETPLACE CATALOGUE"}</p>
     <h1 className="mt-2 text-3xl font-extrabold capitalize">{title}</h1>
     <form className="mt-6 flex max-w-3xl gap-2" onSubmit={event => { event.preventDefault(); setPage(1); }}>
-      <div className="searchbox flex-1"><Search size={18}/><input value={q} onChange={event => reset(() => setQ(event.target.value))} placeholder="Search listings"/></div>
+      <div className="searchbox flex-1"><Search size={18}/><input value={q} onChange={event => reset(() => setQ(sanitizeSearchQuery(event.target.value)))} maxLength={100} placeholder="Search listings"/></div>
       <Button className="bg-[#e31b23]">Search</Button>
     </form>
     <div className="mt-6 flex flex-wrap items-center gap-3">

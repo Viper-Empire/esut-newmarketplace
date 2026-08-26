@@ -30,7 +30,7 @@ export default function SellerDashboardPage() {
   const signOut = async () => { try { await logout(); toast.success("You have been signed out."); navigate("/"); } catch { toast.error("Unable to sign out. Please try again."); } };
 
   if (loading) return <main className="page-shell py-16">Loading seller workspace…</main>;
-  if (!user) return <main className="page-shell py-20 text-center"><h1 className="text-3xl font-extrabold">Sign in to access seller tools</h1><Link href="/sell" className="mt-4 inline-block font-bold text-[#00843d]">Apply to sell</Link></main>;
+  if (!user) return <main className="page-shell py-20 text-center"><h1 className="text-3xl font-extrabold">Sign in to access your seller workspace</h1><p className="mx-auto mt-2 max-w-md text-slate-600">Log in to manage your store, or create an account to begin your seller application.</p><div className="mt-6 flex flex-wrap justify-center gap-3"><Link href="/login"><Button className="bg-[#00843d] hover:bg-[#006b32]">Log in</Button></Link><Link href="/register"><Button variant="outline">Create account</Button></Link></div></main>;
   if (!isSeller) return <main className="page-shell py-20 text-center"><Store className="mx-auto text-[#00843d]" size={42} /><h1 className="mt-4 text-3xl font-extrabold">Seller approval required</h1><p className="mt-2 text-slate-600">Your store becomes available after an administrator approves your application.</p><Link href="/sell" className="mt-5 inline-block font-bold text-[#e31b23]">Check seller application</Link></main>;
 
   const summary = analytics.data;

@@ -11,6 +11,16 @@ describe("security remediation contracts", () => {
     expect(storePage.match(/>Active listings</g)?.length).toBe(1);
   });
 
+  it("applies the authorized security-header baseline without shared-subdomain HSTS", () => {
+    const headers = rootSource("server/_core/securityHeaders.ts");
+    expect(headers).toContain('response.setHeader("X-Frame-Options", "DENY")');
+    expect(headers).toContain('default-src \'self\'');
+    expect(headers).toContain("object-src 'none'");
+    expect(headers).toContain("base-uri 'self'");
+    expect(headers).toContain('max-age=31536000');
+    expect(headers).not.toContain("includeSubDomains");
+  });
+
   it("keeps public legal and support routes registered", () => {
     const app = rootSource("client/src/App.tsx");
     const utilityPages = source("PublicUtilityPages.tsx");
@@ -21,6 +31,23 @@ describe("security remediation contracts", () => {
     expect(source("AuthPage.tsx")).toContain('href="/privacy"');
     expect(rootSource("client/src/components/StorefrontComponents.tsx")).toContain('href="/support"');
     expect(rootSource("client/src/components/StorefrontComponents.tsx")).toContain('href="/contact"');
+  });
+
+  it("gives anonymous sellers the standard login and registration escape routes", () => {
+    const seller = source("SellerDashboardPage.tsx");
+    expect(seller).toContain("Sign in to access your seller workspace");
+    expect(seller).toContain('href="/login"');
+    expect(seller).toContain('href="/register"');
+    expect(seller).toContain("Create account");
+  });
+
+  it("removes token-bearing routes from robots exclusions", () => {
+    const robots = rootSource("client/public/robots.txt");
+    expect(robots).toContain("Disallow: /seller");
+    expect(robots).not.toContain("Disallow: /forgot-password");
+    expect(robots).not.toContain("Disallow: /reset-password");
+    expect(robots).not.toContain("Disallow: /verify-email");
+    expect(robots).toContain("/sitemap.xml");
   });
 
   it("removes the stale admin moderation banner while retaining protected admin routing", () => {
@@ -40,6 +67,14 @@ describe("security remediation contracts", () => {
     expect(store).toContain("retry: false");
     expect(store).toContain('storeQuery.error?.data?.code === "NOT_FOUND"');
     expect(store).toContain("Store unavailable");
+  });
+
+  it("sanitizes and bounds URL and typed search queries", () => {
+    const explore = source("ExplorePage.tsx");
+    expect(explore).toContain("sanitizeSearchQuery");
+    expect(explore).toContain("slice(0, 100)");
+    expect(explore).toContain("maxLength={100}");
+    expect(explore).toContain("\\u0000-\\u001F\\u007F");
   });
 
   it("hydrates URL price filters and surfaces contradictory ranges", () => {

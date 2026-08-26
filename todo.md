@@ -596,3 +596,11 @@
 # Preview connectivity follow-up
 
 - [x] Restore the managed development preview connection refused by `3000-isyid2piwrgzy5lu4skpl-ba902a1a.us4.manus.computer`, verify the Preview panel can load the homepage, and preserve published-site behavior. (Restarted the managed dev service, confirmed localhost:3000 returns HTTP 200, refreshed the preview proxy, and verified the homepage renders.)
+
+# Authorized pasted_content_3 local fixes
+
+- [x] Update security headers to the authorized baseline: HSTS max-age 31536000 without includeSubDomains/preload, nosniff, DENY/frame protection, strict-origin referrer policy, and a compatible CSP baseline with default-src, object-src, and base-uri. (Implemented and verified through the forwarded-HTTPS response.)
+- [x] Make anonymous `/seller` show the standard account-style gate with Log in and Create account actions while preserving authenticated seller access. (Implemented and visually verified.)
+- [x] Sanitize marketplace search input at the URL/UI boundary by trimming, removing control characters, and capping `q` at 100 characters while preserving escaped React rendering. (Implemented for URL hydration and live input, with a 100-character max length and focused regression coverage.)
+- [x] Remove `/forgot-password`, `/reset-password`, and `/verify-email` from robots.txt while retaining protected-route disallows and the sitemap reference. (Implemented and covered by regression assertions.)
+- [x] Add focused regression coverage and run full validation for the four authorized fixes; leave password-reset delivery disabled and documented as deferred. (12 focused contracts passed; full suite passed with 71 files, 220 passed, 1 skipped; TypeScript, production build, header probe, and browser checks passed.)

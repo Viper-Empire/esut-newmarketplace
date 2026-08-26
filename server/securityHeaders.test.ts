@@ -16,8 +16,13 @@ describe("security headers", () => {
     expect(headers.get("X-Content-Type-Options")).toBe("nosniff");
     expect(headers.get("Referrer-Policy")).toBe("strict-origin-when-cross-origin");
     expect(headers.get("Permissions-Policy")).toContain("camera=()");
-    expect(headers.get("Content-Security-Policy")).toBe("frame-ancestors 'none'");
-    expect(headers.get("Strict-Transport-Security")).toContain("max-age=15552000");
+    expect(headers.get("X-Frame-Options")).toBe("DENY");
+    expect(headers.get("Content-Security-Policy")).toContain("default-src 'self'");
+    expect(headers.get("Content-Security-Policy")).toContain("object-src 'none'");
+    expect(headers.get("Content-Security-Policy")).toContain("base-uri 'self'");
+    expect(headers.get("Content-Security-Policy")).toContain("frame-ancestors 'none'");
+    expect(headers.get("Strict-Transport-Security")).toBe("max-age=31536000");
+    expect(headers.get("Strict-Transport-Security")).not.toContain("includeSubDomains");
     expect(headers.has("Access-Control-Allow-Origin")).toBe(false);
   });
 
