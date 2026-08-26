@@ -24,4 +24,9 @@ describe("final marketplace category availability policy", () => {
     expect(canonicalCategorySlug("hostel-home")).toBe("accommodation");
     expect(isPubliclyDiscoverableCategory({ id: 30001 })).toBe(false);
   });
+
+  it("inherits availability from a retained parent category", () => {
+    expect(getCategoryAvailability({ id: 9001, parentId: 6, slug: "esut-chop" })).toBe("COMING_SOON");
+    expect(isPubliclyDiscoverableCategory({ id: 9002, parentId: 5, slug: "esut-accommodation" })).toBe(false);
+  });
 });

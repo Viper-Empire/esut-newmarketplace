@@ -2,6 +2,7 @@ export type CategoryAvailability = "ACTIVE" | "COMING_SOON";
 
 export type CategoryAvailabilityInput = {
   id?: number | null;
+  parentId?: number | null;
   slug?: string | null;
 };
 
@@ -18,7 +19,7 @@ const COMING_SOON_CATEGORIES: readonly ComingSoonCategory[] = [
   {
     id: 6,
     canonicalSlug: "food",
-    legacySlugs: ["food-groceries"],
+    legacySlugs: ["food-groceries", "esut-chop"],
     publicRoute: "/esutchop",
     verticalName: "ESUT Chop",
     detail: "Food discovery will open when the ESUT Chop experience is ready for the community.",
@@ -26,7 +27,7 @@ const COMING_SOON_CATEGORIES: readonly ComingSoonCategory[] = [
   {
     id: 30001,
     canonicalSlug: "digital-books-courses",
-    legacySlugs: ["books", "books-academic"],
+    legacySlugs: ["books", "books-academic", "digital-academic-resources"],
     publicRoute: "/category/digital-books-courses",
     verticalName: "Digital Academic Resources",
     detail: "Digital academic resources will open when the course-material experience is ready for the community.",
@@ -34,7 +35,7 @@ const COMING_SOON_CATEGORIES: readonly ComingSoonCategory[] = [
   {
     id: 5,
     canonicalSlug: "accommodation",
-    legacySlugs: ["hostel-home", "hostel-lodge"],
+    legacySlugs: ["hostel-home", "hostel-lodge", "esut-accommodation"],
     publicRoute: "/accommodation",
     verticalName: "ESUT Accommodation",
     detail: "Accommodation discovery will open when the ESUT housing experience is ready for the community.",
@@ -48,7 +49,7 @@ export const getComingSoonCategory = (category: CategoryAvailabilityInput): Comi
   return COMING_SOON_CATEGORIES.find(candidate => candidate.id === category.id || candidate.canonicalSlug === slug || candidate.legacySlugs.includes(slug)) ?? null;
 };
 
-export const getCategoryAvailability = (category: CategoryAvailabilityInput): CategoryAvailability => getComingSoonCategory(category) ? "COMING_SOON" : "ACTIVE";
+export const getCategoryAvailability = (category: CategoryAvailabilityInput): CategoryAvailability => getComingSoonCategory(category) || getComingSoonCategory({ id: category.parentId }) ? "COMING_SOON" : "ACTIVE";
 
 export const isPubliclyDiscoverableCategory = (category: CategoryAvailabilityInput) => getCategoryAvailability(category) === "ACTIVE";
 
