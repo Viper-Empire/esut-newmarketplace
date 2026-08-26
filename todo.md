@@ -643,3 +643,7 @@
 # Upstash Redis replacement
 
 - [x] Replace the malformed current Redis configuration with an authorized Upstash Redis connection for server-side security state, preserving TLS, key namespaces, TTLs, rate-limit behavior, fallback handling, and secret privacy; validate before checkpointing. (Upstash `rediss://` URI supplied through managed secrets; server-only PING passed; application health reports configured/reachable/throttlingAvailable; atomic EVAL lockout sequence passed with unique cleanup keys.)
+
+# Mobile hero artwork overlap
+
+- [x] Adjust the mobile hero artwork so the Campus Deals label does not cover the five category elements, while preserving desktop composition and ESUT branding; verify both breakpoints before checkpointing. (Added a mobile-only collision guard that reduces the caption footprint, moves it into the lower-right safe area, and preserves desktop styling; mobile and desktop screenshots, focused tests, TypeScript, and production build passed.)
