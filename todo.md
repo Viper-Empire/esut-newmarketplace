@@ -679,3 +679,11 @@
 # Unified general administration control center
 
 - [x] Redesign the administrator experience into one coherent, general marketplace control center with grouped navigation, a real-data command overview, contextual operational queues, and linked management workspaces, while preserving control-only administrator permissions and truthful data. (Added a shared protected `AdminControlCenterNav` across every `/admin` route, replacing the duplicate flat navigation on suite pages. It groups the established real-data workspaces into Command Center, Marketplace Management, Trust & Safety, and System Control; shows Staff roles only to SUPER_ADMIN; retains existing operational overview/drill-down links; and contains no cart, selling, or commerce routes. The admin authorization suite, analytics tests, navigation contract, full Vitest suite, TypeScript, and production build passed. Desktop/mobile signed-out captures confirm the control center remains hidden behind the existing administrator boundary; direct authenticated visual review requires an administrator session.)
+
+# Public product-media delivery investigation
+
+- [ ] Recheck why some public listing images fail to render, inventory live image metadata and delivery URLs, repair only the verified public-storage/media fault, and validate representative listings without exposing private evidence or altering unrelated marketplace data.
+
+# Reference-inspired category menu redesign
+
+- [x] Redesign the ESUT Main Category Menu as a clean icon-led vertical category drawer/dropdown matching the approved reference pattern: show only the six active parent categories at first level, reveal approved active children progressively, exclude Food, Books & Academic, and Hostel & Lodge from the drawer, and preserve all existing Coming Soon routes, data, and safeguards. (Added a shared icon-led Main Category Menu with a desktop dropdown trigger and mobile direct-open drawer. It shows only active parents, progressively reveals active children, filters Coming Soon parents/children from navigation, uses real category routes, includes keyboard-visible focus states and accessible labels, and replaces the crowded horizontal category row. Focused menu/storefront/category tests, TypeScript, full suite, production build, and 375px homepage/Explore screenshots passed.)
