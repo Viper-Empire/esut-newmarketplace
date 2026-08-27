@@ -53,3 +53,13 @@ describe("compact review row helpers", () => {
     expect(formatReviewDate("2026-08-20T12:00:00.000Z")).toMatch(/Aug 20, 2026/);
   });
 });
+
+describe("responsive review layout contract", () => {
+  it("keeps the sort control and review card responsive across breakpoints", () => {
+    const source = readFileSync(new URL("./ProductPage.tsx", import.meta.url), "utf8");
+    expect(source).toContain("w-full sm:w-auto");
+    expect(source).toContain("rounded-[1.5rem]");
+    expect(source).toContain("sm:p-6");
+    expect(source).toContain("flex items-start justify-between gap-4");
+  });
+});

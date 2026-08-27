@@ -741,3 +741,8 @@
 
 - [x] Add a quality energetic ESUT Marketplace colour treatment to the verified-purchase review cards with readable contrast, restrained green/red/gold accents, and no change to review data or light-only behavior. (Added a soft ESUT-green card surface, restrained red-to-gold-to-green top accent, warm gold rating chip, and dark readable review text without changing review data or light-only behavior.)
 - [x] Validate responsive presentation and contrast, run focused/full checks, and checkpoint the colour refinement. (Focused ProductPage tests, TypeScript, full Vitest suite, production build, and real product 375px mobile/1280px desktop visual checks passed.)
+
+# Cross-device review card verification
+
+- [x] Verify the review cards and review sort control at phone, tablet, and desktop widths, correcting any breakpoint-specific overflow, wrapping, contrast, or spacing issue without changing real review behavior. (Verified real product page at 375px phone, 768px tablet, and 1280px desktop widths. No overflow, clipping, contrast, or spacing defect required correction; phone uses stacked full-width sorting, tablet transitions cleanly, and desktop aligns beside Buyer Guidance.)
+- [x] Add responsive regression coverage, run full validation, and checkpoint the cross-device review verification. (Added a focused responsive ProductPage source contract; focused tests, TypeScript, full Vitest suite, production build, and three breakpoint captures passed.)
