@@ -704,3 +704,7 @@
 # Mobile hero Campus Deals overlap regression
 
 - [x] Repair the mobile-only Campus Deals label overlap with the Food & Snacks hero chip, preserve desktop composition and category data, and verify all five hero chips at mobile and desktop breakpoints. (Moved the mobile caption from the lower-right chip area to a centered top safe zone, reduced its mobile footprint, and preserved desktop positioning. Full 375px mobile capture confirms the caption no longer covers Food & Snacks or the other hero chips; desktop capture remains unchanged. TypeScript, full test suite, production build, and responsive verification passed. A transient Redis fallback warning appeared during one preview capture and is unrelated to the CSS-only hero change.)
+
+# Mobile hero caption position refinement
+
+- [x] Restore Campus Deals to its previous lower-right mobile position and reduce only its size enough to keep the Food & Snacks chip unobstructed; preserve desktop composition and verify responsive behavior. (Restored `right: 4%` and `bottom: 2.5%`; reduced the mobile footprint from 38% to 34% width and from a 7.6vw maximum scale to a 6.4vw scale. Mobile full-page and desktop captures passed visual review; TypeScript, full Vitest suite, and production build passed.)
