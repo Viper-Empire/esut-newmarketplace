@@ -722,3 +722,7 @@
 - [x] Add an interactive real-data review sort control for highest rating, lowest rating, newest, and oldest review order. (Added a local deterministic sort control with Newest first, Oldest first, Highest rated, and Lowest rated options using the existing real review rating and createdAt fields.)
 - [x] Optimize the verified-purchase review cards and controls for narrow mobile screens while preserving readable buyer, rating, review, and seller-response hierarchy. (The sort select becomes full width on mobile; card padding, avatar sizing, comment typography, response spacing, and rating pill were tightened without overflow.)
 - [x] Add focused review sorting/layout regressions, run full validation, visually verify desktop/mobile product pages, and checkpoint the release. (Hook-order regression found by mobile capture was corrected; focused ProductPage tests, TypeScript, full Vitest suite, production build, and real product desktop/mobile captures passed.)
+
+# Review summary pill removal
+
+- [x] Remove the redundant aggregate rating summary pill above the review cards while retaining interactive sorting and individual verified review ratings. (Removed the highlighted aggregate summary pill from `ProductPage.tsx`; retained the full-width mobile/compact desktop sort control and each review’s individual accessible rating. Focused ProductPage test, TypeScript, full Vitest suite, production build, and 375px mobile visual verification passed.)
