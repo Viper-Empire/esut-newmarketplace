@@ -1,0 +1,7 @@
+# Mock Data Cleanup Verification — 2026-08-27
+
+The explicitly authorized cleanup removed the verified seeded seller accounts 5, 6, and 7, their stores ESUT Tech Hub, Campus Living, and Study Corner, listings 1–6, five linked cancelled orders (IDs 1, 2, 30001, 30002, and 60001), related order items, reservations, status history, batches, listing media/inventory, personal account records, favorites, reminders, and other safely linked dependents. Audit logs and private case evidence were preserved.
+
+Post-delete database checks returned zero for the targeted users, stores, listings, orders, order items, inventory, favorites, reminders, and notifications. The remaining seller population contains three later approved sellers: Bernard Raphael / Esut Myshop with four listings, Blythe Pingree / Aluta Shop Tech with three listings, and Elon Musk / Elon with one listing. The public Explore page reported four currently public listings, all with valid Cloudinary image URLs. A deleted mock product URL (`/product/wireless-study-headphones`) rendered the existing truthful `404 · Listing not found` / `This listing is no longer available` recovery state.
+
+No genuine seller, listing, active order, audit log, or private evidence record was intentionally deleted. The cleanup was executed as one database transaction after explicit owner authorization to remove linked cancelled historical orders. The separate public-media investigation remains open for any remaining genuine listing that lacks a seller-provided image.
