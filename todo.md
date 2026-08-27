@@ -708,3 +708,11 @@
 # Mobile hero caption position refinement
 
 - [x] Restore Campus Deals to its previous lower-right mobile position and reduce only its size enough to keep the Food & Snacks chip unobstructed; preserve desktop composition and verify responsive behavior. (Restored `right: 4%` and `bottom: 2.5%`; reduced the mobile footprint from 38% to 34% width and from a 7.6vw maximum scale to a 6.4vw scale. Mobile full-page and desktop captures passed visual review; TypeScript, full Vitest suite, and production build passed.)
+
+# Verified-purchase review experience refinement
+
+- [x] Analyze the supplied verified-purchase review reference against the current product/store review UI and define truthful, light-only improvements using only genuine buyer reviews and real seller responses. (Reference analysis and current ProductPage audit completed; the design keeps the red verification eyebrow, strong heading, white rounded card, gold rating, real buyer identity, review text, and conditional seller response while adding stronger app-style hierarchy.)
+- [x] Implement the approved verified-purchase review presentation improvements, including clear verification, readable rating/comment hierarchy, and an optional seller-response treatment without fabricating review content. (Added modern light-only cards with buyer initials derived from the real buyer name, accessible five-star labels, verified-purchase badges, responsive comment blockquotes, rating summary, gradient accent, hover polish, and a distinct seller-response panel rendered only from `review.sellerResponse`.)
+- [x] Add focused review regression coverage, run TypeScript, full Vitest, production build, responsive visual verification, and checkpoint the review release. (Added ProductPage review source regressions for real review fields, accessible rating semantics, truthful empty state, and no reference-demo content; 75 test files, 235 tests passed, 1 skipped; TypeScript, production build, and real product desktop/mobile screenshots passed.)
+
+- [x] Modernize the verified-purchase review cards to feel more like a polished app while preserving the reference hierarchy, real review data, seller-response truthfulness, accessibility, and light-only ESUT styling. (Implemented in `ProductPage.tsx` with no fabricated reviews, ratings, buyers, or seller responses.)
