@@ -736,3 +736,8 @@
 
 - [x] Replace the overly compressed review row with a higher-quality modern app review component, improving spacing, alignment, card hierarchy, mobile readability, and visual polish without changing review truthfulness or eligibility. (Refined `ProductPage.tsx` with a larger initials avatar, stronger buyer identity hierarchy, soft ESUT-green avatar treatment, warm gold rating chip, spacious comment block, polished seller-response surface, and responsive card spacing.)
 - [x] Add or update focused review regressions, run full validation, visually verify the redesign at mobile and desktop widths, and checkpoint the release. (Focused ProductPage tests passed: 7 tests; TypeScript passed; full Vitest suite and production build passed; real product mobile and desktop screenshots confirmed the redesigned card renders without overflow.)
+
+# ESUT review card colour refinement
+
+- [x] Add a quality energetic ESUT Marketplace colour treatment to the verified-purchase review cards with readable contrast, restrained green/red/gold accents, and no change to review data or light-only behavior. (Added a soft ESUT-green card surface, restrained red-to-gold-to-green top accent, warm gold rating chip, and dark readable review text without changing review data or light-only behavior.)
+- [x] Validate responsive presentation and contrast, run focused/full checks, and checkpoint the colour refinement. (Focused ProductPage tests, TypeScript, full Vitest suite, production build, and real product 375px mobile/1280px desktop visual checks passed.)
