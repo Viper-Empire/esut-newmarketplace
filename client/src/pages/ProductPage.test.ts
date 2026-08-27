@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
-import { descriptionDetails } from "./ProductPage";
+import { buyerInitials, descriptionDetails, formatReviewDate } from "./ProductPage";
 
 describe("product detail description parsing", () => {
   it("keeps seller-authored introductory text and separates recognised labelled details", () => {
@@ -39,5 +39,17 @@ describe("verified-purchase review presentation", () => {
     const source = readFileSync(new URL("./ProductPage.tsx", import.meta.url), "utf8");
     expect(source).toContain("No verified purchase reviews yet.");
     expect(source).toContain("Reviews appear after an eligible buyer completes a purchase.");
+  });
+});
+
+describe("compact review row helpers", () => {
+  it("derives readable initials from the real buyer name", () => {
+    expect(buyerInitials("Jude T.")).toBe("JT");
+    expect(buyerInitials("Marketplace member")).toBe("MM");
+    expect(buyerInitials(null)).toBe("MM");
+  });
+
+  it("formats a real review timestamp for display", () => {
+    expect(formatReviewDate("2026-08-20T12:00:00.000Z")).toMatch(/Aug 20, 2026/);
   });
 });

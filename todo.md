@@ -726,3 +726,8 @@
 # Review summary pill removal
 
 - [x] Remove the redundant aggregate rating summary pill above the review cards while retaining interactive sorting and individual verified review ratings. (Removed the highlighted aggregate summary pill from `ProductPage.tsx`; retained the full-width mobile/compact desktop sort control and each review’s individual accessible rating. Focused ProductPage test, TypeScript, full Vitest suite, production build, and 375px mobile visual verification passed.)
+
+# Compact buyer-name review rows
+
+- [x] Adapt verified-purchase reviews into compact social-commerce rows using initials derived from the real buyer name when no genuine avatar asset exists, while retaining real rating, date, comment, sorting, and seller-response data. (ProductPage now derives up to two initials from the real buyer name, displays the real localized review date, preserves individual rating/sorting/comment/seller-response fields, and does not fabricate avatar assets.)
+- [x] Add focused regressions, run full validation, visually verify mobile and desktop product pages, and checkpoint the compact review-row release. (Added deterministic helper tests for buyer initials and date formatting; focused ProductPage tests, TypeScript, full Vitest suite, production build, and real product mobile/desktop captures passed.)
