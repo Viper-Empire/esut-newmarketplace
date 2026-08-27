@@ -24,3 +24,17 @@ describe("administrator audit-note controls", () => {
     expect(source).toContain("newListingCount");
   });
 });
+
+
+describe("administrator workspace data rendering", () => {
+  it("does not wrap query feedback in an always-truthy JSX element", () => {
+    expect(source).toContain("const feedback = AdminQueryFeedback({ loading: users.isLoading");
+    expect(source).toContain("const feedback = AdminQueryFeedback({ loading: listings.isLoading");
+    expect(source).not.toContain("const feedback = <AdminQueryFeedback");
+  });
+
+  it("provides a shared workspace header and escape route", () => {
+    expect(source).toContain("admin-workspace-header");
+    expect(source).toContain('href=\"/admin\" className=\"admin-back-link\"');
+  });
+});
