@@ -716,3 +716,9 @@
 - [x] Add focused review regression coverage, run TypeScript, full Vitest, production build, responsive visual verification, and checkpoint the review release. (Added ProductPage review source regressions for real review fields, accessible rating semantics, truthful empty state, and no reference-demo content; 75 test files, 235 tests passed, 1 skipped; TypeScript, production build, and real product desktop/mobile screenshots passed.)
 
 - [x] Modernize the verified-purchase review cards to feel more like a polished app while preserving the reference hierarchy, real review data, seller-response truthfulness, accessibility, and light-only ESUT styling. (Implemented in `ProductPage.tsx` with no fabricated reviews, ratings, buyers, or seller responses.)
+
+# Review sorting and mobile layout refinement
+
+- [x] Add an interactive real-data review sort control for highest rating, lowest rating, newest, and oldest review order. (Added a local deterministic sort control with Newest first, Oldest first, Highest rated, and Lowest rated options using the existing real review rating and createdAt fields.)
+- [x] Optimize the verified-purchase review cards and controls for narrow mobile screens while preserving readable buyer, rating, review, and seller-response hierarchy. (The sort select becomes full width on mobile; card padding, avatar sizing, comment typography, response spacing, and rating pill were tightened without overflow.)
+- [x] Add focused review sorting/layout regressions, run full validation, visually verify desktop/mobile product pages, and checkpoint the release. (Hook-order regression found by mobile capture was corrected; focused ProductPage tests, TypeScript, full Vitest suite, production build, and real product desktop/mobile captures passed.)
