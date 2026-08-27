@@ -700,3 +700,7 @@
 # Repeated Preview panel refusal
 
 - [x] Reproduce the embedded Preview panel refusal after the prior restart, identify why the managed preview target stops accepting connections, stabilize the service or proxy, and verify the embedded target without changing application data. (The screenshot represented a transient managed-preview outage: the dev process had exited with code -1 during repeated prior restart cycles, so the embedded frame temporarily refused the fixed preview hostname. After the managed service restart, the process remained running, localhost returned HTTP 200, the exact public preview host returned HTTP 200, and the preview capture rendered the homepage successfully. No application code or marketplace data changed.)
+
+# Mobile hero Campus Deals overlap regression
+
+- [x] Repair the mobile-only Campus Deals label overlap with the Food & Snacks hero chip, preserve desktop composition and category data, and verify all five hero chips at mobile and desktop breakpoints. (Moved the mobile caption from the lower-right chip area to a centered top safe zone, reduced its mobile footprint, and preserved desktop positioning. Full 375px mobile capture confirms the caption no longer covers Food & Snacks or the other hero chips; desktop capture remains unchanged. TypeScript, full test suite, production build, and responsive verification passed. A transient Redis fallback warning appeared during one preview capture and is unrelated to the CSS-only hero change.)
