@@ -696,3 +696,7 @@
 # Preview panel connectivity regression
 
 - [x] Diagnose why the managed Preview panel is not showing, repair the verified service/proxy/runtime fault, and verify preview rendering without changing production marketplace data or deferred infrastructure settings. (The application was healthy before the incident, but the managed dev process exited with code -1 at 10:48:54, temporarily leaving the Preview panel without a target. Restarted the managed service; it initialized OAuth, returned `Server running on http://localhost:3000/`, localhost health returned HTTP 200, and the managed preview URL rendered the ESUT Marketplace homepage. No application code, marketplace data, or deferred infrastructure settings changed.)
+
+# Repeated Preview panel refusal
+
+- [x] Reproduce the embedded Preview panel refusal after the prior restart, identify why the managed preview target stops accepting connections, stabilize the service or proxy, and verify the embedded target without changing application data. (The screenshot represented a transient managed-preview outage: the dev process had exited with code -1 during repeated prior restart cycles, so the embedded frame temporarily refused the fixed preview hostname. After the managed service restart, the process remained running, localhost returned HTTP 200, the exact public preview host returned HTTP 200, and the preview capture rendered the homepage successfully. No application code or marketplace data changed.)
