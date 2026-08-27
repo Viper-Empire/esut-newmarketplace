@@ -89,6 +89,10 @@ function ActiveWorkspaceEventRefresh() {
 
 function App() {
   const [location] = useLocation();
+  const { user, loading: authLoading } = useAuth();
+  const pathname = location.split("?")[0] || "/";
+  const isAdminRoute = pathname.startsWith("/admin");
+  const isAdminWorkspace = isAdminRoute && !authLoading && ["ADMIN", "SUPER_ADMIN"].includes(user?.role ?? "");
 
   useEffect(() => {
     const pathname = location.split("?")[0] || "/";
@@ -118,7 +122,7 @@ function App() {
     root.style.colorScheme = "light";
   }, []);
 
-  return <ErrorBoundary><a className="skip-link" href="#main-content">Skip to page content</a><Toaster/><ActiveWorkspaceEventRefresh/><PublicAccountActions/><ContextualNavigation/><AdminControlCenterNav/><div id="main-content" tabIndex={-1}><Suspense fallback={<main className="page-shell py-16 text-center text-slate-500" role="status">Loading workspace…</main>}><Switch>
+  return <ErrorBoundary><a className="skip-link" href="#main-content">Skip to page content</a><Toaster/><ActiveWorkspaceEventRefresh/>{!isAdminRoute && <><PublicAccountActions/><ContextualNavigation/></>}<AdminControlCenterNav/><div className={isAdminWorkspace ? "admin-app-frame" : undefined}><div className={isAdminWorkspace ? "admin-app-content" : undefined}><div id="main-content" tabIndex={-1}><Suspense fallback={<main className="page-shell py-16 text-center text-slate-500" role="status">Loading workspace…</main>}><Switch>
     <Route path="/" component={Home}/>
     <Route path="/login">{() => <AuthPage mode="login"/>}</Route>
     <Route path="/register">{() => <AuthPage mode="register"/>}</Route>
@@ -197,7 +201,7 @@ function App() {
     <Route path="/category/hostel-home"><Redirect to="/category/accommodation"/></Route>
     <Route path="/category/:slug" component={ExplorePage}/>
     <Route component={NotFound}/>
-  </Switch></Suspense></div></ErrorBoundary>;
+  </Switch></Suspense></div></div></div></ErrorBoundary>;
 }
 
 export default App;

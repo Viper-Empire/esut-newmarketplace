@@ -19,7 +19,8 @@ describe("ESUT dashboard visual system", () => {
   it("applies the same scoped surface to administrator overview and subpages", () => {
     expect(adminOverviewSource).toContain("dashboard-admin-surface");
     expect(adminSuiteSource).toContain("dashboard-admin-surface");
-    expect(adminNavigationSource).toContain('active ? "bg-[#00843d] text-white shadow-sm"');
+    expect(adminNavigationSource).toContain('className={`admin-nav-link${active ? " is-active" : ""}`}');
+    expect(stylesheetSource).toContain(".admin-nav-link.is-active");
     expect(adminNavigationSource).toContain("Administration control center");
   });
 
