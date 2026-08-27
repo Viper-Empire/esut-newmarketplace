@@ -731,3 +731,8 @@
 
 - [x] Adapt verified-purchase reviews into compact social-commerce rows using initials derived from the real buyer name when no genuine avatar asset exists, while retaining real rating, date, comment, sorting, and seller-response data. (ProductPage now derives up to two initials from the real buyer name, displays the real localized review date, preserves individual rating/sorting/comment/seller-response fields, and does not fabricate avatar assets.)
 - [x] Add focused regressions, run full validation, visually verify mobile and desktop product pages, and checkpoint the compact review-row release. (Added deterministic helper tests for buyer initials and date formatting; focused ProductPage tests, TypeScript, full Vitest suite, production build, and real product mobile/desktop captures passed.)
+
+# Modern review visual redesign
+
+- [x] Replace the overly compressed review row with a higher-quality modern app review component, improving spacing, alignment, card hierarchy, mobile readability, and visual polish without changing review truthfulness or eligibility. (Refined `ProductPage.tsx` with a larger initials avatar, stronger buyer identity hierarchy, soft ESUT-green avatar treatment, warm gold rating chip, spacious comment block, polished seller-response surface, and responsive card spacing.)
+- [x] Add or update focused review regressions, run full validation, visually verify the redesign at mobile and desktop widths, and checkpoint the release. (Focused ProductPage tests passed: 7 tests; TypeScript passed; full Vitest suite and production build passed; real product mobile and desktop screenshots confirmed the redesigned card renders without overflow.)
