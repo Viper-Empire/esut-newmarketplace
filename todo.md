@@ -682,7 +682,7 @@
 
 # Public product-media delivery investigation
 
-- [ ] Recheck why some public listing images fail to render, inventory live image metadata and delivery URLs, repair only the verified public-storage/media fault, and validate representative listings without exposing private evidence or altering unrelated marketplace data.
+- [x] Recheck why some public listing images fail to render, inventory live image metadata and delivery URLs, repair only the verified public-storage/media fault, and validate representative listings without exposing private evidence or altering unrelated marketplace data. (Read-only audit on 2026-08-27 found four active listings, each with a primary Cloudinary URL; all four returned HTTP 200 image/jpeg, and all four public product routes returned HTTP 200. No active listing lacked a primary image, no verified delivery fault remained, and no data was mutated. Two older active Cloudinary rows lack matching mediaAssets metadata and are documented as a future idempotent reconciliation observation; secondary legacy gallery rows were preserved.)
 
 # Reference-inspired category menu redesign
 
