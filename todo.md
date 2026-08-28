@@ -771,10 +771,10 @@
 
 # Authentication callback and narrow-mobile follow-up
 
-- [ ] Audit the public homepage callback behavior and the Manus OAuth callback contract to determine why `/?code=...` is visible and whether the code is being consumed safely.
-- [ ] Implement the smallest safe callback handling fix, preserving nonce/state validation, session exchange, fixed redirect behavior, and avoiding code leakage in URL history/referrers.
-- [ ] Re-verify the 320px narrow-phone homepage and major route matrix after the callback fix, with no unrelated responsive or business-logic changes.
-- [ ] Review `pasted_content_8.txt` against the current remediation and document completed coverage, verified limitations, and any remaining authorized fixes; run focused/full validation and checkpoint the release.
+- [x] Audit the public homepage callback behavior and the Manus OAuth callback contract to determine why `/?code=...` is visible and whether the code is being consumed safely. (The server callback route is correct; the visible code was a misrouted/stale SPA landing and is now documented in `NARROW_MOBILE_CALLBACK_QA_2026-08-28.md`.)
+- [x] Implement the smallest safe callback handling fix, preserving nonce/state validation, session exchange, fixed redirect behavior, and avoiding code leakage in URL history/referrers. (Non-callback SPA URLs now remove callback parameters via `history.replaceState`; the server exchange and redirect remain unchanged.)
+- [x] Re-verify the 320px narrow-phone homepage and major route matrix after the callback fix, with no unrelated responsive or business-logic changes. (320px representative public/gated route capture plus 360/375/390/768/1280 homepage captures passed visual review.)
+- [x] Review `pasted_content_8.txt` against the current remediation and document completed coverage, verified limitations, and any remaining authorized fixes; run focused/full validation and checkpoint the release. (Audit and QA handoff documented; full tests, TypeScript, build, and checkpoint completed.)
 
 - [x] Remove stray OAuth callback parameters from non-callback SPA URLs without bypassing server-side code/state validation. (Added client-side history cleanup for misrouted callback parameters; server callback nonce/state validation and code exchange remain unchanged.)
 - [x] Re-verify the homepage and authenticated workspace route matrix at 320px, 360px, 375px, and 390px after callback cleanup. (Public homepage and representative gated buyer/seller/messaging/admin states were visually checked at 320px; homepage was checked at 360px, 375px, 390px, 768px, and 1280px. Authenticated narrow visual capture remains unavailable in the managed session.)
