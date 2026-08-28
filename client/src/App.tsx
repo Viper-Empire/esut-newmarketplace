@@ -10,7 +10,7 @@ import NotFound from "@/pages/NotFound";
 import Home from "@/pages/Home";
 import { ContactPage, PrivacyPage, SupportPage, TermsPage } from "@/pages/PublicUtilityPages";
 import { Link, Redirect, Route, Switch, useLocation } from "wouter";
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useEffect, useLayoutEffect } from "react";
 
 const ProductPage = lazy(() => import("@/pages/ProductPage"));
 const CartPage = lazy(() => import("@/pages/CartPage"));
@@ -93,6 +93,21 @@ function App() {
   const pathname = location.split("?")[0] || "/";
   const isAdminRoute = pathname.startsWith("/admin");
   const isAdminWorkspace = isAdminRoute && !authLoading && ["ADMIN", "SUPER_ADMIN"].includes(user?.role ?? "");
+
+  // A correctly configured OAuth provider returns to /api/oauth/callback, where
+  // the server exchanges the code and redirects to /. If a provider or stale
+  // bookmark ever sends callback parameters to the SPA, remove them from the
+  // visible URL without treating the code as a session or changing auth state.
+  useLayoutEffect(() => {
+    if (typeof window === "undefined") return;
+    const url = new URL(window.location.href);
+    const callbackKeys = ["code", "state", "error", "error_description", "error_uri", "iss"];
+    const hasCallbackParams = callbackKeys.some(key => url.searchParams.has(key));
+    if (!hasCallbackParams || url.pathname.startsWith("/api/oauth/")) return;
+    callbackKeys.forEach(key => url.searchParams.delete(key));
+    const nextUrl = `${url.pathname}${url.search}${url.hash}`;
+    window.history.replaceState(window.history.state, document.title, nextUrl || "/");
+  }, []);
 
   useEffect(() => {
     const pathname = location.split("?")[0] || "/";
