@@ -779,3 +779,15 @@
 - [x] Remove stray OAuth callback parameters from non-callback SPA URLs without bypassing server-side code/state validation. (Added client-side history cleanup for misrouted callback parameters; server callback nonce/state validation and code exchange remain unchanged.)
 - [x] Re-verify the homepage and authenticated workspace route matrix at 320px, 360px, 375px, and 390px after callback cleanup. (Public homepage and representative gated buyer/seller/messaging/admin states were visually checked at 320px; homepage was checked at 360px, 375px, 390px, 768px, and 1280px. Authenticated narrow visual capture remains unavailable in the managed session.)
 - [x] Audit the remaining pasted_content_8 requirements and document any unresolved narrow-mobile edge cases. (Requirements matched the already-completed remediation; no new application edge case was identified. Authenticated narrow visual capture remains the only verified limitation.)
+
+# Logout and Security & devices follow-up
+
+- [x] Make administrator, buyer, and seller logout controls consistently visible, easy to reach, and clear on desktop and narrow mobile. (Completed through the shared buyer/seller shell and admin control-center header, sidebar, and mobile actions.)
+- [ ] Repair the Security & devices active-session query and recent security activity query/mutations so real data, loading, empty, error, and refresh/revocation states work.
+- [ ] Add focused logout/session-security regression tests, run full validation, verify responsive protected workspaces, and checkpoint the release.
+
+# Workspace logout usability follow-up
+
+- [x] Make logout controls consistently visible and easy to reach in administrator, buyer, and seller dashboards on desktop and narrow mobile. (Buyer/seller shells now expose a persistent header action plus existing sidebar/menu actions; admin exposes desktop top-bar, mobile-bar, sidebar, and drawer actions.)
+- [x] Preserve secure logout mutation behavior and safe redirect/session refresh behavior across all three workspace types. (All controls use the existing auth logout mutation, clear client auth state/session mirror, prevent duplicate clicks, and return to `/` through existing page handlers.)
+- [x] Add focused logout regression coverage, run validation, verify responsive workspaces, and checkpoint the release. (Added `WorkspaceLogout.contract.test.ts`; focused tests, TypeScript, production build, and 390px `/account`, `/seller`, `/admin` boundary captures passed.)

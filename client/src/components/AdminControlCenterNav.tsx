@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
+import { Button } from "@/components/ui/button";
 
 type AdminLink = { href: string; label: string; icon: React.ElementType; superAdmin?: boolean };
 type AdminGroup = { label: string; links: AdminLink[] };
@@ -135,7 +136,7 @@ function AdminIdentity({ onLogout }: { onLogout: () => void }) {
         <p className="admin-identity-name">{user?.name || "Administrator"}</p>
         <p className="admin-identity-role">{roleLabel(user?.role)}</p>
       </div>
-      <button type="button" className="admin-logout-button" onClick={onLogout}>Log out</button>
+      <button type="button" className="admin-logout-button" onClick={onLogout} aria-label="Log out of the administrator control center">Log out</button>
     </div>
   );
 }
@@ -144,6 +145,7 @@ export default function AdminControlCenterNav() {
   const { user, loading, logout } = useAuth();
   const [location, navigate] = useLocation();
   const [open, setOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
   const pathname = location.split("?")[0] ?? location;
   useEffect(() => {
     setOpen(false);
@@ -161,8 +163,14 @@ export default function AdminControlCenterNav() {
   if (loading || !pathname.startsWith("/admin") || !["ADMIN", "SUPER_ADMIN"].includes(user?.role ?? "")) return null;
 
   const logoutAndReturn = async () => {
-    await logout();
-    navigate("/");
+    if (loggingOut) return;
+    setLoggingOut(true);
+    try {
+      await logout();
+      navigate("/");
+    } finally {
+      setLoggingOut(false);
+    }
   };
   const currentEntry = ADMIN_NAV_GROUPS.flatMap(group => group.links.map(link => ({ ...link, group: group.label }))).find(link => isCurrent(pathname, link.href));
 
@@ -189,7 +197,7 @@ export default function AdminControlCenterNav() {
           <p className="admin-shell-kicker">ESUT Marketplace · Admin control center</p>
           <p className="admin-shell-breadcrumb"><span>Admin</span><b aria-hidden="true">/</b><span>{currentEntry?.group ?? "Command center"}</span><b aria-hidden="true">/</b><strong>{currentEntry?.label ?? "Overview"}</strong></p>
         </div>
-        <div className="admin-shell-context"><span className="admin-shell-role">{roleLabel(user?.role)}</span><span className="admin-shell-identity">{user?.name || "Administrator"}</span></div>
+        <div className="admin-shell-context"><span className="admin-shell-role">{roleLabel(user?.role)}</span><span className="admin-shell-identity">{user?.name || "Administrator"}</span><Button type="button" variant="outline" className="ml-2 min-h-9 border-[#e31b23]/35 px-3 text-sm font-extrabold text-[#b91c1c] hover:bg-[#fff3f3]" onClick={() => void logoutAndReturn()} disabled={loggingOut} aria-label="Log out of the administrator control center"><span aria-hidden="true">↪</span> {loggingOut ? "Signing out…" : "Log out"}</Button></div>
       </header>
 
       <div className="admin-mobile-bar">
@@ -197,7 +205,7 @@ export default function AdminControlCenterNav() {
           <Menu aria-hidden="true" size={20} />
           <span>Admin control center</span>
         </button>
-        <span className="admin-mobile-current">{ADMIN_NAV_GROUPS.flatMap(group => group.links).find(link => isCurrent(pathname, link.href))?.label ?? "Overview"}</span>
+        <span className="admin-mobile-current">{ADMIN_NAV_GROUPS.flatMap(group => group.links).find(link => isCurrent(pathname, link.href))?.label ?? "Overview"}</span><Button type="button" variant="outline" className="min-h-9 border-[#e31b23]/35 px-2.5 text-xs font-extrabold text-[#b91c1c]" onClick={() => void logoutAndReturn()} disabled={loggingOut} aria-label="Log out of the administrator control center">{loggingOut ? "Signing out…" : "Log out"}</Button>
       </div>
 
       {open ? (
