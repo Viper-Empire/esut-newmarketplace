@@ -27,7 +27,8 @@ describe("storefront managed visual assets", () => {
     expect(componentSource).toContain('Control center');
     expect(componentSource).toContain('{!isControlPlane && <Link href="/cart"');
     expect(componentSource).toContain('{!isControlPlane && <Link href="/sell"');
-    expect(componentSource).toContain('{!isControlPlane && mobileLink("/sell", "Buy / Sell", true)}');
+    expect(componentSource).toContain('aria-label="Open cart"');
+    expect(componentSource).not.toContain('aria-label="Open navigation"');
   });
 
   it("keeps product-card content on a stable vertical rhythm", () => {

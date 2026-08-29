@@ -796,3 +796,9 @@
 
 - [x] Remove the circled public mobile hamburger control and only its dependent trigger behavior without affecting cart or desktop navigation. (Removed the public mobile hamburger trigger and its dependent drawer; retained cart, desktop navigation, Categories, and Browse all listings.)
 - [x] Verify the public header and homepage at 320px, 360px, 375px, 390px, tablet, and desktop; run tests/build and checkpoint the repair. (Focused tests, TypeScript, production build, and visual checks at 320px, 390px, 768px, and 1280px passed; 360px and 375px remain covered by the existing narrow-mobile regression history.)
+
+# Robots crawler-policy review
+
+- [x] Audit robots.txt directives against public indexable routes, sitemap entries, and protected application paths. (Confirmed the prior file explicitly named private `/account`, `/checkout`, `/admin`, `/moderator`, and `/seller` paths.)
+- [x] Remove sensitive-path enumeration from robots.txt while preserving truthful public-route indexing and server-side authorization. (robots.txt now contains only the global allow rule and sitemap; private routes receive route-aware `X-Robots-Tag: noindex, nofollow, noarchive` headers and remain server-protected.)
+- [x] Add crawler-policy regression coverage, run validation, and checkpoint the robots.txt repair. (Updated crawler/security-header tests; full suite, TypeScript, and production build passed.)

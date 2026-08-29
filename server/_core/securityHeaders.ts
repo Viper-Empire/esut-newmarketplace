@@ -1,5 +1,6 @@
 type HeaderRequest = {
   secure?: boolean;
+  url?: string;
   headers: Record<string, string | string[] | undefined>;
 };
 
@@ -19,6 +20,11 @@ export function applySecurityHeaders(request: HeaderRequest, response: HeaderRes
   response.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
   response.setHeader("X-Frame-Options", "DENY");
   response.setHeader("Content-Security-Policy", "default-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; script-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https: wss:");
+
+  const pathname = request.url?.split("?", 1)[0] ?? "";
+  if (/^\/(account|checkout|admin|moderator|seller)(?:\/|$)/.test(pathname)) {
+    response.setHeader("X-Robots-Tag", "noindex, nofollow, noarchive");
+  }
 
   if (Boolean(request.secure) || forwardedHttps(request)) {
     response.setHeader("Strict-Transport-Security", "max-age=31536000");

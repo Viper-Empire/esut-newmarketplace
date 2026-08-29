@@ -26,6 +26,16 @@ describe("security headers", () => {
     expect(headers.has("Access-Control-Allow-Origin")).toBe(false);
   });
 
+  it("marks private application routes as non-indexable without exposing them in robots.txt", () => {
+    const headers = new Map<string, string>();
+    applySecurityHeaders({ url: "/admin/users?tab=active", headers: {} }, { setHeader: (name, value) => headers.set(name, value) });
+    expect(headers.get("X-Robots-Tag")).toBe("noindex, nofollow, noarchive");
+
+    const publicHeaders = new Map<string, string>();
+    applySecurityHeaders({ url: "/explore?query=admin", headers: {} }, { setHeader: (name, value) => publicHeaders.set(name, value) });
+    expect(publicHeaders.has("X-Robots-Tag")).toBe(false);
+  });
+
   it("does not advertise HSTS over an unencrypted local request", () => {
     const headers = new Map<string, string>();
     applySecurityHeaders({ headers: {} }, { setHeader: (name, value) => headers.set(name, value) });

@@ -43,7 +43,10 @@ describe("security remediation contracts", () => {
 
   it("removes token-bearing routes from robots exclusions", () => {
     const robots = rootSource("client/public/robots.txt");
-    expect(robots).toContain("Disallow: /seller");
+    expect(robots).not.toContain("Disallow: /seller");
+    expect(robots).not.toContain("Disallow: /admin");
+    expect(robots).not.toContain("Disallow: /account");
+    expect(robots).not.toContain("Disallow: /checkout");
     expect(robots).not.toContain("Disallow: /forgot-password");
     expect(robots).not.toContain("Disallow: /reset-password");
     expect(robots).not.toContain("Disallow: /verify-email");
@@ -115,8 +118,8 @@ describe("security remediation contracts", () => {
   it("keeps crawler controls limited to public routes", () => {
     const robots = rootSource("client/public/robots.txt");
     const sitemap = rootSource("client/public/sitemap.xml");
-    expect(robots).toContain("Disallow: /admin");
-    expect(robots).toContain("Disallow: /checkout");
+    expect(robots).not.toContain("Disallow: /admin");
+    expect(robots).not.toContain("Disallow: /checkout");
     expect(sitemap).toContain("/terms</loc>");
     expect(sitemap).not.toContain("/account");
     expect(sitemap).not.toContain("/admin");

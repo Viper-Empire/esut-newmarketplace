@@ -1,9 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /account
-Disallow: /checkout
-Disallow: /admin
-Disallow: /moderator
-Disallow: /seller
 
 Sitemap: https://esutshop-59wzg8bs.manus.space/sitemap.xml
