@@ -22,4 +22,17 @@ describe("workspace logout affordances", () => {
     expect(source).toContain('await logout();');
     expect(source).toContain('navigate("/");');
   });
+
+  it("makes Security & devices data actionable and refreshable", () => {
+    const page = read("client/src/pages/AccountSecurityPage.tsx");
+    const router = read("server/routers.ts");
+    const service = read("server/sessionSecurity.ts");
+    expect(page).toContain('aria-label="Refresh security information"');
+    expect(page).toContain("Active sessions <span");
+    expect(page).toContain('aria-label={`Sign out ${session.deviceLabel || "this device"}`}');
+    expect(page).toContain('trpc.auth.revokeSession.useMutation');
+    expect(router).toContain('revokeSession: protectedProcedure.input(z.object({ sessionId: z.number().int().positive() }))');
+    expect(service).toContain("revokeTrackedSessionById");
+    expect(service).toContain('row.sessionHash === hashOpaqueToken(currentSessionId)');
+  });
 });

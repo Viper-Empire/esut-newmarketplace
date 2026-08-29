@@ -64,6 +64,15 @@ export async function revokeTrackedSession({ userId, sessionId, reason, request 
   return true;
 }
 
+export async function revokeTrackedSessionById({ userId, authSessionId, currentSessionId, reason, request }: { userId: number; authSessionId: number; currentSessionId: string; reason: string; request?: Pick<Request, "headers" | "ip"> }) {
+  const db = await getDbOrThrow();
+  const row = (await db.select().from(authSessions).where(and(eq(authSessions.id, authSessionId), eq(authSessions.userId, userId), eq(authSessions.status, "ACTIVE"))).limit(1))[0];
+  if (!row || row.sessionHash === hashOpaqueToken(currentSessionId)) return false;
+  await db.update(authSessions).set({ status: "REVOKED", revokedAt: new Date(), revokeReason: reason }).where(eq(authSessions.id, row.id));
+  await recordAccountSecurityEvent({ userId, authSessionId: row.id, eventType: "SESSION_REVOKED", request, metadata: { reason } });
+  return true;
+}
+
 export async function revokeOtherTrackedSessions({ userId, currentSessionId, reason, request }: { userId: number; currentSessionId: string; reason: string; request?: Pick<Request, "headers" | "ip"> }) {
   const db = await getDbOrThrow();
   const rows = await db.select({ id: authSessions.id }).from(authSessions).where(and(eq(authSessions.userId, userId), eq(authSessions.status, "ACTIVE"), lt(authSessions.createdAt, new Date(Date.now() + 1))));

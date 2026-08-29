@@ -783,8 +783,8 @@
 # Logout and Security & devices follow-up
 
 - [x] Make administrator, buyer, and seller logout controls consistently visible, easy to reach, and clear on desktop and narrow mobile. (Completed through the shared buyer/seller shell and admin control-center header, sidebar, and mobile actions.)
-- [ ] Repair the Security & devices active-session query and recent security activity query/mutations so real data, loading, empty, error, and refresh/revocation states work.
-- [ ] Add focused logout/session-security regression tests, run full validation, verify responsive protected workspaces, and checkpoint the release.
+- [x] Repair the Security & devices active-session query and recent security activity query/mutations so real data, loading, empty, error, and refresh/revocation states work. (Added refresh and fetching feedback, active-session count and safe per-device revoke control, while preserving current-device protection and real recent activity data.)
+- [x] Add focused logout/session-security regression tests, run full validation, verify responsive protected workspaces, and checkpoint the release. (Added `WorkspaceLogout.contract.test.ts`; 80 test files, 255 tests passed, 1 skipped; TypeScript, production build, and 390px protected-route captures passed.)
 
 # Workspace logout usability follow-up
 
