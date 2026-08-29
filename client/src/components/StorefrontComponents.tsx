@@ -5,7 +5,7 @@ import { condition, naira } from "@/lib/marketplace";
 import { trpc } from "@/lib/trpc";
 import { canonicalCategoryRoute, presentCategories } from "@/lib/verticalCatalog";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BadgeCheck, Bell, BookOpen, Heart, House, Laptop, MapPin, Menu, Package, Search, Shirt, ShoppingCart, Smartphone, UtensilsCrossed, UsersRound, Wrench, X } from "lucide-react";
+import { BadgeCheck, Bell, BookOpen, Heart, House, Laptop, MapPin, Package, Search, Shirt, ShoppingCart, Smartphone, UtensilsCrossed, UsersRound, Wrench } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
@@ -81,7 +81,6 @@ export function StorefrontProductCard({ row, showActions = true, compact = false
 export function StorefrontHeader({ categories }: { categories: { id: number; name: string; slug: string; availability?: "ACTIVE" | "COMING_SOON"; children?: { id: number; name: string; slug: string; availability?: "ACTIVE" | "COMING_SOON" }[] }[] }) {
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [recentSearches, setRecentSearches] = useState<string[]>(readRecentSearches);
   const [, go] = useLocation();
   const { isAuthenticated, user } = useAuth();
@@ -90,11 +89,9 @@ export function StorefrontHeader({ categories }: { categories: { id: number; nam
   const unread = trpc.notifications.unreadCount.useQuery(undefined, { enabled: isAuthenticated });
   useEffect(() => { const timer = window.setTimeout(() => setDebouncedQuery(query.trim()), 220); return () => window.clearTimeout(timer); }, [query]);
   const hasSuggestions = Boolean(suggestions.data && (suggestions.data.products.length || suggestions.data.stores.length || suggestions.data.categories.length));
-  const submitSearch = (term = query) => { const normalized = term.trim(); if (!normalized) return; const next = [normalized, ...recentSearches.filter(item => item.toLocaleLowerCase() !== normalized.toLocaleLowerCase())].slice(0, 6); setRecentSearches(next); try { window.localStorage.setItem(recentSearchesKey, JSON.stringify(next)); } catch { /* Browser storage can be unavailable without preventing marketplace search. */ } setMobileOpen(false); go(`/explore?q=${encodeURIComponent(normalized)}`); };
+  const submitSearch = (term = query) => { const normalized = term.trim(); if (!normalized) return; const next = [normalized, ...recentSearches.filter(item => item.toLocaleLowerCase() !== normalized.toLocaleLowerCase())].slice(0, 6); setRecentSearches(next); try { window.localStorage.setItem(recentSearchesKey, JSON.stringify(next)); } catch { /* Browser storage can be unavailable without preventing marketplace search. */ } go(`/explore?q=${encodeURIComponent(normalized)}`); };
   const clearRecentSearches = () => { setRecentSearches([]); try { window.localStorage.removeItem(recentSearchesKey); } catch { /* Ignore storage unavailability. */ } };
   const recentSearchPanel = <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-xl"><div className="flex items-center justify-between gap-3 px-1 pb-2"><p className="text-xs font-extrabold uppercase tracking-[.12em] text-slate-500">Recent searches</p><button type="button" onClick={clearRecentSearches} className="text-xs font-bold text-[#00843d] hover:underline">Clear</button></div><div className="flex flex-wrap gap-2">{recentSearches.map(term => <button key={term} type="button" onClick={() => submitSearch(term)} className="rounded-full bg-slate-100 px-3 py-1.5 text-sm font-semibold text-slate-700 transition hover:bg-[#eaf7ef] hover:text-[#006b32]">{term}</button>)}</div></div>;
-  const mobileLink = (href: string, label: string, accent = false) => <Link href={href} onClick={() => setMobileOpen(false)} className={`rounded-lg px-3 py-2 font-bold hover:bg-slate-50 ${accent ? "text-[#00843d] hover:bg-[#eaf7ef]" : ""}`}>{label}</Link>;
-
   return <>
     <div className="announcement">Shop from verified ESUT sellers <span>•</span> Campus pickup available</div>
     <header className="market-header">
@@ -108,9 +105,9 @@ export function StorefrontHeader({ categories }: { categories: { id: number; nam
           {isAuthenticated && <><Link href="/account/favorites" className="nav-icon"><Heart size={20}/><span>Favorites</span></Link><Link href="/account/notifications" className="nav-icon relative"><Bell size={20}/><span>Updates</span>{unread.data?.count ? <b className="absolute -right-2 -top-2 min-w-5 rounded-full bg-[#e31b23] px-1 text-center text-[10px] leading-5 text-white">{unread.data.count > 9 ? "9+" : unread.data.count}</b> : null}</Link></>}
           {!isControlPlane && <Link href="/cart" className="nav-icon"><ShoppingCart size={20}/><span>Cart</span></Link>}<Link href={isAuthenticated ? (isControlPlane ? "/admin" : "/account") : "/login"} className="nav-icon"><UsersRound size={20}/><span>{isAuthenticated ? user?.name?.split(" ")[0] ?? "Account" : "Login"}</span></Link>{!isControlPlane && <Link href="/sell"><Button className="bg-[#00843d] hover:bg-[#006b32]">Buy / Sell</Button></Link>}{isControlPlane && <Link href="/admin"><Button className="bg-[#00843d] hover:bg-[#006b32]">Control center</Button></Link>}
         </nav>
-        <div className="ml-auto flex items-center gap-2 lg:hidden">{!isControlPlane && <Link href="/cart"><ShoppingCart size={22}/></Link>}<button type="button" aria-label="Open navigation" className="rounded-lg p-2" onClick={() => setMobileOpen(value => !value)}>{mobileOpen ? <X size={23}/> : <Menu size={23}/>}</button></div>
+        <div className="ml-auto flex items-center gap-2 lg:hidden">{!isControlPlane && <Link href="/cart" aria-label="Open cart" className="rounded-lg p-2 text-[#122033] hover:bg-[#eaf7ef]"><ShoppingCart size={22}/></Link>}</div>
       </div>
-      {mobileOpen && <div className="border-t bg-white lg:hidden"><div className="page-shell grid gap-2 py-4"><form onSubmit={event => { event.preventDefault(); submitSearch(); }} className="mb-2 flex overflow-hidden rounded-xl border border-slate-300"><label className="flex min-w-0 flex-1 items-center gap-2 px-3"><Search size={17} className="text-slate-400"/><input value={query} onChange={event => setQuery(event.target.value)} placeholder="Search marketplace" className="min-w-0 flex-1 py-2 text-sm outline-none" autoComplete="off"/></label><button type="submit" className="bg-[#e31b23] px-4 text-sm font-bold text-white">Search</button></form>{!query.trim() && recentSearches.length ? <div className="mb-2">{recentSearchPanel}</div> : null}{mobileLink("/explore", "Browse marketplace")}{isAuthenticated && <>{mobileLink("/account/favorites", "Favorites")}{mobileLink("/account/notifications", `Notifications${unread.data?.count ? ` (${unread.data.count})` : ""}`)}{mobileLink("/account/messages", "Messages")}</>}{mobileLink(isAuthenticated ? (isControlPlane ? "/admin" : "/account") : "/login", isAuthenticated ? (isControlPlane ? "Control center" : "My account") : "Login")}{!isControlPlane && mobileLink("/sell", "Buy / Sell", true)}<div className="border-t border-slate-100 pt-3"><MainCategoryMenu categories={categories} inline/></div></div></div>}
+
       <div className="border-t border-slate-100 bg-white"><div className="page-shell flex h-14 items-center justify-between gap-4"><MainCategoryMenu categories={categories}/><Link href="/explore" className="text-sm font-extrabold text-[#006b32] hover:underline focus:outline-none focus:ring-2 focus:ring-[#00843d]/40">Browse all listings</Link></div></div>
     </header>
   </>;

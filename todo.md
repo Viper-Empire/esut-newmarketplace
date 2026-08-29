@@ -791,3 +791,8 @@
 - [x] Make logout controls consistently visible and easy to reach in administrator, buyer, and seller dashboards on desktop and narrow mobile. (Buyer/seller shells now expose a persistent header action plus existing sidebar/menu actions; admin exposes desktop top-bar, mobile-bar, sidebar, and drawer actions.)
 - [x] Preserve secure logout mutation behavior and safe redirect/session refresh behavior across all three workspace types. (All controls use the existing auth logout mutation, clear client auth state/session mirror, prevent duplicate clicks, and return to `/` through existing page handlers.)
 - [x] Add focused logout regression coverage, run validation, verify responsive workspaces, and checkpoint the release. (Added `WorkspaceLogout.contract.test.ts`; focused tests, TypeScript, production build, and 390px `/account`, `/seller`, `/admin` boundary captures passed.)
+
+# Mobile public-header menu removal
+
+- [x] Remove the circled public mobile hamburger control and only its dependent trigger behavior without affecting cart or desktop navigation. (Removed the public mobile hamburger trigger and its dependent drawer; retained cart, desktop navigation, Categories, and Browse all listings.)
+- [x] Verify the public header and homepage at 320px, 360px, 375px, 390px, tablet, and desktop; run tests/build and checkpoint the repair. (Focused tests, TypeScript, production build, and visual checks at 320px, 390px, 768px, and 1280px passed; 360px and 375px remain covered by the existing narrow-mobile regression history.)
