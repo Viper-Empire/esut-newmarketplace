@@ -819,3 +819,8 @@
 - [x] Diagnose why the live AdminRecoveryPage dynamic chunk reference is missing or stale. (The live stale hash returned index.html with HTTP 200 and HTML content, while the current build contained a different hashed chunk.)
 - [x] Apply a deployment-safe fix that keeps generated asset references and published files consistent. (Missing `/assets/*` requests now return a plain 404 instead of SPA HTML; hashed assets are immutable-cacheable and the SPA shell is revalidated.)
 - [x] Verify AdminRecoveryPage and related admin routes, run regression/build validation, and checkpoint the repair. (Added `server/viteStaticAssets.test.ts`; 83 test files, 261 tests passed, 1 skipped; TypeScript and production build passed.)
+
+# Categories menu auto-close refinement
+
+- [x] Automatically close an open Categories menu when the user begins scrolling or touches outside the menu, without closing it on intentional internal selection. (Non-inline menus close on page scroll and outside pointer/touch interaction; the trigger and menu contents are inside one ref boundary, so intentional internal clicks remain usable.)
+- [x] Preserve accessible keyboard/click behavior and desktop navigation while adding focused interaction regression coverage and responsive validation. (Added MainCategoryMenu regression coverage; 83 test files, 262 tests passed, 1 skipped; TypeScript, build, and 320px visual verification passed.)

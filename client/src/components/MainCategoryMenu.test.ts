@@ -13,6 +13,16 @@ describe("ESUT Main Category Menu", () => {
     expect(source).toContain("View ${category.name} sub-categories");
   });
 
+  it("auto-closes an open non-inline menu on page scroll or outside touch", () => {
+    expect(source).toContain("menuRootRef");
+    expect(source).toContain('window.addEventListener("scroll", closeOnPageScroll');
+    expect(source).toContain('document.addEventListener("pointerdown", closeOnOutsideTouch)');
+    expect(source).toContain("!menuRootRef.current?.contains(target)");
+    expect(source).toContain('window.removeEventListener("scroll", closeOnPageScroll');
+    expect(source).toContain('document.removeEventListener("pointerdown", closeOnOutsideTouch)');
+    expect(source).toContain("if (!open || inline) return;");
+  });
+
   it("filters all Coming Soon parents and children from navigation", () => {
     expect(source).toContain('category.availability !== "COMING_SOON"');
     expect(source).toContain("activeCategories(categories)");
