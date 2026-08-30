@@ -802,3 +802,9 @@
 - [x] Audit robots.txt directives against public indexable routes, sitemap entries, and protected application paths. (Confirmed the prior file explicitly named private `/account`, `/checkout`, `/admin`, `/moderator`, and `/seller` paths.)
 - [x] Remove sensitive-path enumeration from robots.txt while preserving truthful public-route indexing and server-side authorization. (robots.txt now contains only the global allow rule and sitemap; private routes receive route-aware `X-Robots-Tag: noindex, nofollow, noarchive` headers and remain server-protected.)
 - [x] Add crawler-policy regression coverage, run validation, and checkpoint the robots.txt repair. (Updated crawler/security-header tests; full suite, TypeScript, and production build passed.)
+
+# Sensitive-route redirect follow-up
+
+- [x] Redirect unauthenticated visits to hidden sensitive routes back to the main website without exposing protected content or leaking the attempted path. (Central App guard redirects unauthenticated `/account`, `/checkout`, `/seller`, `/moderator`, and `/admin` paths to `/`.)
+- [x] Preserve authenticated buyer, seller, and administrator access and server-side authorization for protected routes. (Guard waits for auth resolution; authenticated admin access was preserved in browser verification, and existing page/router authorization remains unchanged.)
+- [x] Add route-guard regression coverage, run validation, verify redirects, and checkpoint the release. (Added `App.sensitive-route-redirect.test.ts`; 82 test files, 258 tests passed, 1 skipped; TypeScript and production build passed.)

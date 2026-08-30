@@ -87,11 +87,16 @@ function ActiveWorkspaceEventRefresh() {
   return null;
 }
 
+export function isSensitiveRoute(pathname: string) {
+  return /^\/(account|checkout|admin|moderator|seller)(?:\/|$)/.test(pathname);
+}
+
 function App() {
   const [location] = useLocation();
   const { user, loading: authLoading } = useAuth();
   const pathname = location.split("?")[0] || "/";
   const isAdminRoute = pathname.startsWith("/admin");
+  const shouldRedirectUnauthenticatedSensitiveRoute = !authLoading && !user && isSensitiveRoute(pathname);
   const isAdminWorkspace = isAdminRoute && !authLoading && ["ADMIN", "SUPER_ADMIN"].includes(user?.role ?? "");
 
   // A correctly configured OAuth provider returns to /api/oauth/callback, where
@@ -137,7 +142,7 @@ function App() {
     root.style.colorScheme = "light";
   }, []);
 
-  return <ErrorBoundary><a className="skip-link" href="#main-content">Skip to page content</a><Toaster/><ActiveWorkspaceEventRefresh/>{!isAdminRoute && <><PublicAccountActions/><ContextualNavigation/></>}<AdminControlCenterNav/><div className={isAdminWorkspace ? "admin-app-frame" : undefined}><div className={isAdminWorkspace ? "admin-app-content" : undefined}><div id="main-content" tabIndex={-1}><Suspense fallback={<main className="page-shell py-16 text-center text-slate-500" role="status">Loading workspace…</main>}><Switch>
+  return <ErrorBoundary><a className="skip-link" href="#main-content">Skip to page content</a><Toaster/><ActiveWorkspaceEventRefresh/>{!isAdminRoute && <><PublicAccountActions/><ContextualNavigation/></>}<AdminControlCenterNav/><div className={isAdminWorkspace ? "admin-app-frame" : undefined}><div className={isAdminWorkspace ? "admin-app-content" : undefined}><div id="main-content" tabIndex={-1}><Suspense fallback={<main className="page-shell py-16 text-center text-slate-500" role="status">Loading workspace…</main>}>{shouldRedirectUnauthenticatedSensitiveRoute ? <Redirect to="/" /> : <Switch>
     <Route path="/" component={Home}/>
     <Route path="/login">{() => <AuthPage mode="login"/>}</Route>
     <Route path="/register">{() => <AuthPage mode="register"/>}</Route>
@@ -216,7 +221,7 @@ function App() {
     <Route path="/category/hostel-home"><Redirect to="/category/accommodation"/></Route>
     <Route path="/category/:slug" component={ExplorePage}/>
     <Route component={NotFound}/>
-  </Switch></Suspense></div></div></div></ErrorBoundary>;
+  </Switch>}</Suspense></div></div></div></ErrorBoundary>;
 }
 
 export default App;
