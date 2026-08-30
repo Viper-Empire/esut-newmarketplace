@@ -327,7 +327,7 @@ class SDKServer {
     if (!session.sid) {
       throw ForbiddenError("Session renewal is required");
     }
-    const activeSession = await getActiveTrackedSession({ userId: user.id, sessionId: session.sid });
+    const activeSession = await getActiveTrackedSession({ userId: user.id, sessionId: session.sid, request: req });
     if (!activeSession) {
       throw ForbiddenError("Session is no longer active");
     }

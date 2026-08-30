@@ -27,6 +27,10 @@ export const sessionRequestMetadata = (request: Pick<Request, "headers" | "ip">)
   return { ...userAgentDetails(agent), ipFingerprint: clientIp ? securityIdentifier("session-ip", clientIp) : null };
 };
 
+type SessionMetadata = { deviceLabel: string | null; browserFamily: string | null; osFamily: string | null; ipFingerprint: string | null };
+
+export const sessionMetadataNeedsRefresh = (current: SessionMetadata, next: ReturnType<typeof sessionRequestMetadata>) => current.deviceLabel !== next.deviceLabel || current.browserFamily !== next.browserFamily || current.osFamily !== next.osFamily || current.ipFingerprint !== next.ipFingerprint;
+
 export async function recordAccountSecurityEvent({ userId, authSessionId, eventType, request, metadata = {} }: { userId: number | null; authSessionId?: number | null; eventType: SecurityEventType; request?: Pick<Request, "headers" | "ip">; metadata?: Record<string, string | number | boolean | null> }) {
   const db = await getDbOrThrow();
   const requestMetadata = request ? sessionRequestMetadata(request) : null;
@@ -45,13 +49,20 @@ export async function createTrackedSession({ userId, request, expiresInMs }: { u
   return { sessionId, expiresAt, authSessionId };
 }
 
-export async function getActiveTrackedSession({ userId, sessionId }: { userId: number; sessionId: string | undefined }) {
+export async function getActiveTrackedSession({ userId, sessionId, request }: { userId: number; sessionId: string | undefined; request?: Pick<Request, "headers" | "ip"> }) {
   if (!sessionId) return null;
   const db = await getDbOrThrow();
   const now = new Date();
   const row = (await db.select().from(authSessions).where(and(eq(authSessions.userId, userId), eq(authSessions.sessionHash, hashOpaqueToken(sessionId)), eq(authSessions.status, "ACTIVE"), gt(authSessions.expiresAt, now))).limit(1))[0];
   if (!row) return null;
-  if (row.lastActiveAt.getTime() < now.getTime() - 5 * 60 * 1_000) await db.update(authSessions).set({ lastActiveAt: now }).where(eq(authSessions.id, row.id));
+  const requestMetadata = request ? sessionRequestMetadata(request) : null;
+  const shouldRefreshMetadata = requestMetadata ? sessionMetadataNeedsRefresh(row, requestMetadata) : false;
+  if (shouldRefreshMetadata || row.lastActiveAt.getTime() < now.getTime() - 5 * 60 * 1_000) {
+    await db.update(authSessions).set({
+      ...(requestMetadata ?? {}),
+      lastActiveAt: now,
+    }).where(eq(authSessions.id, row.id));
+  }
   return row;
 }
 
