@@ -808,3 +808,8 @@
 - [x] Redirect unauthenticated visits to hidden sensitive routes back to the main website without exposing protected content or leaking the attempted path. (Central App guard redirects unauthenticated `/account`, `/checkout`, `/seller`, `/moderator`, and `/admin` paths to `/`.)
 - [x] Preserve authenticated buyer, seller, and administrator access and server-side authorization for protected routes. (Guard waits for auth resolution; authenticated admin access was preserved in browser verification, and existing page/router authorization remains unchanged.)
 - [x] Add route-guard regression coverage, run validation, verify redirects, and checkpoint the release. (Added `App.sensitive-route-redirect.test.ts`; 82 test files, 258 tests passed, 1 skipped; TypeScript and production build passed.)
+
+# Account and checkout login redirect refinement
+
+- [x] Redirect unauthenticated `/account` and `/checkout` visits to `/login`, while keeping other sensitive-route destinations unchanged. (The centralized guard now sends these paths to `/login`; `/admin`, `/seller`, and `/moderator` continue to go to `/`.)
+- [x] Add redirect-policy regression coverage, run validation, and checkpoint the refinement. (Added destination assertions; 82 test files, 259 tests passed, 1 skipped; TypeScript and production build passed.)
