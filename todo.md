@@ -813,3 +813,9 @@
 
 - [x] Redirect unauthenticated `/account` and `/checkout` visits to `/login`, while keeping other sensitive-route destinations unchanged. (The centralized guard now sends these paths to `/login`; `/admin`, `/seller`, and `/moderator` continue to go to `/`.)
 - [x] Add redirect-policy regression coverage, run validation, and checkpoint the refinement. (Added destination assertions; 82 test files, 259 tests passed, 1 skipped; TypeScript and production build passed.)
+
+# Dynamic import asset failure repair
+
+- [x] Diagnose why the live AdminRecoveryPage dynamic chunk reference is missing or stale. (The live stale hash returned index.html with HTTP 200 and HTML content, while the current build contained a different hashed chunk.)
+- [x] Apply a deployment-safe fix that keeps generated asset references and published files consistent. (Missing `/assets/*` requests now return a plain 404 instead of SPA HTML; hashed assets are immutable-cacheable and the SPA shell is revalidated.)
+- [x] Verify AdminRecoveryPage and related admin routes, run regression/build validation, and checkpoint the repair. (Added `server/viteStaticAssets.test.ts`; 83 test files, 261 tests passed, 1 skipped; TypeScript and production build passed.)

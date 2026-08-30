@@ -58,10 +58,23 @@ export function serveStatic(app: Express) {
     );
   }
 
-  app.use(express.static(distPath));
+  app.use(express.static(distPath, {
+    setHeaders: (res, filePath) => {
+      if (filePath.startsWith(path.join(distPath, "assets"))) {
+        res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+      }
+    },
+  }));
 
-  // fall through to index.html if the file doesn't exist
+  // A missing hashed module must never receive index.html with a 200 HTML response.
+  // That masks stale deployment manifests as a dynamic-import TypeError.
+  app.use("/assets", (_req, res) => {
+    res.status(404).type("text/plain").send("Asset not found");
+  });
+
+  // Revalidate the SPA shell so new deployments cannot keep pointing at old chunk hashes.
   app.use("*", (_req, res) => {
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     res.sendFile(path.resolve(distPath, "index.html"));
   });
 }
