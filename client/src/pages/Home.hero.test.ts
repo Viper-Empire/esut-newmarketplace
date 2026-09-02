@@ -9,6 +9,7 @@ describe("homepage hero artwork interaction contract", () => {
     expect(homeSource).toContain('aria-label="Esut Shops hero artwork"');
     expect(homeSource).toContain('>Esut<br/><b>Shops</b></p>');
     expect(homeSource).not.toContain('Campus Deals hero artwork');
+    expect(homeSource).toContain('Discover more with Esut Shops.');
     expect(homeSource).toContain('className="reference-hero-surface"');
     expect(homeSource).toContain('className="reference-logo-medallion"');
     expect(homeSource).toContain('src={ESUT_MARKETPLACE_LOGO_PATH}');
@@ -39,6 +40,9 @@ describe("homepage hero artwork interaction contract", () => {
     expect(stylesheet).toContain(".reference-logo-medallion");
     expect(stylesheet).toContain(".reference-chip:hover,.reference-chip:focus-visible");
     expect(stylesheet).toContain(".reference-caption");
+    expect(stylesheet).toContain("@keyframes reference-caption-fade-in");
+    expect(stylesheet).toContain("animation:reference-caption-fade-in 700ms cubic-bezier(.23,1,.32,1) 220ms both");
+    expect(stylesheet).toContain("@media(prefers-reduced-motion:reduce){.reference-caption{animation:none;opacity:1;transform:none}}");
     expect(stylesheet).toContain(".reference-logo-medallion::after");
     expect(stylesheet).toContain("animation:reference-logo-glow 4.8s ease-in-out 900ms infinite");
     expect(stylesheet).toContain(".reference-logo-medallion::after{animation:none;opacity:.5;transform:none}");

@@ -834,3 +834,8 @@
 # Hero artwork caption rename
 
 - [x] Change the hero artwork caption from “Campus Deals” to the exact requested wording “Esut Shops” while preserving artwork layout, category links, styling, and responsive behavior. (Updated the HTML caption and accessible artwork label; logo, category chips, links, styles, and responsive composition remain unchanged.)
+
+# Esut Shops hero branding refinement
+
+- [x] Update the supporting hero phrase to align with Esut Shops branding. (Changed it to “Discover more with Esut Shops.”)
+- [x] Add a subtle reduced-motion-safe fade-in animation to the Esut Shops artwork caption and verify the responsive hero presentation. (Added a 700ms opacity/translate fade-in with a reduced-motion override; focused and full tests, TypeScript, build, and 375px/1280px captures passed.)

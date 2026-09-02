@@ -233,7 +233,10 @@
 @media(max-width:639px){.reference-orbit-node-fashion{animation-duration:36s!important}.reference-orbit-node-phones{animation-duration:36s!important}.reference-orbit-node-beauty{animation-duration:36s!important}.reference-orbit-node-food{animation-duration:36s!important}.reference-orbit-node-books{animation-duration:36s!important}.reference-orbit-node-accommodation{animation-duration:36s!important}.reference-orbit-node>.reference-chip{animation-duration:36s!important}}
 @media(prefers-reduced-motion:reduce){.reference-orbit-node{animation:none!important;transform:translate(-50%,-50%)}.reference-orbit-node>.reference-chip{animation:none!important;transform:translate(-50%,-50%)!important}.reference-orbit-node-fashion{transform:translate(-50%,-50%) translate(-60px,-104px)}.reference-orbit-node-phones{transform:translate(-50%,-50%) translate(60px,-104px)}.reference-orbit-node-beauty{transform:translate(-50%,-50%) translate(120px,0)}.reference-orbit-node-food{transform:translate(-50%,-50%) translate(60px,104px)}.reference-orbit-node-books{transform:translate(-50%,-50%) translate(-60px,104px)}.reference-orbit-node-accommodation{transform:translate(-50%,-50%) translate(-120px,0)}}
 
-/* Mobile hero-artwork collision guard: keep Campus Deals clear of orbit chips. */
+@keyframes reference-caption-fade-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.reference-caption{animation:reference-caption-fade-in 700ms cubic-bezier(.23,1,.32,1) 220ms both;will-change:opacity,transform}
+@media(prefers-reduced-motion:reduce){.reference-caption{animation:none;opacity:1;transform:none}}
+/* Mobile hero-artwork collision guard: keep Esut Shops clear of orbit chips. */
 @media(max-width:639px){.reference-caption{right:4%;bottom:2.5%;max-width:34%;font-size:clamp(1.2rem,6.4vw,1.9rem);line-height:.84;letter-spacing:-.045em;pointer-events:none}}
 
 /* ESUT Marketplace admin control center */
