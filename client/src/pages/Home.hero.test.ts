@@ -6,7 +6,9 @@ const stylesheet = readFileSync(new URL("../index.css", import.meta.url), "utf8"
 
 describe("homepage hero artwork interaction contract", () => {
   it("keeps the artwork semantic, keyboard-focusable, and layered", () => {
-    expect(homeSource).toContain('aria-label="Campus Deals hero artwork"');
+    expect(homeSource).toContain('aria-label="Esut Shops hero artwork"');
+    expect(homeSource).toContain('>Esut<br/><b>Shops</b></p>');
+    expect(homeSource).not.toContain('Campus Deals hero artwork');
     expect(homeSource).toContain('className="reference-hero-surface"');
     expect(homeSource).toContain('className="reference-logo-medallion"');
     expect(homeSource).toContain('src={ESUT_MARKETPLACE_LOGO_PATH}');

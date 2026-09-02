@@ -830,3 +830,7 @@
 - [x] Trace buyer/seller Security & devices session and recent-activity values from database/session service through tRPC into the UI and identify mock or fabricated fallbacks. (The UI and API already read real `authSessions` and `accountSecurityEvents`; the remaining issue was password-auth session issuance without request metadata.)
 - [x] Remove mock security values and ensure buyer/seller pages render only authenticated real data with truthful loading, empty, error, refresh, and revoke states. (Registration, login, reset, and change-password sessions now pass `ctx.req`; active-session validation refreshes device metadata from the authenticated request; no mock rows or fabricated values were added.)
 - [x] Add focused real-data regressions, run full validation and responsive checks, and checkpoint the repair. (Added session metadata refresh regression; 83 test files, 263 tests passed, 1 skipped; TypeScript, production build, and security contracts passed.)
+
+# Hero artwork caption rename
+
+- [x] Change the hero artwork caption from “Campus Deals” to the exact requested wording “Esut Shops” while preserving artwork layout, category links, styling, and responsive behavior. (Updated the HTML caption and accessible artwork label; logo, category chips, links, styles, and responsive composition remain unchanged.)
