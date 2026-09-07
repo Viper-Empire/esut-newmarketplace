@@ -845,3 +845,9 @@
 - [x] Inventory the implemented frontend, backend, database, authentication, storage, security, moderation, and deployment architecture. (Documented in `ESUT_MARKETPLACE_ARCHITECTURE_AND_OPERATING_MODEL.md`.)
 - [x] Trace buyer, seller, administrator, checkout, messaging, review, session-security, crawler, and redirect flows from source contracts. (Documented implemented flows, role boundaries, domain entities, governance controls, and deferred infrastructure.)
 - [x] Write and deliver a comprehensive architecture, operations, and governance/regulation report that separates implemented controls from deferred plans. (Report written and attached for review.)
+
+# ESUT Marketplace hosting runbook
+
+- [x] Inventory current build scripts, runtime requirements, environment variables, database, OAuth, media, scheduling, and deployment constraints. (Validated against `package.json`, `server/_core/index.ts`, `server/_core/env.ts`, OAuth, storage, Cloudinary, and schedule modules.)
+- [x] Document the recommended Manus hosting procedure and a controlled cPanel/Node.js alternative, including prerequisites and release gates. (Included in `ESUT_MARKETPLACE_HOSTING_RUNBOOK.md`.)
+- [x] Write the complete hosting, security, backup, monitoring, maintenance, migration, and rollback runbook and validate it against the repository. (Runbook includes current commands, environment contract, OAuth, database, Cloudinary, cron, cPanel, Manus, DNS/SSL, security, backup, incident, release, cutover, and rollback procedures.)
