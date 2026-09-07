@@ -839,3 +839,9 @@
 
 - [x] Update the supporting hero phrase to align with Esut Shops branding. (Changed it to “Discover more with Esut Shops.”)
 - [x] Add a subtle reduced-motion-safe fade-in animation to the Esut Shops artwork caption and verify the responsive hero presentation. (Added a 700ms opacity/translate fade-in with a reduced-motion override; focused and full tests, TypeScript, build, and 375px/1280px captures passed.)
+
+# ESUT Marketplace architecture report
+
+- [x] Inventory the implemented frontend, backend, database, authentication, storage, security, moderation, and deployment architecture. (Documented in `ESUT_MARKETPLACE_ARCHITECTURE_AND_OPERATING_MODEL.md`.)
+- [x] Trace buyer, seller, administrator, checkout, messaging, review, session-security, crawler, and redirect flows from source contracts. (Documented implemented flows, role boundaries, domain entities, governance controls, and deferred infrastructure.)
+- [x] Write and deliver a comprehensive architecture, operations, and governance/regulation report that separates implemented controls from deferred plans. (Report written and attached for review.)
