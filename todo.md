@@ -851,3 +851,16 @@
 - [x] Inventory current build scripts, runtime requirements, environment variables, database, OAuth, media, scheduling, and deployment constraints. (Validated against `package.json`, `server/_core/index.ts`, `server/_core/env.ts`, OAuth, storage, Cloudinary, and schedule modules.)
 - [x] Document the recommended Manus hosting procedure and a controlled cPanel/Node.js alternative, including prerequisites and release gates. (Included in `ESUT_MARKETPLACE_HOSTING_RUNBOOK.md`.)
 - [x] Write the complete hosting, security, backup, monitoring, maintenance, migration, and rollback runbook and validate it against the repository. (Runbook includes current commands, environment contract, OAuth, database, Cloudinary, cron, cPanel, Manus, DNS/SSL, security, backup, incident, release, cutover, and rollback procedures.)
+
+# Truehost VPS and esutmarketplace.com deployment runbook
+
+- [x] Validate the current application runtime, build, secrets, database, OAuth, media, Redis, schedules, and external VPS/domain assumptions. (Validated against the current repository and documented the external VPS/domain assumptions and provider-dependent gaps.)
+- [x] Research and confirm the provider/domain/SSL prerequisites needed for a safe Truehost VPS deployment without treating marketing claims as guaranteed capabilities. (Reviewed the current Truehost configuration page, Ubuntu, NGINX, and Certbot references; undocumented provider capabilities remain explicitly marked for written confirmation.)
+- [x] Write the complete VPS hosting, security, deployment, DNS, SSL, operations, backup, cutover, and rollback documentation for `esutmarketplace.com`. (Written in `ESUT_MARKETPLACE_TRUEHOST_VPS_DEPLOYMENT_RUNBOOK.md`.)
+- [x] Validate the runbook against the repository and deliver it as a checkpointed Markdown document. (Repository contracts, provider findings, scheduled endpoints, OAuth, media, and operations procedures were validated and the document is ready for checkpoint delivery.)
+
+# HostAfrica hosting-option comparison
+
+- [x] Research HostAfrica shared, LiteSpeed, WordPress, and Node.js hosting capabilities, limitations, and current deployment requirements. (Reviewed all four current HostAfrica product pages and saved source findings.)
+- [x] Compare each option against ESUT Marketplace’s React/Vite, Node.js/Express/tRPC, database, OAuth, Cloudinary, Redis, cron, and security requirements. (Comparison report maps each option to the actual application runtime and operational needs.)
+- [x] Deliver a clear hosting recommendation, explain why the other options are unsuitable or conditional, and document migration implications. (Recommendation: Node.js Hosting among HostAfrica choices; VPS remains preferred for serious production control.)
