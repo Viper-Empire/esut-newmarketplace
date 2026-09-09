@@ -35,6 +35,45 @@ These features are helpful, but the plan description does not establish the foll
 | Backups | Database, configuration, releases, and media metadata | Confirm retention and restoration process |
 | Logs | Node, proxy, cron, error, and deployment diagnostics | Confirm access and retention |
 
+## 3. Confirmed DirectAdmin settings and required mapping
+
+The DirectAdmin screen currently shows the following values:
+
+| DirectAdmin field | Current value | ESUT Marketplace decision |
+|---|---|---|
+| Node.js version | Node.js 22 LTS | Correct target runtime; matches the application’s current Node 22-era toolchain, subject to final provider verification |
+| Application mode | Production | Correct for a production-like staging application; do not use it for the first database cutover until staging passes |
+| Application root | `apps/api` | **Do not accept this unchanged for the current repository.** The repository is a single root application with `package.json`, `client/`, `server/`, `drizzle/`, and `dist/index.js` after build; it does not currently use an `apps/api` workspace directory |
+| Application URL | `myapp.africa` | Temporary provider test URL only; replace with `staging.esutmarketplace.com` for staging and `esutmarketplace.com` for production after DNS is approved |
+
+The current application’s production scripts are:
+
+```json
+"build": "vite build && esbuild server/_core/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
+"start": "NODE_ENV=production node dist/index.js"
+```
+
+Therefore, the DirectAdmin application root must be the directory containing the full deployed repository and its `package.json`, or a deliberately prepared release directory containing the built `dist` output and the runtime files required by the bundle. Do not point DirectAdmin at a nonexistent `apps/api` directory and expect the current repository to start. Unless HostAfrica explicitly requires a different layout, use an application root such as `esut-marketplace` or `/home/USER/esut-marketplace`, set the startup file to `dist/index.js`, and run the build from that root.
+
+If HostAfrica requires the literal root `apps/api`, there are two safe options. The preferred option is to deploy the complete repository inside that directory, so `apps/api/package.json`, `apps/api/dist/index.js`, `apps/api/client`, `apps/api/server`, and `apps/api/drizzle` exist together. The alternative is to create a reviewed deployment packaging step that copies the complete runtime into `apps/api`; do not copy only frontend files. The codebase should not be refactored into a new monorepo layout merely to match a provider field.
+
+`myapp.africa` should not be used as the ESUT production URL unless it is an authorized domain owned by the project. Use a temporary HostAfrica URL or `staging.esutmarketplace.com` for staging. The final public URL remains `https://esutmarketplace.com`.
+
+## 3A. Exact next DirectAdmin actions
+
+Before changing DNS, complete the following in DirectAdmin:
+
+1. Open the Node.js application and change the application root from `apps/api` to the full ESUT Marketplace deployment directory, unless the provider confirms that `apps/api` is an existing directory containing the complete repository.
+2. Set the startup file to `dist/index.js`.
+3. Confirm that the application manager uses the project root as the working directory when running `pnpm run build` and `pnpm start`.
+4. Confirm whether DirectAdmin supports pnpm 10. If not, ask for the provider-approved way to install from `pnpm-lock.yaml`; do not silently replace the lockfile workflow.
+5. Use `staging.esutmarketplace.com` or the temporary provider URL for the first deployment, not `esutmarketplace.com`.
+6. Add the staging environment variables, including a staging database URL and `VITE_PUBLIC_SITE_URL=https://staging.esutmarketplace.com`.
+7. Ask HostAfrica to confirm the Node process port/proxy mapping, automatic restart behavior, cron support, database connection limits, and secure environment-variable storage.
+8. Deploy the approved commit, run `pnpm install --frozen-lockfile`, run `pnpm check`, `pnpm test`, and run `pnpm run build`.
+9. Restart the DirectAdmin Node.js application and confirm the temporary URL returns the ESUT Marketplace homepage and `/api/trpc` responds with the expected application behavior.
+10. Only after staging passes should the root domain, OAuth callback, Cloudinary production settings, and production database be introduced.
+
 ## 3. Target production architecture
 
 ```mermaid

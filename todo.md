@@ -871,3 +871,9 @@
 - [x] Design the staging, deployment, DNS, SSL, integration, testing, cutover, monitoring, backup, and rollback procedures for `esutmarketplace.com`. (Runbook includes staging-first migration, DNS, HTTPS, OAuth, Cloudinary, Redis, email, scheduled jobs, acceptance matrix, cutover, monitoring, backup, and rollback.)
 - [x] Write a complete start-to-finish HostAfrica Node.js hosting runbook with commands, provider settings, acceptance gates, and capability gaps requiring written confirmation. (Written in `ESUT_MARKETPLACE_HOSTAFRICA_NODEJS_DEPLOYMENT_RUNBOOK.md`.)
 - [x] Validate and checkpoint the documentation for delivery. (Required-section validation passed; documentation is ready for checkpoint.)
+
+# DirectAdmin Node.js runtime confirmation
+
+- [x] Map DirectAdmin Node.js 22 LTS, production mode, `apps/api` root, and `myapp.africa` URL to the current ESUT Marketplace structure. (Node 22 LTS and production mode are suitable; the current single-root repository does not match `apps/api` unless the complete repository is deployed there; `myapp.africa` remains a temporary URL until ownership and DNS are confirmed.)
+- [x] Confirm the correct application root/startup file, domain mapping, package/build process, environment variables, database, OAuth, Cloudinary, Redis, and scheduler settings before staging deployment. (Runbook now maps the root to the repository, startup to `dist/index.js`, and lists remaining provider gates.)
+- [x] Update the HostAfrica runbook with the confirmed DirectAdmin values and report the exact next actions without changing production DNS or application data. (Updated `ESUT_MARKETPLACE_HOSTAFRICA_NODEJS_DEPLOYMENT_RUNBOOK.md`; no DNS, production data, schema, or runtime configuration was changed.)
