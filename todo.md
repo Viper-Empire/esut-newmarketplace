@@ -877,3 +877,9 @@
 - [x] Map DirectAdmin Node.js 22 LTS, production mode, `apps/api` root, and `myapp.africa` URL to the current ESUT Marketplace structure. (Node 22 LTS and production mode are suitable; the current single-root repository does not match `apps/api` unless the complete repository is deployed there; `myapp.africa` remains a temporary URL until ownership and DNS are confirmed.)
 - [x] Confirm the correct application root/startup file, domain mapping, package/build process, environment variables, database, OAuth, Cloudinary, Redis, and scheduler settings before staging deployment. (Runbook now maps the root to the repository, startup to `dist/index.js`, and lists remaining provider gates.)
 - [x] Update the HostAfrica runbook with the confirmed DirectAdmin values and report the exact next actions without changing production DNS or application data. (Updated `ESUT_MARKETPLACE_HOSTAFRICA_NODEJS_DEPLOYMENT_RUNBOOK.md`; no DNS, production data, schema, or runtime configuration was changed.)
+
+# DirectAdmin root and Node.js deployment guide
+
+- [x] Write exact DirectAdmin steps to replace the incorrect `apps/api` root and set `dist/index.js` as startup file for the current repository. (Documented the UI sequence, repository-root check, startup-file field, save/restart procedure, and troubleshooting.)
+- [x] Write the complete HostAfrica Node.js setup and deployment guide from account creation through staging, integrations, SSL, testing, cutover, monitoring, backup, and rollback. (Written in `ESUT_MARKETPLACE_DIRECTADMIN_NODEJS_SETUP_GUIDE.md`.)
+- [x] Validate and checkpoint the guide for delivery. (Required guide terms and procedures are present; final tracker reconciliation is pending checkpoint.)
