@@ -864,3 +864,10 @@
 - [x] Research HostAfrica shared, LiteSpeed, WordPress, and Node.js hosting capabilities, limitations, and current deployment requirements. (Reviewed all four current HostAfrica product pages and saved source findings.)
 - [x] Compare each option against ESUT Marketplace’s React/Vite, Node.js/Express/tRPC, database, OAuth, Cloudinary, Redis, cron, and security requirements. (Comparison report maps each option to the actual application runtime and operational needs.)
 - [x] Deliver a clear hosting recommendation, explain why the other options are unsuitable or conditional, and document migration implications. (Recommendation: Node.js Hosting among HostAfrica choices; VPS remains preferred for serious production control.)
+
+# HostAfrica Node.js hosting deployment runbook
+
+- [x] Validate the supplied HostAfrica Node.js plan against ESUT Marketplace runtime, database, OAuth, media, Redis, cron, email, and security requirements. (Documented the supplied features and marked Node.js version, process limits, environment variables, database, cron, proxy, logs, backups, and scheduler identity as provider-confirmation gates.)
+- [x] Design the staging, deployment, DNS, SSL, integration, testing, cutover, monitoring, backup, and rollback procedures for `esutmarketplace.com`. (Runbook includes staging-first migration, DNS, HTTPS, OAuth, Cloudinary, Redis, email, scheduled jobs, acceptance matrix, cutover, monitoring, backup, and rollback.)
+- [x] Write a complete start-to-finish HostAfrica Node.js hosting runbook with commands, provider settings, acceptance gates, and capability gaps requiring written confirmation. (Written in `ESUT_MARKETPLACE_HOSTAFRICA_NODEJS_DEPLOYMENT_RUNBOOK.md`.)
+- [x] Validate and checkpoint the documentation for delivery. (Required-section validation passed; documentation is ready for checkpoint.)
