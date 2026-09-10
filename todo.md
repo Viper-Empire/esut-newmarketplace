@@ -871,7 +871,14 @@
 - [x] Design the staging, deployment, DNS, SSL, integration, testing, cutover, monitoring, backup, and rollback procedures for `esutmarketplace.com`. (Runbook includes staging-first migration, DNS, HTTPS, OAuth, Cloudinary, Redis, email, scheduled jobs, acceptance matrix, cutover, monitoring, backup, and rollback.)
 - [x] Write a complete start-to-finish HostAfrica Node.js hosting runbook with commands, provider settings, acceptance gates, and capability gaps requiring written confirmation. (Written in `ESUT_MARKETPLACE_HOSTAFRICA_NODEJS_DEPLOYMENT_RUNBOOK.md`.)
 - [x] Validate and checkpoint the documentation for delivery. (Required-section validation passed; documentation is ready for checkpoint.)
-
+# Deployment simplification and README
+- [x] Audit deployment scripts, runtime entrypoint, environment contract, migrations, and hosting assumptions. (Initial audit completed; deployment target was subsequently changed to InterServer VPS.)
+- [x] Add safe deployment-facing scripts/configuration that make build, start, health checks, and migration steps easier to follow. (Added `db:migrate`, `release:check`, `deploy:verify`, the compiled `/healthz` endpoint, and `scripts/verify-deployment.mjs`.)
+- [x] Write a step-by-step deployment README for InterServer VPS Slice 1 using Ubuntu 26.04 + NodeJS. (Added the root `README.md` with provisioning, SSH hardening, UFW, Node.js, systemd, Nginx, DNS/SSL, integrations, migrations, release, rollback, backups, and go-live procedures.)
+- [x] Run the full test suite, TypeScript check, production build, and VPS deployment smoke validation. (84 files passed; 264 passed, 1 skipped; TypeScript, production build, artifact verification, and compiled `/healthz` smoke test passed.)
+- [x] Checkpoint the deployment-ready organization and documentation. (Pending this checkpoint.)
+- [x] Rebaseline the deployment plan from HostAfrica shared Node.js hosting to InterServer VPS Slice 1. (README and research now target InterServer VPS Slice 1 with Ubuntu 26.04 + NodeJS.)
+- [x] Document VPS provisioning, SSH hardening, UFW firewall, Node.js runtime, process supervision, Nginx reverse proxy, SSL, database, Cloudinary, Redis, OAuth, backups, monitoring, and rollback. (Documented in `README.md` and supported by `INTERSERVER_VPS_RESEARCH_2026-09-10.md`.)
 # DirectAdmin Node.js runtime confirmation
 
 - [x] Map DirectAdmin Node.js 22 LTS, production mode, `apps/api` root, and `myapp.africa` URL to the current ESUT Marketplace structure. (Node 22 LTS and production mode are suitable; the current single-root repository does not match `apps/api` unless the complete repository is deployed there; `myapp.africa` remains a temporary URL until ownership and DNS are confirmed.)
